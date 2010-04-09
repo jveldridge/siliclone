@@ -1,4 +1,4 @@
-package interfaces;
+package edu.brown.cs32.siliclone.interfaces;
 
 /**
  * Specifies the required methods of a Feature of a DNASequence.
