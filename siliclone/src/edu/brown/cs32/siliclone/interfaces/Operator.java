@@ -1,4 +1,4 @@
-package interfaces;
+package edu.brown.cs32.siliclone.interfaces;
 
 import java.util.Collection;
 
