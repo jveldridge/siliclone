@@ -51,4 +51,10 @@ public class TestOp implements Operator {
 
 	}
 
+	@Override
+	public void connect(Operator adjacent) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
