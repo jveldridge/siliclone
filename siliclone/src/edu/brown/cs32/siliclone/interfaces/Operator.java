@@ -2,6 +2,8 @@ package edu.brown.cs32.siliclone.interfaces;
 
 import java.util.Collection;
 
+import com.google.gwt.user.client.ui.Widget;
+
 /**
  * Specifies the methods of an Operator object that will be used
  * in the workspace to perform operations on DNASequences.
@@ -26,7 +28,10 @@ public interface Operator {
 	 *     that returns a PropertiesSelector object (which the workspace can then
 	 *     display appropriately), right?
 	 */
-	public void showPropertiesSelector();
+	public Widget getPropertiesSelector();
+	
+	public Widget getWidget();
+	
 	
 	/**
 	 * Runs the Operation that this Operator controls.  This method simply calls
