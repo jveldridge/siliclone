@@ -63,5 +63,4 @@ public class BasicDNASequence implements edu.brown.cs32.siliclone.interfaces.DNA
 	public Object getProperty(String key) {
 		return _properties.get(key);
 	}
-
 }
