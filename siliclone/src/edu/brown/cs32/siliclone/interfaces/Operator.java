@@ -48,6 +48,8 @@ public interface Operator {
 	 */
 	public void cancel();
 	
+	public void connect(Operator adjacent);
+	
 	/**
 	 * Returns the Operators adjacent to this Operator; that is, all Operators
 	 * that have the output of this Operator as an input.
