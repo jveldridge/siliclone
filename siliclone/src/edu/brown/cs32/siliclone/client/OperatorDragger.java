@@ -23,8 +23,9 @@ public class OperatorDragger extends Layout {
 		this.op = op;
 		
 		Widget opWidget = op.getWidget();
-		addMember(opWidget);
+		this.addMember(opWidget);
 		setShowEdges(true);
+		setEdgeSize(5); //This is the default, but w/out it getEdgeSize returns null
 		setCanDragReposition(true);
 		setKeepInParentRect(true);
 		setDragAppearance(DragAppearance.TARGET);
@@ -35,6 +36,7 @@ public class OperatorDragger extends Layout {
 		selector.addMember(op.getPropertiesSelector());
 		selector.addMember(new Button("close", new HideSelectorHandler()));
 		selector.setShowEdges(true);
+		selector.setEdgeSize(5); //This is the default, but w/out it getEdgeSize returns null
 		selector.setCanDragReposition(true);
 		selector.setKeepInParentRect(true);
 		selector.setDragAppearance(DragAppearance.TARGET);
