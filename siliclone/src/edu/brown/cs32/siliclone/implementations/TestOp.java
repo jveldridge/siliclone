@@ -36,7 +36,7 @@ public class TestOp implements Operator {
 	@Override
 	public Widget getPropertiesSelector() {
 		// TODO Auto-generated method stub
-		return new Label("Properties Selector");
+		return new Label("Selector for " + name);
 	}
 
 	@Override

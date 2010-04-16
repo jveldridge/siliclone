@@ -4,14 +4,13 @@ package edu.brown.cs32.siliclone.client;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.types.DragAppearance;
-import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ShowContextMenuEvent;
 import com.smartgwt.client.widgets.events.ShowContextMenuHandler;
 import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.layout.VLayout;
 
 import edu.brown.cs32.siliclone.interfaces.Operator;
 
@@ -31,8 +30,8 @@ public class OperatorDragger extends Layout {
 		setDragAppearance(DragAppearance.TARGET);
 		
 		
-		selector = new Layout();
-		selector.setTitle("Properties Selector:");
+		selector = new VLayout();
+		selector.addMember(new Label("Properties Selector:"));
 		selector.addMember(op.getPropertiesSelector());
 		selector.addMember(new Button("close", new HideSelectorHandler()));
 		selector.setShowEdges(true);

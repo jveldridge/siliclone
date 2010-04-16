@@ -30,13 +30,14 @@ public class Siliclone implements EntryPoint {
         HLayout notMenuLayout = new HLayout();  
         notMenuLayout.setHeight("*");  
 
-        notMenuLayout.addMember(new ListingLabel());  
+        OpListing opList = new OpListing();
+        opList.addOpCreate(new DragCreate(new TestOpFactory("test1")));
+        opList.addOpCreate(new DragCreate(new TestOpFactory("test2")));
+        
+        notMenuLayout.addMember(opList);  
         notMenuLayout.addMember(new Workspace()); 
   
         mainLayout.addMember(notMenuLayout);  
-
-        notMenuLayout.addMember(new DragCreate(new TestOpFactory("test1")));
-        notMenuLayout.addMember(new DragCreate(new TestOpFactory("test2")));
         
         RootPanel.get().add(mainLayout);
   
