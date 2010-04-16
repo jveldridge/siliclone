@@ -5,6 +5,7 @@ import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.util.SC; //very handy for debug
 
 import com.smartgwt.client.widgets.events.*;
+import com.smartgwt.client.widgets.layout.Layout;
 public class Workspace extends Canvas {
 	public Workspace(){
 		setCanAcceptDrop(true);
@@ -15,7 +16,7 @@ public class Workspace extends Canvas {
 		
 		addDropOverHandler(new HoverHandle());
 		addDropHandler(new WorkDropHandle());
-		addShowContextMenuHandler(new RightClickHandler());
+//		addShowContextMenuHandler(new RightClickHandler());
 	}
 	private class HoverHandle implements DropOverHandler{
 		@Override
@@ -28,10 +29,19 @@ public class Workspace extends Canvas {
 		@Override
 		public void onDrop(DropEvent event) {
 			// TODO Auto-generated method stub
-			SC.say("Something was added to the workspace");
-			addChild(new OperatorDragger(((DragCreate) EventHandler.getDragTarget()).getFactory().makeOperator()));
+			OperatorDragger newOp = new OperatorDragger(((DragCreate) EventHandler.getDragTarget()).getFactory().makeOperator());
+			newOp.setTop(getOffsetY());
+			newOp.setLeft(getOffsetX());
+			
+			Layout opSelector = newOp.getSelectorPopup();
+			opSelector.setTop(getOffsetY());
+			opSelector.setLeft(getOffsetX());
+			
+			addChild(newOp);
+			addChild(opSelector);
 		}
 	}
+	/**
 	private class RightClickHandler implements ShowContextMenuHandler {
 		@Override
 		public void onShowContextMenu(ShowContextMenuEvent event) {
@@ -39,7 +49,7 @@ public class Workspace extends Canvas {
 			event.cancel();
 			SC.say("No right clicking!"); 
 		}
-	}
+	}**/
 	
 }
 
