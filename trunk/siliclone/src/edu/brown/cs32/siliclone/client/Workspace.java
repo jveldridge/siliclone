@@ -29,7 +29,7 @@ public class Workspace extends Canvas {
 		public void onDrop(DropEvent event) {
 			// TODO Auto-generated method stub
 			SC.say("Something was added to the workspace");
-			addChild(new WidgetDisplay(((DragCreate) EventHandler.getDragTarget()).getName()));
+			addChild(new OperatorDragger(((DragCreate) EventHandler.getDragTarget()).getFactory().makeOperator()));
 		}
 	}
 	private class RightClickHandler implements ShowContextMenuHandler {

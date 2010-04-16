@@ -6,12 +6,10 @@ import com.smartgwt.client.widgets.Label;
 import edu.brown.cs32.siliclone.interfaces.OperatorFactory;
 
 public class DragCreate extends Label {
-	private String name;
 	private OperatorFactory factory;
-	public DragCreate(String name, OperatorFactory factory){
-		super(name);
+	public DragCreate(OperatorFactory factory){
+		super(factory.getName());
 		this.factory = factory;
-		this.name = name;
 		setShowEdges(true);
 		setCanDrag(true);
 		setCanDrop(true);
@@ -19,7 +17,7 @@ public class DragCreate extends Label {
 		setDragAppearance(DragAppearance.TRACKER);
 	}
 	public String getName(){
-		return name;
+		return factory.getName();
 	}
 	public OperatorFactory getFactory(){
 		return factory;
