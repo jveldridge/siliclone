@@ -30,6 +30,7 @@ public class Siliclone implements EntryPoint {
         notMenuLayout.addMember(new Workspace()); 
   
         mainLayout.addMember(notMenuLayout);  
+        notMenuLayout.addMember(new DragCreate("one"));
         RootPanel.get().add(mainLayout);
   
        

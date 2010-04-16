@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.client;
 
+import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.util.SC; //very handy for debug
 
 import com.smartgwt.client.widgets.Canvas;
@@ -12,15 +13,23 @@ public class Workspace extends Canvas {
 		setWidth100();
 		setShowEdges(true);
 		
+		addDropOverHandler(new HoverHandle());
 		addDropHandler(new WorkDropHandle());
 		addShowContextMenuHandler(new RightClickHandler());
 	}
-	
+	private class HoverHandle implements DropOverHandler{
+		@Override
+		public void onDropOver(DropOverEvent event) {
+			setBackgroundColor("#ffffff");
+		}
+		
+	}
 	private class WorkDropHandle implements DropHandler {
 		@Override
 		public void onDrop(DropEvent event) {
 			// TODO Auto-generated method stub
 			SC.say("Something was added to the workspace");
+			addChild(new WidgetDisplay(((DragCreate) EventHandler.getDragTarget()).getName()));
 		}
 	}
 	private class RightClickHandler implements ShowContextMenuHandler {
