@@ -6,6 +6,7 @@ import com.smartgwt.client.util.SC; //very handy for debug
 
 import com.smartgwt.client.widgets.events.*;
 import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.tree.TreeGrid;
 public class Workspace extends Canvas {
 	public Workspace(){
 		setCanAcceptDrop(true);
@@ -29,16 +30,20 @@ public class Workspace extends Canvas {
 		@Override
 		public void onDrop(DropEvent event) {
 			// TODO Auto-generated method stub
-			OperatorDragger newOp = new OperatorDragger(((DragCreate) EventHandler.getDragTarget()).getFactory().makeOperator());
-			newOp.setTop(getOffsetY());
-			newOp.setLeft(getOffsetX());
+			Canvas dropped = EventHandler.getDragTarget();
+			if(dropped instanceof TreeGrid){
+				DragCreate operatorSelected = (DragCreate) ((TreeGrid) dropped).getSelectedRecord();
+				OperatorDragger newOp = new OperatorDragger(operatorSelected.getFactory().makeOperator());
+				newOp.setTop(getOffsetY());
+				newOp.setLeft(getOffsetX());
 			
-			Layout opSelector = newOp.getSelectorPopup();
-			opSelector.setTop(getOffsetY());
-			opSelector.setLeft(getOffsetX());
+				Layout opSelector = newOp.getSelectorPopup();
+				opSelector.setTop(getOffsetY());
+				opSelector.setLeft(getOffsetX());
 			
-			addChild(newOp);
-			addChild(opSelector);
+				addChild(newOp);
+				addChild(opSelector);
+			}
 		}
 	}
 	/**
