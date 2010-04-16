@@ -1,6 +1,7 @@
 package edu.brown.cs32.siliclone.client;
 
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.util.SC; //very handy for debug
 
@@ -39,10 +40,10 @@ public class Workspace extends Canvas {
 			
 				Layout opSelector = newOp.getSelectorPopup();
 				opSelector.setTop(getOffsetY());
-				opSelector.setLeft(getOffsetX());
-			
+				opSelector.setLeft(newOp.getRight() + newOp.getEdgeSize() + opSelector.getEdgeSize());
+				
 				addChild(newOp);
-				addChild(opSelector);
+				newOp.addPeer(opSelector);
 			}
 		}
 	}

@@ -39,7 +39,9 @@ public class Siliclone implements EntryPoint {
   
         mainLayout.addMember(notMenuLayout);  
         
-        RootPanel.get().add(mainLayout);
+        //RootPanel.get().add(mainLayout);
+        //I had to use this to make the selection panel work right --Noah
+        mainLayout.draw();
   
        
 	}
