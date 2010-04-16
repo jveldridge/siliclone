@@ -1,9 +1,9 @@
 package edu.brown.cs32.siliclone.client;
 
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.util.SC; //very handy for debug
 
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.*;
 public class Workspace extends Canvas {
 	public Workspace(){

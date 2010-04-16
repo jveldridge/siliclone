@@ -16,9 +16,6 @@ public class DragCreate extends Label {
 		setDragType("b");
 		setDragAppearance(DragAppearance.TRACKER);
 	}
-	public String getName(){
-		return factory.getName();
-	}
 	public OperatorFactory getFactory(){
 		return factory;
 	}
