@@ -1,0 +1,1 @@
+java -cp war/WEB-INF/classes edu.brown.cs32.siliclone.tasks.workernode.WorkerNode localhost 2012
