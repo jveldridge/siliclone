@@ -7,12 +7,31 @@ import java.io.Serializable;
  * 
  * @author jeldridg
  */
-public interface Feature extends Serializable{
+public interface Feature extends Serializable {
 
-	public String getName();
+	/**
+	 * Returns the a String representing the type of DNA annotation
+	 * that this feature represents.
+	 */
+	public String getType();
 	
+	/**
+	 * Returns a value associated with the feature.  The specifications
+	 * of what this value may be are up to the individual Feature
+	 * implementations.
+	 */
+	public Object getValue();
+	
+	/**
+	 * Returns the position of the nucleotide at which this feature starts
+	 * in the DNASequence with which it is associated.
+	 */
 	public int getStartPosition();
 	
+	/**
+	 * Returns the position of the nucleotide at which this feature starts
+	 * in the DNASequence with which it is associated.
+	 */
 	public int getEndPosition();
 	
 }
