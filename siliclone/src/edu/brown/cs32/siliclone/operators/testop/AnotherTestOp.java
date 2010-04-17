@@ -13,7 +13,7 @@ public class AnotherTestOp implements Operator {
 	private String name;
 	
 	public AnotherTestOp(){
-		this.name = "TestOp2";
+		this.name = "TestOpChanged";
 	}
 	
 	public void calculate() {

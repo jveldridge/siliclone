@@ -21,6 +21,6 @@
   <source path='shared'/>
   <source path='dna'/>
   <source path='operators'/>
-  <source path='extensions'/>
+  <source path='plugins'/>
 
 </module>

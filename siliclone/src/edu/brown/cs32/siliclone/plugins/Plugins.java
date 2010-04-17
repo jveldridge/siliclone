@@ -9,7 +9,6 @@ public class Plugins {
 	public static void defineOperators(OperatorAdder operatorAdder){
 		operatorAdder.addOperator(new TestOpFactory());
 		operatorAdder.addOperator(new AnotherTestOpFactory());
-
 	}
 	
 }
