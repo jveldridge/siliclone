@@ -1,6 +1,3 @@
-/*
- * IncomingTaskListener
- */
 
 package edu.brown.cs32.siliclone.tasks.server;
 
@@ -9,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- *
+ * The WorkerNodeListener is run in a seperate Thread in the TaskServer to listen for incoming WorkerNode connections
  * @author tderond
  */
 public class WorkerNodeListener implements Runnable{
@@ -23,6 +20,11 @@ public class WorkerNodeListener implements Runnable{
 		_scheduler = scheduler;
 	}
 
+	/**
+	 * listen for incoming WorkerNode connections.
+	 * Upon arrival of a new WorkerNode connection, let a WorkerNodeHandler
+	 * determine what work the Node needs to do 
+	 */
 	public void run() {
 		try {
 			ServerSocket listeningSocket = new ServerSocket(_port);

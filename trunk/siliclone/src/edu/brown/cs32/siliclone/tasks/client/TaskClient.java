@@ -1,3 +1,8 @@
+/**
+ * This is the class that anybody using the Tasks framework will
+ * communicate with
+ */
+
 package edu.brown.cs32.siliclone.tasks.client;
 
 import java.io.IOException;
@@ -20,6 +25,15 @@ public class TaskClient implements Runnable{
 	private HashSet<Request> _requestsWaiting;
 	private static final boolean DEBUG = true;
 	
+	/**
+	 * Makes a new TaskClient connected to a specified TaskServer
+	 * 
+	 * @param host The hostname of the TaskServer
+	 * @param port The port on which the TaskServer is listening to TaskClients
+	 * (the first argument of TaskServer's main method)
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	public TaskClient(String host, int port) throws UnknownHostException, IOException{
 	
 		_socket = new Socket(host,port);
@@ -32,6 +46,16 @@ public class TaskClient implements Runnable{
 		
 	}
 	
+	
+	/**
+	 * Will get the compute() method on the task called at some WorkerNode
+	 * This method will block until the computation is completed and its
+	 * resulting task is returned
+	 * This method is Thread-safe
+	 * @param task the Task that compute() needs to be called on
+	 * @return the modified task after calling compute() on it
+	 * @throws IOException
+	 */
 	public Task computeTask(Task task) throws IOException{
 		
 		Request request = new Request(task);
@@ -71,6 +95,11 @@ public class TaskClient implements Runnable{
 		
 	}
 
+	
+	/**
+	 * This method is used by a thread that retrieves returned tasks from
+	 * the Server. No user of the Tasks framework will ever need to call this.
+	 */
 	public void run() {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(_socket

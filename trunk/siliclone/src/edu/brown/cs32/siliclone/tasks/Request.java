@@ -1,3 +1,8 @@
+/**
+ * A request is a wrapper of a Task that can be identified as identical
+ * even if the exact contents of the containing Task has changed (i.e. after
+ * compute() is called on a task)
+ */
 package edu.brown.cs32.siliclone.tasks;
 
 import java.io.Serializable;

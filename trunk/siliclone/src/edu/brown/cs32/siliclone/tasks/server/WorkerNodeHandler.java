@@ -1,6 +1,3 @@
-/*
- * IncomingTaskListener
- */
 
 package edu.brown.cs32.siliclone.tasks.server;
 
@@ -15,8 +12,8 @@ import edu.brown.cs32.siliclone.tasks.Request;
 import edu.brown.cs32.siliclone.tasks.Task;
 
 /**
- *
- * @author tderond
+ * Takes care of determining what work gets assigned to a newly connected WorkerNode,
+ * and communicating with this WorkerNode
  */
 public class WorkerNodeHandler implements Runnable{
 	
@@ -29,7 +26,10 @@ public class WorkerNodeHandler implements Runnable{
 		_scheduler=scheduler;
 	}
 	
-
+	/**
+	 * Takes care of determining what work gets assigned to a newly connected WorkerNode,
+	 * and communicating with this WorkerNode
+	 */
 	public void run() {
 
 		try {

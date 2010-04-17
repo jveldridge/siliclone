@@ -1,6 +1,4 @@
-/*
- * IncomingTaskListener
- */
+
 
 package edu.brown.cs32.siliclone.tasks.server;
 
@@ -15,8 +13,8 @@ import edu.brown.cs32.siliclone.tasks.Request;
 import edu.brown.cs32.siliclone.tasks.Task;
 
 /**
- *
- * @author tderond
+ * Takes care of retrieving tasks from a newly connected TaskClient,
+ * and communicating with it.
  */
 public class TaskClientHandler implements Runnable{
 	
@@ -26,6 +24,12 @@ public class TaskClientHandler implements Runnable{
 	private HashSet<Request> _requestsWaiting;
 	private static final boolean DEBUG = true;
 	
+	/**
+	 * Makes a new TaskClientHandler
+	 * @param socket the socket that the incoming TaskClient is connected to
+	 * @param scheduler there Will only be one workerDispatcherListener, but
+	 * to be good Object-Oriented programmers, we pass a reference to it just to be safe.
+	 */
 	public TaskClientHandler(Socket socket, TaskScheduler scheduler){
 		_socket=socket;
 		_scheduler=scheduler;
@@ -40,6 +44,12 @@ public class TaskClientHandler implements Runnable{
 		}
 	}
 	
+	
+	/**
+	 * Returns this request to the TaskClient. If the debug mode is turned off,
+	 * At this point it is trusted that this is the right request to return to this client
+	 * @param request the request that needs to be sent to the TaskClient
+	 */
 	public void returnCompletedRequest(Request request){
 		if(DEBUG){
 			synchronized (_requestsWaiting) {
@@ -60,6 +70,10 @@ public class TaskClientHandler implements Runnable{
 		}
 	}
 
+	
+	/**
+	 * Takes care of retrieving tasks from a newly connected TaskClient
+	 */
 	public void run() {
 
 		try {
