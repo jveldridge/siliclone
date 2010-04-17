@@ -3,8 +3,8 @@ package edu.brown.cs32.siliclone.operators.testop;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;
 
-import edu.brown.cs32.siliclone.interfaces.Operator;
-import edu.brown.cs32.siliclone.interfaces.OperatorFactory;
+import edu.brown.cs32.siliclone.operators.Operator;
+import edu.brown.cs32.siliclone.operators.OperatorFactory;
 
 public class TestOpFactory implements OperatorFactory {
 	private String name;

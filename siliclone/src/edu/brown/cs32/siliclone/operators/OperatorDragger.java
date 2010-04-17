@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client;
+package edu.brown.cs32.siliclone.operators;
 
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,7 +12,6 @@ import com.smartgwt.client.widgets.events.ShowContextMenuHandler;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-import edu.brown.cs32.siliclone.interfaces.Operator;
 
 
 

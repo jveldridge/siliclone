@@ -1,6 +1,5 @@
-package edu.brown.cs32.siliclone.implementations;
+package edu.brown.cs32.siliclone.client.workspace;
 
-import edu.brown.cs32.siliclone.interfaces.Workspace;
 
 public class BasicWorkspace implements Workspace {
 

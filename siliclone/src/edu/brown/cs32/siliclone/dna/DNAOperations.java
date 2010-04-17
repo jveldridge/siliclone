@@ -1,9 +1,7 @@
-package edu.brown.cs32.siliclone.utilities;
+package edu.brown.cs32.siliclone.dna;
 
 
 import java.util.Collection;
-
-import edu.brown.cs32.siliclone.interfaces.DNASequence;
 
 /**
  * This class provides static utility methods to perform common

@@ -5,9 +5,9 @@ import java.util.Collection;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;
 
-import edu.brown.cs32.siliclone.interfaces.CompletedListener;
-import edu.brown.cs32.siliclone.interfaces.DNASequence;
-import edu.brown.cs32.siliclone.interfaces.Operator;
+import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
+import edu.brown.cs32.siliclone.dna.DNASequence;
+import edu.brown.cs32.siliclone.operators.Operator;
 
 public class TestOp implements Operator {
 	private String name;
