@@ -50,7 +50,6 @@ public class OperatorDragger extends Layout {
 	
 	
 	private class RightClickHandler implements ShowContextMenuHandler {
-		@Override
 		public void onShowContextMenu(ShowContextMenuEvent event) {
 			event.cancel();
 			//SC.say("right click");
@@ -59,7 +58,6 @@ public class OperatorDragger extends Layout {
 		}
 	}
 	private class HideSelectorHandler implements ClickHandler{
-		@Override
 		public void onClick(ClickEvent event) {
 			// TODO Auto-generated method stub
 			selector.hide();

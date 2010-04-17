@@ -23,7 +23,6 @@ public class WorkerNodeListener implements Runnable{
 		_scheduler = scheduler;
 	}
 
-	@Override
 	public void run() {
 		try {
 			ServerSocket listeningSocket = new ServerSocket(_port);

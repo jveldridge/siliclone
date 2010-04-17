@@ -71,8 +71,6 @@ public class TaskClient implements Runnable{
 		
 	}
 
-	
-	@Override
 	public void run() {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(_socket

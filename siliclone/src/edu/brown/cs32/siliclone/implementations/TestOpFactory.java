@@ -13,19 +13,16 @@ public class TestOpFactory implements OperatorFactory {
 		this.name = name;
 	}
 	
-	@Override
 	public Widget getWidget() {
 		// TODO Auto-generated method stub
 		return new Label(name);
 	}
 
-	@Override
 	public Operator makeOperator() {
 		// TODO Auto-generated method stub
 		return new TestOp(name);
 	}
 	
-	@Override
 	public String getName(){
 		return name;
 	}

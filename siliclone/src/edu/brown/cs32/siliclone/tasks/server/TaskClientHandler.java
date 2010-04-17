@@ -60,13 +60,12 @@ public class TaskClientHandler implements Runnable{
 		}
 	}
 
-	@Override
 	public void run() {
 
 		try {
 			ObjectInputStream ois = new ObjectInputStream(_socket
 					.getInputStream());
-while(true){
+			while(true){
 			Object incomingObject = null;
 			try {
 				incomingObject = ois.readObject();
