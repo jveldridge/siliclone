@@ -9,11 +9,11 @@ import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 import edu.brown.cs32.siliclone.dna.DNASequence;
 import edu.brown.cs32.siliclone.operators.Operator;
 
-public class TestOp implements Operator {
+public class AnotherTestOp implements Operator {
 	private String name;
 	
-	public TestOp(){
-		this.name = "TestOp1";
+	public AnotherTestOp(){
+		this.name = "TestOp2";
 	}
 	
 	public void calculate() {
@@ -33,12 +33,16 @@ public class TestOp implements Operator {
 
 	public Widget getPropertiesSelector() {
 		// TODO Auto-generated method stub
-		return new Label("Selector for " + name);
+		Label l =  new Label("Selector for " + name);
+		l.setBackgroundColor("green");
+		return l;
 	}
 
 	public Widget getWidget() {
 		// TODO Auto-generated method stub
-		return new Label(name);
+		Label l = new Label(name);
+		l.setBackgroundColor("yellow");
+		return l;
 	}
 
 	public void setInput(int slotNum, Collection<DNASequence> input) {

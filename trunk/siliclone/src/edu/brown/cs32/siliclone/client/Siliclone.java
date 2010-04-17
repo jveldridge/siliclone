@@ -20,28 +20,11 @@ public class Siliclone implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 
-        VLayout mainLayout = new VLayout();  
-        mainLayout.setWidth100();  
-        mainLayout.setHeight100();  
-  
-        //top menu
-        mainLayout.addMember(new TopMenu());  
-  
-        HLayout notMenuLayout = new HLayout();  
-        notMenuLayout.setHeight("*");  
-
-        OpListing opList = new OpListing();
-        opList.addOpCreate(new DragCreate(new TestOpFactory("test1")));
-        opList.addOpCreate(new DragCreate(new TestOpFactory("test2")));
-        
-        notMenuLayout.addMember(opList);  
-        notMenuLayout.addMember(new WorkspaceView()); 
-  
-        mainLayout.addMember(notMenuLayout);  
+        MainView theOnlyView = new MainView();
         
         //RootPanel.get().add(mainLayout);
         //I had to use this to make the selection panel work right --Noah
-        mainLayout.draw();
+        theOnlyView.draw();
   
        
 	}

@@ -6,11 +6,11 @@ import com.smartgwt.client.widgets.Label;
 import edu.brown.cs32.siliclone.operators.Operator;
 import edu.brown.cs32.siliclone.operators.OperatorTemplate;
 
-public class TestOpFactory implements OperatorTemplate {
+public class AnotherTestOpFactory implements OperatorTemplate {
 	private String name;
 	
-	public TestOpFactory(){
-		this.name = "TestOp1";
+	public AnotherTestOpFactory(){
+		this.name = "TestOp2";
 	}
 	
 	public Widget getWidget() {
@@ -20,7 +20,7 @@ public class TestOpFactory implements OperatorTemplate {
 
 	public Operator makeOperator() {
 		// TODO Auto-generated method stub
-		return new TestOp();
+		return new AnotherTestOp();
 	}
 	
 	public String getName(){
