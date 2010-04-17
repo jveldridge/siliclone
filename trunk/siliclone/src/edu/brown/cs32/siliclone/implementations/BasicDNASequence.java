@@ -25,22 +25,18 @@ public class BasicDNASequence implements edu.brown.cs32.siliclone.interfaces.DNA
 		_properties = properties;
 	}
 	
-	@Override
 	public String getSequence() {
 		return _sequence;
 	}
 
-	@Override
 	public int length() {
 		return _sequence.length();
 	}
 	
-	@Override
 	public Collection<Feature> getFeaturesOfType(String featureType) {
 		return _features.get(featureType);
 	}
 	
-	@Override
 	public void addFeature(Feature toAdd, String type) {
 		if (type != null) {
 			if (_features.get(type) != null) {
@@ -54,12 +50,10 @@ public class BasicDNASequence implements edu.brown.cs32.siliclone.interfaces.DNA
 		}
 	}
 	
-	@Override
 	public void addProperty(String key, Object value) {
 		_properties.put(key, value);
 	}
 
-	@Override
 	public Object getProperty(String key) {
 		return _properties.get(key);
 	}

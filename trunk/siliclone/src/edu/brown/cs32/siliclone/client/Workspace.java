@@ -21,14 +21,12 @@ public class Workspace extends Canvas {
 //		addShowContextMenuHandler(new RightClickHandler());
 	}
 	private class HoverHandle implements DropOverHandler{
-		@Override
 		public void onDropOver(DropOverEvent event) {
 			setBackgroundColor("#ffffff");
 		}
 		
 	}
 	private class WorkDropHandle implements DropHandler {
-		@Override
 		public void onDrop(DropEvent event) {
 			// TODO Auto-generated method stub
 			Canvas dropped = EventHandler.getDragTarget();

@@ -15,43 +15,36 @@ public class TestOp implements Operator {
 		this.name = name;
 	}
 	
-	@Override
 	public void calculate() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void cancel() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public Collection<Operator> getAdjacentOperators() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Widget getPropertiesSelector() {
 		// TODO Auto-generated method stub
 		return new Label("Selector for " + name);
 	}
 
-	@Override
 	public Widget getWidget() {
 		// TODO Auto-generated method stub
 		return new Label(name);
 	}
 
-	@Override
 	public void setInput(int slotNum, Collection<DNASequence> input) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void connect(Operator adjacent) {
 		// TODO Auto-generated method stub
 		
