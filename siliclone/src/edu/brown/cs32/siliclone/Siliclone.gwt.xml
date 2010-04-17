@@ -19,8 +19,7 @@
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
   <source path='shared'/>
-  <source path='interfaces'/>
-  <source path='implementations'/>
+  <source path='dna'/>
   <source path='operators'/>
 
 </module>
