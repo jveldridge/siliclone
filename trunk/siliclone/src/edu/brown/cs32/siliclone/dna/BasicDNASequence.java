@@ -1,14 +1,14 @@
-package edu.brown.cs32.siliclone.implementations;
+package edu.brown.cs32.siliclone.dna;
 
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import edu.brown.cs32.siliclone.interfaces.Feature;
+import edu.brown.cs32.siliclone.dna.features.Feature;
 
 
-public class BasicDNASequence implements edu.brown.cs32.siliclone.interfaces.DNASequence {
+public class BasicDNASequence implements edu.brown.cs32.siliclone.dna.DNASequence {
 	
 	/**
 	 * 

@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client;
+package edu.brown.cs32.siliclone.client.workspace;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;

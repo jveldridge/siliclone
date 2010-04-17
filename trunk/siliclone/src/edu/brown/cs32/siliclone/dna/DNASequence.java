@@ -1,7 +1,9 @@
-package edu.brown.cs32.siliclone.interfaces;
+package edu.brown.cs32.siliclone.dna;
 
 import java.io.Serializable;
 import java.util.Collection;
+
+import edu.brown.cs32.siliclone.dna.features.Feature;
 
 /**
  * Specifies the methods of a DNA sequence.
@@ -76,5 +78,3 @@ public interface DNASequence extends Serializable {
 	public Object getProperty(String key);
 	
 }
-
-

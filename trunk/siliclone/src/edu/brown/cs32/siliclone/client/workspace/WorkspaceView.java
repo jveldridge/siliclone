@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client;
+package edu.brown.cs32.siliclone.client.workspace;
 
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
@@ -8,6 +8,8 @@ import com.smartgwt.client.util.SC; //very handy for debug
 import com.smartgwt.client.widgets.events.*;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+
+import edu.brown.cs32.siliclone.operators.OperatorDragger;
 public class WorkspaceView extends Canvas {
 	public WorkspaceView(){
 		setCanAcceptDrop(true);

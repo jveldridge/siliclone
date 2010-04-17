@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client;
+package edu.brown.cs32.siliclone.client.workspace;
 
 
 import com.smartgwt.client.types.Overflow;
@@ -6,6 +6,7 @@ import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+
 
 public class OpListing extends VLayout {
 	private final TreeGrid opGrid;

@@ -1,9 +1,11 @@
-package edu.brown.cs32.siliclone.interfaces;
+package edu.brown.cs32.siliclone.operators;
 
 import java.io.Serializable;
 import java.util.Collection;
 
 import com.google.gwt.user.client.ui.Widget;
+
+import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 
 /**
  * Specifies the methods of an Operator object that will be used
