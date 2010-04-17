@@ -7,6 +7,9 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 
+import edu.brown.cs32.siliclone.plugins.Plugins;
+import edu.brown.cs32.siliclone.operators.OperatorAdder;
+import edu.brown.cs32.siliclone.operators.OperatorTemplate;
 
 public class OpListing extends VLayout {
 	private final TreeGrid opGrid;
@@ -26,10 +29,19 @@ public class OpListing extends VLayout {
         opGrid.setTitle("Add Operator:");
         
         opGrid.setCanDragRecordsOut(true);
-		
+        
+        Plugins.defineOperators(new OperatorAdderImpl());
+
 		addMember(opGrid);
+		
+
 	}
-	public void addOpCreate(DragCreate c){
-		opTree.add(c, opTree.getRoot());
+	
+	private class OperatorAdderImpl implements OperatorAdder{
+		
+		public void addOperator(OperatorTemplate toBeAdded){
+			opTree.add(new DragCreate(toBeAdded), opTree.getRoot());
+		}
+		
 	}
 }
