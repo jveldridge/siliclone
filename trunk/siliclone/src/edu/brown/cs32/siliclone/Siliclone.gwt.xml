@@ -21,5 +21,6 @@
   <source path='shared'/>
   <source path='interfaces'/>
   <source path='implementations'/>
+  <source path='operators'/>
 
 </module>
