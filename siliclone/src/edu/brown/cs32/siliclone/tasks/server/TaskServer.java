@@ -1,18 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package edu.brown.cs32.siliclone.tasks.server;
 
 /**
- *
- * @author tderond
+ * The TaskServer listens to connections from TaskClients, WorkerDispatchers, and WorkerNodes,
+ * and starts threads to handle their needs.
  */
 public class TaskServer {
 
     /**
-     * TaskServer <TaskClient port> <WorkerDispatcher port> <WorkerNode port>
+     * Usage: TaskServer <TaskClient port> <WorkerDispatcher port> <WorkerNode port>
      */
     public static void main(String[] args) {
         

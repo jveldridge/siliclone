@@ -8,7 +8,7 @@ public class SquareTask implements Task {
 
 	public int numberToBeSquared;
 	public int squaredNumber;
-
+	
 	public void compute() {
 		squaredNumber = numberToBeSquared * numberToBeSquared;
 

@@ -1,6 +1,4 @@
-/*
- * IncomingTaskListener
- */
+
 
 package edu.brown.cs32.siliclone.tasks.server;
 
@@ -11,7 +9,7 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
- *
+ * The WorkerDispatcherListener is run in a seperate Thread in the TaskServer to listen for incoming WorkerDispatcher connections
  * @author tderond
  */
 public class WorkerDispatcherListener implements Runnable{
@@ -25,6 +23,10 @@ public class WorkerDispatcherListener implements Runnable{
 		_dispatchers = new LinkedBlockingDeque<ObjectOutputStream>();
 	}
 
+	
+	/**
+	 * listens for incoming WorkerDispatcher connections and registers them on a stack
+	 */
 	public void run() {
 		try {
 			ServerSocket listeningSocket = new ServerSocket(_port);
@@ -53,6 +55,12 @@ public class WorkerDispatcherListener implements Runnable{
 		
 		
 	}
+	
+	/**
+	 * Tells the latest WorkerDispatcher that connected to dispatch a new WorkerNode.
+	 * This method might be altered to handle multiple workerdispatchers simultaneously
+	 * if computations need to be distributed over multiple computer clusters.
+	 */
 	
 	public void dispatchWorker(){
 		synchronized (_dispatchers) {

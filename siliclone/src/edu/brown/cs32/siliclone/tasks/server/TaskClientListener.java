@@ -1,6 +1,4 @@
-/*
- * IncomingTaskListener
- */
+
 
 package edu.brown.cs32.siliclone.tasks.server;
 
@@ -9,7 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- *
+ * The TaskClientListener is run in a seperate Thread in the TaskServer to listen for incoming TaskClient connections
  * @author tderond
  */
 public class TaskClientListener implements Runnable{
@@ -23,6 +21,9 @@ public class TaskClientListener implements Runnable{
 		_scheduler = scheduler;
 	}
 
+	/**
+	 * listens for incoming TaskClients and runs a TaskClientHandler for each incoming connection
+	 */
 	public void run() {
 		try {
 			ServerSocket listeningSocket = new ServerSocket(_port);
