@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.operators.testop;
+package edu.brown.cs32.siliclone.operators.anothertestop;
 
 import java.util.Collection;
 
@@ -33,16 +33,14 @@ public class AnotherTestOp implements Operator {
 
 	public Widget getPropertiesSelector() {
 		// TODO Auto-generated method stub
-		Label l =  new Label("Selector for " + name);
-		l.setBackgroundColor("green");
-		return l;
+		return new Properties(_widget) ;
 	}
+	
+	private Label _widget = new Label(name);
 
 	public Widget getWidget() {
 		// TODO Auto-generated method stub
-		Label l = new Label(name);
-		l.setBackgroundColor("yellow");
-		return l;
+		return _widget;
 	}
 
 	public void setInput(int slotNum, Collection<DNASequence> input) {

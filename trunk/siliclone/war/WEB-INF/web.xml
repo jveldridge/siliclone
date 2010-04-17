@@ -7,9 +7,22 @@
   
   <!-- Servlets -->
 
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>squareServlet</servlet-name>
+    <servlet-class>edu.brown.cs32.siliclone.server.SquareServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>squareServlet</servlet-name>
+    <url-pattern>/siliclone/square</url-pattern>
+  </servlet-mapping>
+
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Siliclone.html</welcome-file>
   </welcome-file-list>
+  
+  
 
 </web-app>
