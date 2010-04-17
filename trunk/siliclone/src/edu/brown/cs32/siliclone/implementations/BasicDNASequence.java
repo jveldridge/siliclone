@@ -10,6 +10,10 @@ import edu.brown.cs32.siliclone.interfaces.Feature;
 
 public class BasicDNASequence implements edu.brown.cs32.siliclone.interfaces.DNASequence {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final String _sequence;
 	private Map<String, Collection<Feature>> _features;
 	private Map<String, Object> _properties;

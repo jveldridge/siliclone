@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.interfaces;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Collection;
  * @author jeldridg
  */
 
-public interface DNASequence {
+public interface DNASequence extends Serializable {
 
 	/**
 	 * Returns a String representing the nucleotides that make up this sequence.

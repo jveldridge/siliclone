@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.interfaces;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -10,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author jeldridg
  */
-public interface Operator {
+public interface Operator extends Serializable {
 
 	/**
 	 * Sets the DNASequences that are given as input to a particular 
@@ -19,7 +20,7 @@ public interface Operator {
 	 * @param slotNum the number of the slot to which the input is being added
 	 * @param input the DNASequences that should be the input to this slot
 	 */
-	public void setInput(int slotNum, Collection<DNASequence> input);
+	public void setInput(int slotNum, Operator input);
 	
 	/**
 	 * Causes the Operator to show a floating window that allows the user to
@@ -32,6 +33,7 @@ public interface Operator {
 	
 	public Widget getWidget();
 	
+	public void addCompletedListener(CompletedListener l);
 	
 	/**
 	 * Runs the Operation that this Operator controls.  This method simply calls

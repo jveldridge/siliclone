@@ -7,8 +7,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
+import edu.brown.cs32.siliclone.operators.testop.TestOpFactory;
 
-import edu.brown.cs32.siliclone.implementations.TestOpFactory;
+
 
 
 /**
@@ -35,7 +36,7 @@ public class Siliclone implements EntryPoint {
         opList.addOpCreate(new DragCreate(new TestOpFactory("test2")));
         
         notMenuLayout.addMember(opList);  
-        notMenuLayout.addMember(new Workspace()); 
+        notMenuLayout.addMember(new WorkspaceView()); 
   
         mainLayout.addMember(notMenuLayout);  
         
