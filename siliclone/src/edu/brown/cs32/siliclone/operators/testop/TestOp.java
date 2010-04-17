@@ -1,10 +1,11 @@
-package edu.brown.cs32.siliclone.implementations;
+package edu.brown.cs32.siliclone.operators.testop;
 
 import java.util.Collection;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;
 
+import edu.brown.cs32.siliclone.interfaces.CompletedListener;
 import edu.brown.cs32.siliclone.interfaces.DNASequence;
 import edu.brown.cs32.siliclone.interfaces.Operator;
 
@@ -46,6 +47,18 @@ public class TestOp implements Operator {
 	}
 
 	public void connect(Operator adjacent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addCompletedListener(CompletedListener l) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setInput(int slotNum, Operator input) {
 		// TODO Auto-generated method stub
 		
 	}

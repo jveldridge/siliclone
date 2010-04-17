@@ -8,8 +8,8 @@ import com.smartgwt.client.util.SC; //very handy for debug
 import com.smartgwt.client.widgets.events.*;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-public class Workspace extends Canvas {
-	public Workspace(){
+public class WorkspaceView extends Canvas {
+	public WorkspaceView(){
 		setCanAcceptDrop(true);
 		
 		setHeight100();
