@@ -41,8 +41,8 @@ public class TaskClient implements Runnable{
 		_returnedRequests = new ConcurrentHashMap<Request,Task>();
 		if(DEBUG){
 		_requestsWaiting = new HashSet<Request>();
-		new Thread(this,"TaskClient").start();
 		}
+		new Thread(this,"TaskClient").start();
 		
 	}
 	

@@ -10,6 +10,11 @@ public class SquareTask implements Task {
 	public int squaredNumber;
 	
 	public void compute() {
+		for(int j = 0;j<numberToBeSquared;j++){
+		for(int i = 0;i<numberToBeSquared;i++){
+			Math.pow(i,j); //just something to make this thing computationally intensive
+		}
+		}
 		squaredNumber = numberToBeSquared * numberToBeSquared;
 
 	}
