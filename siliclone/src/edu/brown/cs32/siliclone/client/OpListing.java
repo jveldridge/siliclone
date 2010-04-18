@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client.workspace;
+package edu.brown.cs32.siliclone.client;
 
 
 import com.smartgwt.client.types.Overflow;
@@ -8,6 +8,7 @@ import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 
 import edu.brown.cs32.siliclone.plugins.Plugins;
+import edu.brown.cs32.siliclone.client.workspace.DragCreate;
 import edu.brown.cs32.siliclone.operators.OperatorAdder;
 import edu.brown.cs32.siliclone.operators.OperatorTemplate;
 
