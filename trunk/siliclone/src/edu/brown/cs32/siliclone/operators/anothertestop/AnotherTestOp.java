@@ -14,6 +14,7 @@ public class AnotherTestOp implements Operator {
 	
 	public AnotherTestOp(){
 		this.name = "TestOpChanged";
+		_widget.setWidth(300);
 	}
 	
 	public void calculate() {

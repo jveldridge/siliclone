@@ -10,7 +10,7 @@ public class AnotherTestOpFactory implements OperatorTemplate {
 	private String name;
 	
 	public AnotherTestOpFactory(){
-		this.name = "TestOp2";
+		this.name = "squareTestOp";
 	}
 	
 	public Widget getWidget() {
