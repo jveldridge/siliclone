@@ -16,7 +16,6 @@ import edu.brown.cs32.siliclone.tasks.client.TaskClient;
 public class SquareServiceImpl extends RemoteServiceServlet implements
 		SquareService {
 
-	@Override
 	public Integer square(Integer in) throws IllegalArgumentException {
 	// TODO Auto-generated method stub
 		

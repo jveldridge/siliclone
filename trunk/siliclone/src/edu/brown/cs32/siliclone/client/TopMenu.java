@@ -7,6 +7,7 @@ import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
+//TODO serious work here
 public class TopMenu extends ToolStrip {
 	public TopMenu(){
         Canvas logoCanvas = new Canvas();

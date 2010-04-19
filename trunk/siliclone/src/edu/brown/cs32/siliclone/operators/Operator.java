@@ -62,4 +62,15 @@ public interface Operator extends Serializable {
 	 */
 	public Collection<Operator> getAdjacentOperators();
 	
+	/**
+	 * @return The x-coordinate for this operator placed on a workspace.
+	 */
+	int getX();
+	/**
+	 * @return The y-coordinate for this operator placed on a workspace.
+	 */
+	int getY();
+	void setX(int x); 
+	void setY(int y);
+	
 }

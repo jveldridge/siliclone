@@ -8,15 +8,17 @@ import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 
 import edu.brown.cs32.siliclone.plugins.Plugins;
-import edu.brown.cs32.siliclone.client.workspace.DragCreate;
 import edu.brown.cs32.siliclone.operators.OperatorAdder;
 import edu.brown.cs32.siliclone.operators.OperatorTemplate;
 
-public class OpListing extends VLayout {
+/**
+ * 
+ */
+public class OpTemplateListing extends VLayout {
 	private final TreeGrid opGrid;
 	private final Tree opTree;
 	
-	public OpListing(){
+	public OpTemplateListing(){
 		setWidth("200px");
 		setShowResizeBar(true);
         setOverflow(Overflow.HIDDEN);
@@ -34,14 +36,15 @@ public class OpListing extends VLayout {
         Plugins.defineOperators(new OperatorAdderImpl());
 
 		addMember(opGrid);
-		
-
 	}
 	
+	/**
+	 * TODO why interface?
+	 */
 	private class OperatorAdderImpl implements OperatorAdder{
 		
 		public void addOperator(OperatorTemplate toBeAdded){
-			opTree.add(new DragCreate(toBeAdded), opTree.getRoot());
+			opTree.add(new OpTemplateView(toBeAdded), opTree.getRoot());
 		}
 		
 	}
