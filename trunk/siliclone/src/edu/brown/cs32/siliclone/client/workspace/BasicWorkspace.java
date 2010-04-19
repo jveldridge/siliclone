@@ -5,47 +5,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import edu.brown.cs32.siliclone.operators.Operator;
 
 
 public class BasicWorkspace implements Workspace {
-	private HashMap <String, Object> properties;
-	private ArrayList<Operator> operators;
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
+	private HashMap <String, Object> _properties;
+	private List<Operator> _operators;
 
-	public void addOperator(Operator o) {
-		// TODO Auto-generated method stub
-		
+	public BasicWorkspace() {
+		_properties = new HashMap<String, Object>();
+		_operators = new ArrayList<Operator>();
 	}
 
-	public void addProperty(String key, Object Value) {
-		// TODO Auto-generated method stub
-		
+	public void addOperator(Operator o) {
+		_operators.add(o);
+	}
+
+	public void addProperty(String key, Object value) {
+		_properties.put(key, value);
 	}
 
 	public List<Operator> getOperators() {
-		// TODO Auto-generated method stub
-		return null;
+		return _operators;
 	}
 
 	public Object getProperty(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return _properties.get(key);
 	}
 
 	public void removeOperator(Operator o) {
-		// TODO Auto-generated method stub
-		
+		_operators.remove(o);
 	}
 
 	public void removeProperty(String key) {
-		// TODO Auto-generated method stub
-		
+		_properties.remove(key);
 	}
 
 
