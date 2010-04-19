@@ -1,15 +1,16 @@
 package edu.brown.cs32.siliclone.client.workspace;
 
+
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+
 
 import edu.brown.cs32.siliclone.operators.Operator;
 
 
-
 public class BasicWorkspace implements Workspace {
-	private Hashtable <String, Object> properties;
+	private HashMap <String, Object> properties;
 	private ArrayList<Operator> operators;
 	
 	/**

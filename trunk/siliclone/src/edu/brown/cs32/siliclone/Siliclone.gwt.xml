@@ -17,11 +17,11 @@
   <entry-point class='edu.brown.cs32.siliclone.client.Siliclone'/>
 
   <!-- Specify the paths for translatable code                    -->
+  <source path='accounts'/>
   <source path='client'/>
-  <source path='shared'/>
+  <source path='accounts'/>
   <source path='dna'/>
   <source path='operators'/>
   <source path='plugins'/>
-  <source path='accounts'/>
 
 </module>
