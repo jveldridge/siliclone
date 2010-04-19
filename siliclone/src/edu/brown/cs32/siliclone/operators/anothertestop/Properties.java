@@ -41,7 +41,6 @@ public class Properties extends Canvas{
 	.create(SquareService.class);
 	
 	private class HandlerImpl implements ChangedHandler{
-		@Override
 		public void onChanged(ChangedEvent event) {
 			
 			AsyncCallback<Integer> callback = new AsyncCallback<Integer>() {

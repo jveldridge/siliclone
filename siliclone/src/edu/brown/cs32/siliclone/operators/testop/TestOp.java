@@ -11,6 +11,7 @@ import edu.brown.cs32.siliclone.operators.Operator;
 
 public class TestOp implements Operator {
 	private String name;
+	private int x,y;
 	
 	public TestOp(){
 		this.name = "TestOp1";
@@ -51,16 +52,17 @@ public class TestOp implements Operator {
 		
 	}
 
-	@Override
 	public void addCompletedListener(CompletedListener l) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void setInput(int slotNum, Operator input) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
+	public int getX(){return x;}
+	public int getY(){return y;}
+	public void setX(int x){this.x = x;}
+	public void setY(int y){this.y = y;}
 }

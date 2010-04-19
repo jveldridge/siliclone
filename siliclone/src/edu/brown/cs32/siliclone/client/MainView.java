@@ -4,9 +4,8 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-import edu.brown.cs32.siliclone.client.workspace.DragCreate;
-import edu.brown.cs32.siliclone.client.workspace.WorkspaceView;
-import edu.brown.cs32.siliclone.operators.testop.TestOpFactory;
+import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
+
 
 public class MainView extends Canvas {
 
@@ -25,10 +24,10 @@ public class MainView extends Canvas {
         HLayout notMenuLayout = new HLayout();  
         notMenuLayout.setHeight("*");  
 
-        OpListing opList = new OpListing();
+        OpTemplateListing opList = new OpTemplateListing();
         
         notMenuLayout.addMember(opList);  
-        notMenuLayout.addMember(new WorkspaceView()); 
+        notMenuLayout.addMember(new WorkspaceView(new BasicWorkspace())); 
   
         mainLayout.addMember(notMenuLayout);  
         

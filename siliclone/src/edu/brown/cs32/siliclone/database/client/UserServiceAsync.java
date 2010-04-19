@@ -2,13 +2,15 @@ package edu.brown.cs32.siliclone.database.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import edu.brown.cs32.siliclone.accounts.User;
+
 public interface UserServiceAsync {
 
-	void changePassword(String username, String password,
+	void changePassword(User u, String newPassword,
 			AsyncCallback<Boolean> callback);
 
-	void login(String username, String password, AsyncCallback<Boolean> callback);
+	void login(User u, AsyncCallback<Boolean> callback);
 
-	void register(String username, String email, AsyncCallback<Boolean> callback);
+	void register(User u, AsyncCallback<Boolean> callback);
 
 }

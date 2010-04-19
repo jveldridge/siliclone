@@ -6,8 +6,6 @@ import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-import edu.brown.cs32.siliclone.client.workspace.DragCreate;
-import edu.brown.cs32.siliclone.client.workspace.WorkspaceView;
 import edu.brown.cs32.siliclone.operators.testop.TestOpFactory;
 
 /**
