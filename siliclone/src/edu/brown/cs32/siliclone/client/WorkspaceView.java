@@ -8,6 +8,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
+import edu.brown.cs32.siliclone.operators.OpView;
 import edu.brown.cs32.siliclone.operators.Operator;
 
 /**
@@ -19,20 +20,21 @@ public class WorkspaceView extends Canvas {
 	private Workspace workspace; 
 	
 	public WorkspaceView(Workspace workspace){
-		setHeight100();
-		setWidth100();
-		setShowEdges(true);
+		this.setHeight100();
+		this.setWidth100();
+		this.setShowEdges(true);
 		
 		
 		this.workspace = workspace;
 		for(Operator op : workspace.getOperators()){ //TODO validation of op position?
+													  //what constitutes a valid position?
 			addChild(new OpView(op));
 		}
 		
-		setCanAcceptDrop(true);
+		this.setCanAcceptDrop(true);
 		
-		addDropOverHandler(new HoverHandle());
-		addDropHandler(new WorkDropHandle());
+		this.addDropOverHandler(new HoverHandle());
+		this.addDropHandler(new WorkDropHandle());
 	}
 	
 	/**
@@ -45,15 +47,18 @@ public class WorkspaceView extends Canvas {
 		addChild(new OpView(op));
 	}
 	
+	public void removeOperator() {
+		
+	}
+	
 	/**
 	 * Should change color when client considers dropping something in it
 	 * The only thing a client should be able to drop is something that goes in
 	 * the workspace.
-	 * TODO - do we want this?
 	 */
 	private class HoverHandle implements DropOverHandler{
 		public void onDropOver(DropOverEvent event) {
-			setBackgroundColor("#ffffff"); //right now "changes" to white so no visible effect
+			setBackgroundColor("#FAF8CC");
 		}
 		
 	}
@@ -65,7 +70,7 @@ public class WorkspaceView extends Canvas {
 	 */
 	private class WorkDropHandle implements DropHandler {
 		public void onDrop(DropEvent event) {
-			// TODO Auto-generated method stub
+			setBackgroundColor("#FFFFFF");
 			Canvas dropped = EventHandler.getDragTarget();
 			if(dropped instanceof TreeGrid){
 				ListGridRecord r = ((TreeGrid) dropped).getSelectedRecord();
