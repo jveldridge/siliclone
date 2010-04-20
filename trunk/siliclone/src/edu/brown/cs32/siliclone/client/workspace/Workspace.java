@@ -22,6 +22,7 @@ public interface Workspace extends Serializable {
 	 */
 	public List<Operator> getOperators();
 	
+	
 	/**
 	 * @param key The name of the property to be added. not null
 	 * @param Value A serializable object. not null

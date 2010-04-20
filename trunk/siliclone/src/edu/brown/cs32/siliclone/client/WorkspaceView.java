@@ -28,7 +28,7 @@ public class WorkspaceView extends Canvas {
 		this.workspace = workspace;
 		for(Operator op : workspace.getOperators()){ //TODO validation of op position?
 													  //what constitutes a valid position?
-			addChild(new OpView(op));
+			addChild(new OpView(op, this));
 		}
 		
 		this.setCanAcceptDrop(true);
@@ -44,11 +44,15 @@ public class WorkspaceView extends Canvas {
 	 */
 	private void addOperator(Operator op){
 		workspace.addOperator(op);
-		addChild(new OpView(op));
+		addChild(new OpView(op, this));
 	}
 	
-	public void removeOperator() {
+	public void removeOperator(Operator op, OpView view) {
+		//remove the operator from the workspace
+		workspace.removeOperator(op);
 		
+		//and remove the OpView from the Workspaceview
+		removeChild(view);
 	}
 	
 	/**

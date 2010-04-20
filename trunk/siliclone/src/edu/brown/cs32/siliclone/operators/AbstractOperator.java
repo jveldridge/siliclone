@@ -8,7 +8,7 @@ public abstract class AbstractOperator implements Operator {
 	private static final long serialVersionUID = -6196531418823371503L;
 	
 	protected int _xPos, _yPos;
-	protected ArrayList<Operator> _adjacent;
+	protected ArrayList<Operator> _adjacent = new ArrayList<Operator>();
 
 	public void cancel() {
 		// TODO Auto-generated method stub

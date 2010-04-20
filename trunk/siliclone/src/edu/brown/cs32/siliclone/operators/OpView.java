@@ -1,16 +1,21 @@
 package edu.brown.cs32.siliclone.operators;
 
-
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.types.DragAppearance;
+import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.DragRepositionStopEvent;
 import com.smartgwt.client.widgets.events.DragRepositionStopHandler;
+import com.smartgwt.client.widgets.events.MouseOutEvent;
+import com.smartgwt.client.widgets.events.MouseOutHandler;
+import com.smartgwt.client.widgets.events.MouseOverEvent;
+import com.smartgwt.client.widgets.events.MouseOverHandler;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
+
+import edu.brown.cs32.siliclone.client.WorkspaceView;
 
 
 
@@ -26,16 +31,43 @@ public class OpView extends VLayout {
 	/**
 	 * @param op An already initialized operator that this OpView described (not null)
 	 */
-	public OpView(Operator op){
+	public OpView(final Operator op, final WorkspaceView workspace){
 		this.op = op; //associate with operator, positions are related
 		setTop(op.getY());
 		setLeft(op.getX());
 		
-		Widget opWidget = op.getWidget(); //display operator's information
+		//add close button
+		final Img close = new Img("close.png", 20, 20);
+		
+		//on mouseover, show black close button
+		close.addMouseOverHandler(new MouseOverHandler() {
+			public void onMouseOver(MouseOverEvent event) {
+				close.setSrc("close_mouseOver.png");
+			}
+		});
+		
+		//on mouseout, show gray close button
+		close.addMouseOutHandler(new MouseOutHandler() {			
+			public void onMouseOut(MouseOutEvent event) {
+				close.setSrc("close.png");
+			}
+		});
+		
+		//on click, remove the operator
+		close.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent e) {
+				workspace.removeOperator(op, OpView.this);
+			}
+		});
+		
+		addMember(close);
+		
+		//add the graphical representation of the operator
+		Widget opWidget = op.getWidget();
 		addMember(opWidget);
 		
 		setShowEdges(true);
-		setEdgeSize(5); //This is the default, but w/out it getEdgeSize returns null
+		setEdgeSize(0); //This is the default, but w/out it getEdgeSize returns null
 		setCanDragReposition(true);
 		setKeepInParentRect(true);
 		setDragAppearance(DragAppearance.TARGET);
@@ -44,7 +76,7 @@ public class OpView extends VLayout {
 		selector = new VLayout();
 		initPropertiesSelector();
 		
-		addMember(new Button("Show Selector", new ShowSelectorHandler()));
+		//addMember(new Button("Show Selector", new ShowSelectorHandler()));
 	}
 	
 	/**
@@ -54,7 +86,7 @@ public class OpView extends VLayout {
 	private void initPropertiesSelector() {
 		selector.addMember(new Label("Properties Selector:"));
 		selector.addMember(op.getPropertiesSelector());
-		selector.addMember(new Button("close", new HideSelectorHandler()));
+		//selector.addMember(new Button("close", new HideSelectorHandler()));
 		selector.setShowEdges(true);
 		selector.setEdgeSize(5); //This is the default, but w/out it getEdgeSize returns null
 		selector.setCanDragReposition(true);
