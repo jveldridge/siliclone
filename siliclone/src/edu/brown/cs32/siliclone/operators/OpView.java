@@ -26,7 +26,7 @@ import edu.brown.cs32.siliclone.client.WorkspaceView;
  */
 public class OpView extends VLayout {
 	private final Operator op;
-	private final Layout selector;
+	private final PropertiesSelector selector;
 	
 	/**
 	 * @param op An already initialized operator that this OpView described (not null)
@@ -64,18 +64,29 @@ public class OpView extends VLayout {
 		
 		//add the graphical representation of the operator
 		Widget opWidget = op.getWidget();
-		addMember(opWidget);
+		this.addMember(opWidget);
 		
-		setShowEdges(true);
-		setEdgeSize(0); //This is the default, but w/out it getEdgeSize returns null
-		setCanDragReposition(true);
-		setKeepInParentRect(true);
-		setDragAppearance(DragAppearance.TARGET);
-		addDragRepositionStopHandler(new RepositionHandler());
+		this.setShowEdges(true);
+		this.setEdgeSize(0); //This is the default, but w/out it getEdgeSize returns null
+		this.setCanDragReposition(true);
+		this.setKeepInParentRect(true);
+		this.setDragAppearance(DragAppearance.TARGET);
+		this.addDragRepositionStopHandler(new RepositionHandler());
 
-		selector = new VLayout();
+		selector = op.getPropertiesSelector();
+		
 		initPropertiesSelector();
 		
+		this.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (selector.isVisible()) {
+					selector.hide();
+				}
+				else {
+					selector.show();
+				}
+			}
+		});
 		//addMember(new Button("Show Selector", new ShowSelectorHandler()));
 	}
 	
@@ -84,31 +95,22 @@ public class OpView extends VLayout {
 	 * properties selector, which is anchored directly to this operator.
 	 */
 	private void initPropertiesSelector() {
-		selector.addMember(new Label("Properties Selector:"));
-		selector.addMember(op.getPropertiesSelector());
+		//PropertiesSelector selector = op.getPropertiesSelector();
+		//selector.addMember(new Label("Properties Selector:"));
+		//selector.addMember(op.getPropertiesSelector());
 		//selector.addMember(new Button("close", new HideSelectorHandler()));
-		selector.setShowEdges(true);
-		selector.setEdgeSize(5); //This is the default, but w/out it getEdgeSize returns null
+		//selector.setShowEdges(true);
+		//selector.setEdgeSize(5); //This is the default, but w/out it getEdgeSize returns null
 		selector.setCanDragReposition(true);
 		selector.setKeepInParentRect(true);
 		selector.setDragAppearance(DragAppearance.TARGET);
 		
 		selector.setTop(getTop());
-		selector.setLeft(getRight() + getEdgeSize() + selector.getEdgeSize());
+		selector.setLeft(getRight());
 		
 		addPeer(selector);
 	}
 	
-	
-	
-	/**
-	 * Handles when the "show options" button on this selector's view is clicked.
-	 */
-	private class ShowSelectorHandler implements ClickHandler {
-		public void onClick(ClickEvent event) {
-			selector.show();
-		}
-	}
 	
 	/**
 	 * Handles the close button for this opview's selector view. 

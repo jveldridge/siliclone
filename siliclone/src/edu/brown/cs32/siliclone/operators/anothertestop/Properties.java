@@ -4,19 +4,17 @@ package edu.brown.cs32.siliclone.operators.anothertestop;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.BaseWidget;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 
-public class Properties extends Canvas{
+import edu.brown.cs32.siliclone.operators.PropertiesSelector;
+
+public class Properties extends PropertiesSelector {
 	
 	Label _opWidget;
 	TextItem _ti;
