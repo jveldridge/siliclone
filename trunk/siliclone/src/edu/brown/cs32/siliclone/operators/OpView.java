@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client;
+package edu.brown.cs32.siliclone.operators;
 
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,7 +12,6 @@ import com.smartgwt.client.widgets.events.DragRepositionStopHandler;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-import edu.brown.cs32.siliclone.operators.Operator;
 
 
 
@@ -52,7 +51,7 @@ public class OpView extends VLayout {
 	 * Creates a separate draggable window in the workspace for the 
 	 * properties selector, which is anchored directly to this operator.
 	 */
-	private void initPropertiesSelector(){
+	private void initPropertiesSelector() {
 		selector.addMember(new Label("Properties Selector:"));
 		selector.addMember(op.getPropertiesSelector());
 		selector.addMember(new Button("close", new HideSelectorHandler()));
