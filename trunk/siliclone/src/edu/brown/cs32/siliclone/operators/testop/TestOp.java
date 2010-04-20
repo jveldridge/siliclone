@@ -8,6 +8,7 @@ import com.smartgwt.client.widgets.Label;
 import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 import edu.brown.cs32.siliclone.dna.DNASequence;
 import edu.brown.cs32.siliclone.operators.Operator;
+import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 public class TestOp implements Operator {
 	private String name;
@@ -32,9 +33,9 @@ public class TestOp implements Operator {
 		return null;
 	}
 
-	public Widget getPropertiesSelector() {
+	public PropertiesSelector getPropertiesSelector() {
 		// TODO Auto-generated method stub
-		return new Label("Selector for " + name);
+		return null; //new Label("Selector for " + name);
 	}
 
 	public Widget getWidget() {

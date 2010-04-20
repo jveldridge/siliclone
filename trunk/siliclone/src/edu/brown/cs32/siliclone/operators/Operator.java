@@ -31,7 +31,7 @@ public interface Operator extends Serializable {
 	 *     that returns a PropertiesSelector object (which the workspace can then
 	 *     display appropriately), right?
 	 */
-	public Widget getPropertiesSelector();
+	public PropertiesSelector getPropertiesSelector();
 	
 	public Widget getWidget();
 	
