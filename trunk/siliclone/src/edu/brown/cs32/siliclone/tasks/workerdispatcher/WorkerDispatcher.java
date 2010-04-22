@@ -25,7 +25,7 @@ public class WorkerDispatcher {
 	 * WorkerDispatcher <host> <port> <classpath>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> <ssh-identity-file>]]
 	 */
 	public static void main(String[] args) {
-		if(args.length!=2&&args.length!=6&args.length!=7){
+		if(args.length!=3&&args.length!=7&args.length!=8){
 		
 			System.err.println("WorkerDispatcher <host> <port> <classpath>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> [<ssh-identity-file>]]");
 			System.exit(1);
@@ -35,9 +35,8 @@ public class WorkerDispatcher {
 		
 		
 		port = Integer.parseInt(args[1]);
-		classpath = args[2];
 		
-		
+		command = "java -cp "+args[2]+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port;
 
 		
 		if(args.length==7||args.length==8){
@@ -135,8 +134,7 @@ public class WorkerDispatcher {
 		        Channel channel=sshSession.openChannel("exec");
 		     // ((ChannelExec)channel).setCommand("sh dispatch.sh");
 		    //  ((ChannelExec)channel).setCommand("rename 's/track/track1/' track*");
-		      ((ChannelExec)channel).setCommand(
-		    		  "java -cp "+classpath+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port);
+		      ((ChannelExec)channel).setCommand(command);
 		        
 		        
 				channel.connect();
@@ -210,7 +208,7 @@ public class WorkerDispatcher {
 			
 		}else{
 			try {
-				Process p = Runtime.getRuntime().exec("/bin/bash dispatch.sh");
+				Process p = Runtime.getRuntime().exec(command);
 				System.out.println("Local Dispatch happened");
 			} catch (IOException e) {
 				System.err.println("Error executing dispatch script");
@@ -220,7 +218,7 @@ public class WorkerDispatcher {
 	}
 	
 	
-	private static String server, user, password, host,classpath;
+	private static String server, user, password, host,command;
 	private static int timeout, port;
 	
 	private static void sshConnect(){
@@ -241,7 +239,6 @@ public class WorkerDispatcher {
 	
 	private static class TimeOutRunner implements Runnable{
 
-		@Override
 		public void run() {
 			try {
 				Thread.sleep(timeout*1000);
