@@ -15,41 +15,48 @@ import edu.brown.cs32.siliclone.tasks.Task;
 
 public class WorkerDispatcher {
 	
-	private static Object lock;
+	private static Object lock = new Object();
 	
 	private static Session sshSession;
 	
 	private static boolean useremote = false;
 
 	/**
-	 * WorkerDispatcher <host> <port> [<ssh-server> <ssh-user> <ssh-password> <server-session-length>]
+	 * WorkerDispatcher <host> <port> <classpath>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> <ssh-identity-file>]]
 	 */
 	public static void main(String[] args) {
-		if(args.length!=2&&args.length!=6){
+		if(args.length!=2&&args.length!=6&args.length!=7){
 		
-			System.err.println("WorkerDispatcher <host> <port> [<ssh-server> <ssh-user> <ssh-password> <server-session-length>]");
+			System.err.println("WorkerDispatcher <host> <port> <classpath>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> [<ssh-identity-file>]]");
 			System.exit(1);
 		}
-		String host = args[0];
+		host = args[0];
 
 		
 		
-		int port = Integer.parseInt(args[1]);
-		
+		port = Integer.parseInt(args[1]);
+		classpath = args[2];
 		
 		
 
 		
-		if(args.length==6){
+		if(args.length==7||args.length==8){
 			
 			useremote = true;
-			server = args[2];
-			user = args[3];
-			password = args[4];
-			timeout = Integer.parseInt(args[5]);
+			server = args[3];
+			user = args[4];
+			password = args[5];
+			timeout = Integer.parseInt(args[6]);
 			
 	        JSch jsch=new JSch();  
-
+	        if(args.length==7){
+	        	try {
+					jsch.addIdentity(args[7]);
+				} catch (JSchException e) {
+					System.err.println("Error: "+e.getMessage());
+					e.printStackTrace();
+				}
+	        }
 
 	        try {
 				sshSession=jsch.getSession(user, server, 22);
@@ -65,12 +72,12 @@ public class WorkerDispatcher {
 		}
 		
 		
-		
+		dispatch();
 		
 		
 		Socket socket = null;
 		try {
-			socket = new Socket(host, port);
+			socket = new Socket(host, port+1);
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 			Object incomingObject;
 			while(true){
@@ -95,9 +102,9 @@ public class WorkerDispatcher {
 			
 			
 		} catch (UnknownHostException e) {
-			System.err.println("Could not connect to "+host+":"+port);
+			System.err.println("Could not connect to "+host+":"+(port+1));
 		} catch (IOException e) {
-			System.err.println("Error while communicating with "+host+":"+port);
+			System.err.println("Error while communicating with "+host+":"+(port+1));
 			if(socket==null||!socket.isConnected()){
 				System.err.println("The server went down. Please restart the server and then restart this WorkerDispatcher.");
 				System.exit(3);
@@ -116,12 +123,67 @@ public class WorkerDispatcher {
 		if(useremote){
 			synchronized (lock) {
 				
+				
+				
+				
+				
+				
+				
+				
 				sshConnect();
 		        try {
 		        Channel channel=sshSession.openChannel("exec");
-		        ((ChannelExec)channel).setCommand("sh dispatch.sh");
+		     // ((ChannelExec)channel).setCommand("sh dispatch.sh");
+		    //  ((ChannelExec)channel).setCommand("rename 's/track/track1/' track*");
+		      ((ChannelExec)channel).setCommand(
+		    		  "java -cp "+classpath+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port);
+		        
 		        
 				channel.connect();
+				System.out.println("Remote Dispatch happened");
+				
+
+				
+				
+				
+				
+				try{
+
+			      channel.setInputStream(null);
+
+			      ((ChannelExec)channel).setErrStream(System.err);
+
+			      InputStream in=channel.getInputStream();
+
+			      channel.connect();
+			     
+
+			      byte[] tmp=new byte[1024];
+			      while(true){
+			        while(in.available()>0){
+			          int i=in.read(tmp, 0, 1024);
+			          if(i<0)break;
+			          System.out.print(new String(tmp, 0, i));
+			        }
+			        if(channel.isClosed()){
+			          System.out.println("exit-status: "+channel.getExitStatus());
+			          break;
+			        }
+			        try{Thread.sleep(1000);}catch(Exception ee){}
+			      }
+				}catch(IOException e){
+					
+					System.err.println("oops");
+					e.printStackTrace();
+				}
+				
+				
+				
+				
+				
+				
+				
+				
 		        channel.disconnect();
 				
 				} catch (JSchException e) {
@@ -129,9 +191,27 @@ public class WorkerDispatcher {
 					e.printStackTrace();
 				}
 				}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		}else{
 			try {
 				Process p = Runtime.getRuntime().exec("/bin/bash dispatch.sh");
+				System.out.println("Local Dispatch happened");
 			} catch (IOException e) {
 				System.err.println("Error executing dispatch script");
 			}
@@ -140,8 +220,8 @@ public class WorkerDispatcher {
 	}
 	
 	
-	private static String server, user, password;
-	private static int timeout;
+	private static String server, user, password, host,classpath;
+	private static int timeout, port;
 	
 	private static void sshConnect(){
 		
@@ -192,7 +272,7 @@ public class WorkerDispatcher {
 	    
 	      private String passwd;
 
-	      public String getPassphrase(){ return null; }
+	      public String getPassphrase(){ return passwd; }
 	      public boolean promptPassphrase(String message){ return true; }
 	      public boolean promptPassword(String message){
 	          return true;

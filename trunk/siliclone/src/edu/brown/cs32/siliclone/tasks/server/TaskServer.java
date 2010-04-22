@@ -9,19 +9,19 @@ package edu.brown.cs32.siliclone.tasks.server;
 public class TaskServer {
 
     /**
-     * Usage: TaskServer <TaskClient port> <WorkerDispatcher port> <WorkerNode port>
+     * Usage: TaskServer <port>
      */
     public static void main(String[] args) {
         
-    	if(args.length!=3){
+    	if(args.length!=1){
     		
-			System.err.println("Usage: TaskServer <TaskClient port> <WorkerDispatcher port> <WorkerNode port>");
+			System.err.println("Usage: TaskServer <port>");
 			System.exit(1);
 		}
     	
     	int taskClientPort = Integer.parseInt(args[0]);
-    	int workerDispatcherPort = Integer.parseInt(args[1]);
-    	int workerNodePort = Integer.parseInt(args[2]);
+    	int workerDispatcherPort = taskClientPort+1;
+    	int workerNodePort = taskClientPort+2;
     	
     	WorkerDispatcherListener workerDispatcherListener = new WorkerDispatcherListener(workerDispatcherPort);
     	
