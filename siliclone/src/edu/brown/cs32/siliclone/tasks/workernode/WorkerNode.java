@@ -22,7 +22,7 @@ public class WorkerNode {
 		}
 		
 		String host = args[0];
-		int port = Integer.parseInt(args[1]);
+		int port = Integer.parseInt(args[1])+2;
 		
 		try {
 			Socket socket = new Socket(host, port);
