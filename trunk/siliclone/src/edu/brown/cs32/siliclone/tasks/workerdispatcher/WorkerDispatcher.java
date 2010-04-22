@@ -36,7 +36,7 @@ public class WorkerDispatcher {
 		
 		port = Integer.parseInt(args[1]);
 		
-		command = "java -cp "+args[2]+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port;
+		command = "java -cp "+args[2]+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port+" &";
 
 		
 		if(args.length==7||args.length==8){
@@ -48,7 +48,7 @@ public class WorkerDispatcher {
 			timeout = Integer.parseInt(args[6]);
 			
 	        JSch jsch=new JSch();  
-	        if(args.length==7){
+	        if(args.length==8){
 	        	try {
 					jsch.addIdentity(args[7]);
 				} catch (JSchException e) {
@@ -70,7 +70,7 @@ public class WorkerDispatcher {
 		}
 		
 		
-		dispatch();
+		//dispatch();
 		
 		
 		Socket socket = null;
@@ -147,9 +147,9 @@ public class WorkerDispatcher {
 				
 				
 				
-				
+				/*
 				try{
-
+					
 			      channel.setInputStream(null);
 
 			      ((ChannelExec)channel).setErrStream(System.err);
@@ -180,7 +180,7 @@ public class WorkerDispatcher {
 				
 				
 				
-				
+				*/
 				
 				
 				
@@ -263,23 +263,22 @@ public class WorkerDispatcher {
 	    	public MyUserInfo(String password){
 	    		super();
 	    		passwd=password;
-	    		System.out.println("setpassword"+passwd);
 	    	}
-	      public String getPassword(){ System.out.println("password"+passwd);return passwd; }
+	      public String getPassword(){ System.out.println("password sent");return passwd; }
 	      public boolean promptYesNo(String str){
-	    	  System.out.println("promptYesNo "+str);
+	    	  System.out.println(str+" Yes.");
 	         return true;
 	      }
 	    
 	      private String passwd;
 
-	      public String getPassphrase(){ System.out.println("passphrase"+passwd);return passwd; }
-	      public boolean promptPassphrase(String message){ System.out.println("prompt1"); return true; }
-	      public boolean promptPassword( String message){ System.out.println("prompt2");
+	      public String getPassphrase(){ System.out.println("passphrase sent");return passwd; }
+	      public boolean promptPassphrase(String message){return true; }
+	      public boolean promptPassword( String message){
 	          return true;
 	        }
 	      public void showMessage(String message){
-	    	  System.out.println("showMessage "+message);
+	    	  System.out.println(message);
 	      }
 
 		
