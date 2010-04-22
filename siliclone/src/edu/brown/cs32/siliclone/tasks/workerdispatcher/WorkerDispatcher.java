@@ -44,7 +44,7 @@ public class WorkerDispatcher {
 			useremote = true;
 			server = args[3];
 			user = args[4];
-			password = args[5];
+			String password = args[5];
 			timeout = Integer.parseInt(args[6]);
 			
 	        JSch jsch=new JSch();  
@@ -60,7 +60,6 @@ public class WorkerDispatcher {
 	        try {
 				sshSession=jsch.getSession(user, server, 22);
 			} catch (JSchException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	        
@@ -130,6 +129,10 @@ public class WorkerDispatcher {
 				
 				
 				sshConnect();
+				if(!sshSession.isConnected()){
+					System.err.println("Not connected to SSH server after trial.\nThis probably means the SSH server is down or you didn't give the right credentials\nDispatch failed.");
+					return;
+				}
 		        try {
 		        Channel channel=sshSession.openChannel("exec");
 		     // ((ChannelExec)channel).setCommand("sh dispatch.sh");
@@ -218,7 +221,7 @@ public class WorkerDispatcher {
 	}
 	
 	
-	private static String server, user, password, host,command;
+	private static String server, user, host,command;
 	private static int timeout, port;
 	
 	private static void sshConnect(){
@@ -226,6 +229,7 @@ public class WorkerDispatcher {
 		synchronized(lock){
 	    try{
 	    	if(!sshSession.isConnected()){
+	    	System.out.println("Connecting to Ssh server "+sshSession.getHost());
 	        sshSession.connect();
 	        System.out.println("Ssh session connected");
 	        new Thread(new TimeOutRunner()).start();
@@ -243,7 +247,6 @@ public class WorkerDispatcher {
 			try {
 				Thread.sleep(timeout*1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			synchronized (lock) {
@@ -260,8 +263,9 @@ public class WorkerDispatcher {
 	    	public MyUserInfo(String password){
 	    		super();
 	    		passwd=password;
+	    		System.out.println("setpassword"+passwd);
 	    	}
-	      public String getPassword(){ return passwd; }
+	      public String getPassword(){ System.out.println("password"+passwd);return passwd; }
 	      public boolean promptYesNo(String str){
 	    	  System.out.println("promptYesNo "+str);
 	         return true;
@@ -269,9 +273,9 @@ public class WorkerDispatcher {
 	    
 	      private String passwd;
 
-	      public String getPassphrase(){ return passwd; }
-	      public boolean promptPassphrase(String message){ return true; }
-	      public boolean promptPassword(String message){
+	      public String getPassphrase(){ System.out.println("passphrase"+passwd);return passwd; }
+	      public boolean promptPassphrase(String message){ System.out.println("prompt1"); return true; }
+	      public boolean promptPassword( String message){ System.out.println("prompt2");
 	          return true;
 	        }
 	      public void showMessage(String message){
