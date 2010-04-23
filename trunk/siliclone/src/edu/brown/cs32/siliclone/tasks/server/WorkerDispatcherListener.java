@@ -68,8 +68,9 @@ public class WorkerDispatcherListener implements Runnable{
 			if(oos!=null){
 				synchronized (oos) {
 					try {
-						oos.writeObject(null);
+						oos.writeInt(1);
 						oos.flush();
+						System.out.println("dispatched.");
 						return true;
 					} catch (IOException e) {
 						System.err.println("Error communicating with WorkerDispatcher, deleting it from the list of dispatchers, and trying again");

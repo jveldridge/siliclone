@@ -1,17 +1,16 @@
 package edu.brown.cs32.siliclone.tasks.workerdispatcher;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import com.jcraft.jsch.*;
 
-import edu.brown.cs32.siliclone.tasks.Task;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UserInfo;
 
 public class WorkerDispatcher {
 	
@@ -20,7 +19,9 @@ public class WorkerDispatcher {
 	private static Session sshSession;
 	
 	private static boolean useremote = false;
-
+	private static MyUserInfo ui;
+	private static JSch jsch;
+	
 	/**
 	 * WorkerDispatcher <host> <port> <command>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> <ssh-identity-file>]]
 	 */
@@ -31,7 +32,7 @@ public class WorkerDispatcher {
 			System.exit(1);
 		}
 		host = args[0];
-
+		
 		
 		
 		port = Integer.parseInt(args[1]);
@@ -47,7 +48,7 @@ public class WorkerDispatcher {
 			String password = args[5];
 			timeout = Integer.parseInt(args[6]);
 			
-	        JSch jsch=new JSch();  
+	        jsch=new JSch();  
 	        if(args.length==8){
 	        	try {
 					jsch.addIdentity(args[7]);
@@ -56,16 +57,10 @@ public class WorkerDispatcher {
 					e.printStackTrace();
 				}
 	        }
-
-	        try {
-				sshSession=jsch.getSession(user, server, 22);
-			} catch (JSchException e) {
-				e.printStackTrace();
-			}
 	        
 	        //password will be given via UserInfo interface.
-	        UserInfo ui=new MyUserInfo(password);
-	        sshSession.setUserInfo(ui);
+	        ui=new MyUserInfo(password);
+	        
 			
 		}
 		
@@ -74,24 +69,16 @@ public class WorkerDispatcher {
 		try {
 			socket = new Socket(host, port+1);
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-			Object incomingObject;
+			int incomingInt;
 			while(true){
-			try {
-				incomingObject = ois.readObject();
-				if (incomingObject!=null) {
-					throw new ClassNotFoundException();
-				}else{
+				incomingInt = ois.readInt();
+				for(int i =0;i<incomingInt;i++){
 	
 					dispatch();
-					
-				}
-		
 				
-			} catch (ClassNotFoundException e) {
-				System.err.println("Ignored non-null data from "
-						+ socket.getInetAddress());
+				}
 			}
-			}
+			
 			
 			
 			
@@ -126,7 +113,7 @@ public class WorkerDispatcher {
 				
 				
 				sshConnect();
-				if(!sshSession.isConnected()){
+				if(sshSession==null||!sshSession.isConnected()){
 					System.err.println("Not connected to SSH server after trial.\nThis probably means the SSH server is down or you didn't give the right credentials\nDispatch failed.");
 					return;
 				}
@@ -225,14 +212,17 @@ public class WorkerDispatcher {
 		
 		synchronized(lock){
 	    try{
-	    	if(!sshSession.isConnected()){
-	    	System.out.println("Connecting to Ssh server "+sshSession.getHost());
+	    	if(sshSession==null||!sshSession.isConnected()){
+	    		
+	    	System.out.println("Connecting to Ssh server "+server);
+			sshSession=jsch.getSession(user, server, 22);
+			sshSession.setUserInfo(ui);
 	        sshSession.connect();
 	        System.out.println("Ssh session connected");
 	        new Thread(new TimeOutRunner()).start();
 	    	}
 	      }
-	      catch(Exception e){
+	      catch(JSchException e){
 	        System.out.println(e);
 	      }
 	    }

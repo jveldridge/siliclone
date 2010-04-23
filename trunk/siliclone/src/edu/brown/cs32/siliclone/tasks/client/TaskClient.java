@@ -10,9 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -117,15 +115,12 @@ public class TaskClient implements Runnable{
 					.getInputStream());
 			while (true) {
 				Object incomingObject = ois.readObject();
-				if(DEBUG){
-					System.out.println("Received a task back!");
-				
-				}
 				if (!(incomingObject instanceof Request)) {
 					throw new ClassNotFoundException();
 				}
 				Request incomingRequest = (Request) incomingObject;
 				if(DEBUG){
+						System.out.println("Received a task back: '"+incomingRequest.getTask()+"'("+incomingRequest.hashCode()+")");
 					if(incomingRequest.getTimedOut()){
 						System.out.println("... But it's timed out");
 					}
