@@ -29,7 +29,6 @@ public class VerticalConnector extends BaseConnector implements Connectable {
 		this.addRightMouseDownHandler(new DeleteLineHandler());
 	}
 	
-	@Override
 	public void adjustVertical(int change, Direction cameFrom)
 	{
 		if(cameFrom == Direction.UP)
@@ -67,7 +66,6 @@ public class VerticalConnector extends BaseConnector implements Connectable {
 		}
 	}
 	
-	@Override
 	public void adjustHorizontal(int change, Direction cameFrom)
 	{
 		this.setLeft(_beforeDrag.getLeft() + change);
@@ -80,7 +78,6 @@ public class VerticalConnector extends BaseConnector implements Connectable {
 	
 	private class VerticalMoveHandler implements DragRepositionMoveHandler {
 
-		@Override
 		public void onDragRepositionMove(DragRepositionMoveEvent event) {
 			// TODO Auto-generated method stub
 			//Do not change vertical position on dragMove
@@ -96,7 +93,6 @@ public class VerticalConnector extends BaseConnector implements Connectable {
 	
 	private class AddNodeHandler implements DoubleClickHandler {
 
-		@Override
 		public void onDoubleClick(DoubleClickEvent event) {
 			if(_up == null)
 			{
@@ -117,7 +113,6 @@ public class VerticalConnector extends BaseConnector implements Connectable {
 	
 	private class DeleteLineHandler implements RightMouseDownHandler {
 
-		@Override
 		public void onRightMouseDown(RightMouseDownEvent event) {
 			event.cancel();
 			//If this connector is only connected to one other connection, delete it
