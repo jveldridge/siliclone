@@ -1,12 +1,19 @@
 package edu.brown.cs32.siliclone.client.connectors;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.DoubleClickEvent;
 import com.smartgwt.client.widgets.events.DoubleClickHandler;
 import com.smartgwt.client.widgets.events.DragRepositionMoveEvent;
 import com.smartgwt.client.widgets.events.DragRepositionMoveHandler;
+import com.smartgwt.client.widgets.events.RightMouseDownEvent;
+import com.smartgwt.client.widgets.events.RightMouseDownHandler;
 
 public class NodeConnector extends BaseConnector implements Connectable {
+	
+	protected HandlerRegistration moveRegistration;
+	protected HandlerRegistration rightClickRegistration;
 	
 	public NodeConnector(Connectable left, Connectable right, Connectable up, Connectable down)
 	{
@@ -15,8 +22,9 @@ public class NodeConnector extends BaseConnector implements Connectable {
 		this.setOverflow(Overflow.HIDDEN);
 		this.resizeTo(LINE_WIDTH, LINE_WIDTH);
 		this.setCanDragResize(false);
-		this.addDragRepositionMoveHandler(new NodeHandler());
+		moveRegistration = this.addDragRepositionMoveHandler(new NodeHandler());
 		this.addDoubleClickHandler(new AddConnectionHandler());
+		rightClickRegistration = this.addRightMouseDownHandler(new MakeStickyHandler());
 	}
 	
 	public NodeConnector() {
@@ -114,5 +122,33 @@ public class NodeConnector extends BaseConnector implements Connectable {
 				_left = left;
 			}
 		}
+	}
+	
+	private class MakeStickyHandler implements RightMouseDownHandler {
+
+		@Override
+		public void onRightMouseDown(RightMouseDownEvent event) {
+			event.cancel();
+			//Can only switch to sticky node if some connection is missing
+			if(_left == null || _right == null || _up == null || _down == null)
+			{
+				NodeConnector node = NodeConnector.this;
+				Canvas parent = node.getParentElement();
+				parent.removeChild(node);
+				StickyNodeConnector sticky = new StickyNodeConnector(_left, _right, _up, _down);
+				if(_left != null)
+					_left.changeConnection(sticky, Direction.RIGHT);
+				if(_right != null)
+					_right.changeConnection(sticky, Direction.LEFT);
+				if(_up != null)
+					_up.changeConnection(sticky, Direction.DOWN);
+				if(_down != null)
+					_down.changeConnection(sticky, Direction.UP);
+				sticky.moveTo(node.getLeft(), node.getTop());
+				parent.addChild(sticky);
+
+			}
+		}
+		
 	}
 }
