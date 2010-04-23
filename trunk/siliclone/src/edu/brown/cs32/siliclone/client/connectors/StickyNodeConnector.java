@@ -27,7 +27,6 @@ public class StickyNodeConnector extends NodeConnector implements Stickable {
 		this(null, null, null, null);
 	}
 	
-	@Override
 	public Connectable getConnection(Direction dir)
 	{
 		switch(dir)
@@ -47,7 +46,7 @@ public class StickyNodeConnector extends NodeConnector implements Stickable {
 	
 	private class StickyNodeMoveHandler implements DragRepositionMoveHandler {
 
-		@Override
+	
 		public void onDragRepositionMove(DragRepositionMoveEvent event) {
 			if(_left != null)
 			{
@@ -76,7 +75,7 @@ public class StickyNodeConnector extends NodeConnector implements Stickable {
 	
 	private class MakeConnectionHandler implements DragRepositionStopHandler {
 
-		@Override
+	
 		public void onDragRepositionStop(DragRepositionStopEvent event) {
 			Canvas parent = getParentElement();
 			Canvas[] children = parent.getChildren();
@@ -151,7 +150,6 @@ public class StickyNodeConnector extends NodeConnector implements Stickable {
 	
 	private class MakeUnstickyHandler implements RightMouseDownHandler {
 
-		@Override
 		public void onRightMouseDown(RightMouseDownEvent event) {
 			event.cancel();
 			StickyNodeConnector node = StickyNodeConnector.this;
