@@ -23,5 +23,6 @@
   <source path='dna'/>
   <source path='operators'/>
   <source path='plugins'/>
+  <source path='database/client'/>
 
 </module>

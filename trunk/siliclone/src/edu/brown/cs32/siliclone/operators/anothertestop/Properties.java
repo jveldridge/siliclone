@@ -35,10 +35,11 @@ public class Properties extends PropertiesSelector {
 	_latestUpdate = new Date();
 	}
 	
-	private final SquareServiceAsync squareService = GWT
-	.create(SquareService.class);
 	
 	private class HandlerImpl implements ChangedHandler{
+		private final SquareServiceAsync squareService = GWT
+		.create(SquareService.class);
+
 		public void onChanged(ChangedEvent event) {
 			
 			AsyncCallback<Integer> callback = new AsyncCallback<Integer>() {
