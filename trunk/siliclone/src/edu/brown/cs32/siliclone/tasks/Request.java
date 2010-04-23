@@ -13,6 +13,7 @@ public class Request implements Serializable{
 	Task _task;
 	int _ID;
 	int _ID2;
+	boolean _timedOut;
 	
 	public Request(){
 		
@@ -22,6 +23,7 @@ public class Request implements Serializable{
 		_task=task;
 		_ID = task.hashCode();
 		_ID2 = new Random().nextInt(Integer.MAX_VALUE);
+		_timedOut = false;
 	}
 	
 	public Task getTask(){
@@ -44,6 +46,14 @@ public class Request implements Serializable{
 		}
 		Request otherRequest = (Request) o;
 		return(otherRequest._ID==this._ID&&otherRequest._ID2==this._ID2);
+	}
+	
+	public void setTimedOut(boolean b){
+		_timedOut = b;
+	}
+	
+	public boolean getTimedOut(){
+		return _timedOut;
 	}
 
 }

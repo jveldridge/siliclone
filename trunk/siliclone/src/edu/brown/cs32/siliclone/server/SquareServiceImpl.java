@@ -8,6 +8,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import edu.brown.cs32.siliclone.operators.anothertestop.SquareService;
 import edu.brown.cs32.siliclone.tasks.SquareTask;
 import edu.brown.cs32.siliclone.tasks.client.TaskClient;
+import edu.brown.cs32.siliclone.tasks.client.TaskTimedOutException;
 
 /**
  * The server side implementation of the RPC service.
@@ -35,6 +36,9 @@ public class SquareServiceImpl extends RemoteServiceServlet implements
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TaskTimedOutException e){
+			System.err.println(e);
 			e.printStackTrace();
 		}
 		

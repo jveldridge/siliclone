@@ -62,7 +62,7 @@ public class WorkerDispatcherListener implements Runnable{
 	 * if computations need to be distributed over multiple computer clusters.
 	 */
 	
-	public void dispatchWorker(){
+	public boolean dispatchWorker(){
 		synchronized (_dispatchers) {
 			ObjectOutputStream oos = _dispatchers.peek();
 			if(oos!=null){
@@ -70,15 +70,17 @@ public class WorkerDispatcherListener implements Runnable{
 					try {
 						oos.writeObject(null);
 						oos.flush();
+						return true;
 					} catch (IOException e) {
 						System.err.println("Error communicating with WorkerDispatcher, deleting it from the list of dispatchers, and trying again");
 						_dispatchers.removeFirst();
-						dispatchWorker(); //this is OK in java, since this thread already has the lock on _dispatchers
+						return dispatchWorker(); //this is OK in java, since this thread already has the lock on _dispatchers
 					}
 					
 				}
 			}else{
 				System.err.println("There are no registered WorkerDispatchers. Tasks can currently not be completed");
+				return false;
 			}
 		}
 	}

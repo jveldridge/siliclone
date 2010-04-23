@@ -22,12 +22,12 @@ public class WorkerDispatcher {
 	private static boolean useremote = false;
 
 	/**
-	 * WorkerDispatcher <host> <port> <classpath>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> <ssh-identity-file>]]
+	 * WorkerDispatcher <host> <port> <command>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> <ssh-identity-file>]]
 	 */
 	public static void main(String[] args) {
 		if(args.length!=3&&args.length!=7&args.length!=8){
 		
-			System.err.println("WorkerDispatcher <host> <port> <classpath>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> [<ssh-identity-file>]]");
+			System.err.println("WorkerDispatcher <host> <port> <command>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> [<ssh-identity-file>]]");
 			System.exit(1);
 		}
 		host = args[0];
@@ -36,8 +36,8 @@ public class WorkerDispatcher {
 		
 		port = Integer.parseInt(args[1]);
 		
-		command = "java -cp "+args[2]+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port+" &";
-
+	//	command = "java -cp "+args[2]+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port+" &";
+		command = args[2];
 		
 		if(args.length==7||args.length==8){
 			
@@ -68,9 +68,6 @@ public class WorkerDispatcher {
 	        sshSession.setUserInfo(ui);
 			
 		}
-		
-		
-		//dispatch();
 		
 		
 		Socket socket = null;
