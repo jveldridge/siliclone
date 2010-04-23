@@ -1,5 +1,7 @@
 package edu.brown.cs32.siliclone.database.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import edu.brown.cs32.siliclone.accounts.User;
@@ -30,4 +32,27 @@ public interface UserService extends RemoteService {
 	 * @return true if registration was successful, false otherwise.
 	 */
 	User register(User u);
+	
+	
+	User remove(User u);
+	
+	/**
+	 * @param groupname group that doesn't already exist
+	 * @param u owner of group
+	 * @return message describing success or failure
+	 */
+	String createGroup(User u, String group);
+	
+	List<String> getOwnedGroups(User u);
+	List<String> getAvailableGroups(User u);
+	
+	String addToGroup(User u, String group, String userToAdd);
+	String removeFromGroup(User u, String group, String userToRemove);
+	
+	/**
+	 * 
+	 * @param group
+	 * @return empty if group not found
+	 */
+	List<String> getUsersWithAccessToGroup(String group);
 }

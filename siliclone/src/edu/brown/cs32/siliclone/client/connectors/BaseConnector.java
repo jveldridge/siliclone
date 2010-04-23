@@ -66,17 +66,14 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 	/* (non-Javadoc)
 	 * @see edu.brown.cs32.siliclone.client.connectors.Connectable#adjustHorizontal(int, edu.brown.cs32.siliclone.client.connectors.Connectable)
 	 */
-	@Override
 	public abstract void adjustHorizontal(int change, Direction cameFrom);
 	
 	
 	/* (non-Javadoc)
 	 * @see edu.brown.cs32.siliclone.client.connectors.Connectable#adjustVertical(int, edu.brown.cs32.siliclone.client.connectors.Connectable)
 	 */
-	@Override
 	public abstract void adjustVertical(int change, Direction cameFrom);
 	
-	@Override
 	final public void translate(int horizontal, int vertical, Direction cameFrom) {
 		this.setLeft(_beforeDrag.getLeft() + horizontal);
 		this.setTop(_beforeDrag.getTop() + vertical);
@@ -90,7 +87,6 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 			_down.translate(horizontal, vertical, Direction.UP);
 	}
 	
-	@Override
 	final public void removeConnection(Connectable toRemove)
 	{
 		//If toRemove matches any of this Connector's connections, remove it
@@ -109,7 +105,6 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 	 * of startDrag to any connected Connectables
 	 * @see edu.brown.cs32.siliclone.client.connectors.Connectable#startDrag()
 	 */
-	@Override
 	public void startDrag() {
 		if(_dragging == false)
 		{
@@ -132,7 +127,6 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 	 * of endDrag to any connected Connectables
 	 * @see edu.brown.cs32.siliclone.client.connectors.Connectable#endDrag()
 	 */
-	@Override
 	public void endDrag() {
 		if(_dragging == true)
 		{
@@ -152,22 +146,18 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 	private class DragStateHandler implements DragRepositionStartHandler, DragResizeStartHandler,
 	                                          DragRepositionStopHandler, DragResizeStopHandler {
 
-		@Override
 		public void onDragRepositionStart(DragRepositionStartEvent event) {
 			startDrag();
 		}
 
-		@Override
 		public void onDragResizeStart(DragResizeStartEvent event) {
 			startDrag();			
 		}
 
-		@Override
 		public void onDragRepositionStop(DragRepositionStopEvent event) {
 			endDrag();
 		}
 
-		@Override
 		public void onDragResizeStop(DragResizeStopEvent event) {
 			endDrag();
 		}

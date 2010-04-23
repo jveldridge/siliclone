@@ -3,8 +3,8 @@ package edu.brown.cs32.siliclone.database.server;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 
 /**
@@ -54,12 +54,18 @@ public class Database {
 	  
 	  private static boolean validDB(Connection conn){
 		  try{
+			  Statement statement = conn.createStatement();
 			  
-			  PreparedStatement statement = conn.prepareStatement("create table if not exists users" +
-			  		"(name varchar(60) not null unique primary key," +
-			  		"email varchar(60) not null," +
-			  		"password varchar(60) not null);");
-			  statement.executeUpdate();
+			  statement.executeUpdate("create table if not exists users" +
+				  		"(name varchar(60) not null unique primary key," +
+				  		"email varchar(60) not null," +
+				  		"password varchar(60) not null);");
+			
+			  statement.executeUpdate("create table if not exists groups" +
+				  		"(user varchar(60) not null," +
+				  		"group varchar(60) not null," +
+				  		"owner bool not null);");
+			  
 			  statement.close();
 
 			  
@@ -70,48 +76,6 @@ public class Database {
 		  }
 	  }
 	  
-	  
-	  
-	  
-	  
-/**
-	  public static long writeJavaObject(Connection conn, Object object) throws Exception {
-	    String className = object.getClass().getName();
-	    PreparedStatement pstmt = conn.prepareStatement(WRITE_OBJECT_SQL);
-
-	    // set input parameters
-	    pstmt.setString(1, className);
-	    pstmt.setObject(2, object);
-	    pstmt.executeUpdate();
-
-	    // get the generated key for the id
-	    ResultSet rs = pstmt.getGeneratedKeys();
-	    int id = -1;
-	    if (rs.next()) {
-	      id = rs.getInt(1);
-	    }
-
-	    rs.close();
-	    pstmt.close();
-	    System.out.println("writeJavaObject: done serializing: " + className);
-	    return id;
-	  }
-
-	  public static Object readJavaObject(Connection conn, long id) throws Exception {
-	    PreparedStatement pstmt = conn.prepareStatement(READ_OBJECT_SQL);
-	    pstmt.setLong(1, id);
-	    ResultSet rs = pstmt.executeQuery();
-	    rs.next();
-	    Object object = rs.getObject(1);
-	    String className = object.getClass().getName();
-
-	    rs.close();
-	    pstmt.close();
-	    System.out.println("readJavaObject: done de-serializing: " + className);
-	    return object;
-	  }
-	  
-	  **/
 	  
 	  
 	  public static void main(String args[])throws Exception {

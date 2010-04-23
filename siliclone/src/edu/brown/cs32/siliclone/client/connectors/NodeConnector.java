@@ -23,7 +23,6 @@ public class NodeConnector extends BaseConnector implements Connectable {
 		this(null, null, null, null);
 	}
 	
-	@Override
 	public void adjustHorizontal(int change, Direction cameFrom)
 	{
 		this.setLeft(_beforeDrag.getLeft() + change);
@@ -37,7 +36,6 @@ public class NodeConnector extends BaseConnector implements Connectable {
 			_down.adjustHorizontal(change, Direction.UP);
 	}
 	
-	@Override
 	public void adjustVertical(int change, Direction cameFrom)
 	{
 		this.setTop(_beforeDrag.getTop() + change);
@@ -53,7 +51,6 @@ public class NodeConnector extends BaseConnector implements Connectable {
 	
 	private class NodeHandler implements DragRepositionMoveHandler {
 
-		@Override
 		public void onDragRepositionMove(DragRepositionMoveEvent event) {
 			//When you drag the node around, everything connected to it just rigidly translates
 			if(_left != null)
@@ -87,7 +84,6 @@ public class NodeConnector extends BaseConnector implements Connectable {
 	
 	private class AddConnectionHandler implements DoubleClickHandler {
 
-		@Override
 		public void onDoubleClick(DoubleClickEvent event) {
 			if(_up == null)
 			{
