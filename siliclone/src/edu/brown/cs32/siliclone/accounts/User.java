@@ -15,6 +15,7 @@ public class User implements Serializable { //TODO: finish this class
 	private String name; //unique, valid, username 
 	private String email; //unique, valid, email (one account per email)
 	private String password; //valid password 
+	private boolean valid;
 	
 	/**
 	 * TODO serialization
@@ -41,17 +42,22 @@ public class User implements Serializable { //TODO: finish this class
 	public String getEmail(){
 		return email;
 	}
+	public boolean getValid(){
+		return valid;
+	}
 	/**
 	 * @param name The name to be set for this user. (not null)
-	 * @return true if success, false if name invalid/ already in use
 	 */
-	public boolean setName(String name){
-		return false;
+	public void setName(String name){
+		this.name  = name;
 	}
-	public boolean setPassword(String password){
-		return false;
+	public void setPassword(String password){
+		this.password = password;
 	}
-	public boolean setEmail(String email){
-		return false;
+	public void setEmail(String email){
+		this.email = email;
+	}
+	public void setValid(boolean valid){
+		this.valid = valid;
 	}
 }

@@ -7,10 +7,10 @@ import edu.brown.cs32.siliclone.accounts.User;
 public interface UserServiceAsync {
 
 	void changePassword(User u, String newPassword,
-			AsyncCallback<Boolean> callback);
+			AsyncCallback<User> callback);
 
-	void login(User u, AsyncCallback<Boolean> callback);
+	void login(User u, AsyncCallback<User> callback);
 
-	void register(User u, AsyncCallback<Boolean> callback);
-
+	void register(User u, AsyncCallback<User> callback);
+	
 }
