@@ -63,7 +63,7 @@ public class Database {
 			
 			  statement.executeUpdate("create table if not exists groups" +
 				  		"(user varchar(60) not null," +
-				  		"group varchar(60) not null," +
+				  		"groupname varchar(60) not null," +
 				  		"owner bool not null);");
 			  
 			  statement.close();

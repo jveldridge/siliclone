@@ -119,7 +119,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		u.setName("user2");
 		u.setValid(false);
 		u.setEmail("email@site.com");
-		u.setPassword("siliclone");
+		u.setPassword("password");
 		u = i.register(u);
 		if(u.getValid()){
 			System.out.println("successfully registered new user!");
@@ -192,7 +192,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			
 			res = statement.executeQuery(
 					"select from groups where user = '" + u.getName() + 
-					"' and group = '" + group + 
+					"' and groupname = '" + group + 
 					"' and owner = true;");
 			if(!res.next()){ //group was not found
 				res.close();
@@ -213,7 +213,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			
 			res = statement.executeQuery(
 					"select from groups where user = '" + userToAdd +
-					"' and group = " + group + "';");
+					"' and groupname = " + group + "';");
 			if(res.next()){ //already member
 				res.close();
 				statement.close();
@@ -222,7 +222,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			res.close();
 			
 			if(0 < statement.executeUpdate(
-					"inset into groups (user, group, owner) values ('" +
+					"inset into groups (user, groupname, owner) values ('" +
 					userToAdd + "', '" + group + "', false);")){
 				res.close();
 				statement.close();
@@ -254,7 +254,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			res = statement.executeQuery(
-					"select from groups where group = '" + group + "';");
+					"select from groups where groupname = '" + group + "';");
 			if(res.next()){
 				res.close();
 				statement.close();
@@ -262,7 +262,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			}
 			res.close();
 			
-			if(0 < statement.executeUpdate("insert into groups (user, group, owner) " +
+			if(0 < statement.executeUpdate("insert into groups (user, groupname, owner) " +
 					"values ('" + u.getName() + "', '" + group +"', true);")){
 				statement.close();
 				return "Group " + group + " added with owner " + u.getName();
@@ -354,7 +354,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			
-			res = statement.executeQuery("Select user from groups where group = '" + 
+			res = statement.executeQuery("Select user from groups where groupname = '" + 
 					group + "';");
 			while(res.next()){
 				users.add(res.getString(1));
@@ -383,7 +383,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			statement = Database.getSingleConnection().createStatement();
 			
 			res = statement.executeQuery("select from groups where user = '" + 
-					u.getName() + "' and owner = true and group = '" + group + "';");
+					u.getName() + "' and owner = true and groupname = '" + group + "';");
 			if(!res.next()){
 				res.close();
 				statement.close();
@@ -392,7 +392,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			res.close();
 			
 			statement.executeUpdate("delete from groups where user = '" + userToRemove + "'" +
-					"and group = '" + group + "';");
+					"and groupname = '" + group + "';");
 			statement.close();
 			return "User " + userToRemove + " removed from group " + group;
 		}catch (SQLException e){
@@ -415,7 +415,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			statement = Database.getSingleConnection().createStatement();
 
 			res = statement.executeQuery("select from groups where user = '" + 
-					u.getName() + "' and owner = true and group = '" + group + "';");
+					u.getName() + "' and owner = true and groupname = '" + group + "';");
 			if(!res.next()){
 				res.close();
 				statement.close();
@@ -423,7 +423,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			}
 			res.close();
 			
-			statement.executeUpdate("delete from groups where group = '" + group + "';");
+			statement.executeUpdate("delete from groups where groupname = '" + group + "';");
 			statement.close();
 			return "Group " + group + " removed.";
 		}catch (SQLException e){
