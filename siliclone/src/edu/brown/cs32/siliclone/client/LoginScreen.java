@@ -1,16 +1,25 @@
 package edu.brown.cs32.siliclone.client;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
 import com.smartgwt.client.widgets.form.fields.SubmitItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+
+import edu.brown.cs32.siliclone.accounts.User;
+import edu.brown.cs32.siliclone.database.client.UserService;
+import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 public class LoginScreen extends HLayout {
 
@@ -52,15 +61,36 @@ public class LoginScreen extends HLayout {
 			DynamicForm loginForm = new DynamicForm();
 			loginForm.setAutoFocus(true);
 			
-			TextItem username = new TextItem("Username");
+			final TextItem username = new TextItem("Username");
 			username.setRequired(true);
 			username.setSelectOnFocus(true);
 			
-			PasswordItem password = new PasswordItem("Password");
+			final PasswordItem password = new PasswordItem("Password");
 			password.setRequired(true);
 			
-			SubmitItem submit = new SubmitItem("Login!");
+			ButtonItem submit = new ButtonItem("Login!");
 			submit.setAlign(Alignment.CENTER);
+			submit.addClickHandler(new ClickHandler() {
+				private final UserServiceAsync service = GWT.create(UserService.class); 
+				@Override
+				public void onClick(ClickEvent event) {
+					User u = new User(username.getDisplayValue(), password.getDisplayValue());
+					AsyncCallback<User> callback = new AsyncCallback<User>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							caught.printStackTrace();
+							
+						}
+
+						@Override
+						public void onSuccess(User result) {
+							System.out.println("RPC Success");							
+						}
+					};
+					service.login(u, callback);
+				}
+			});
 			
 			loginForm.setFields(new FormItem[] {username, password, submit});
 			
