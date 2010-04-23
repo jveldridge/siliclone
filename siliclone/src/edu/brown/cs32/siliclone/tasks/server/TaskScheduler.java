@@ -51,13 +51,17 @@ public class TaskScheduler{
 		
 		new Thread(new DispatchTimeOutRunner(request),"dispatchertimeoutrunner").start();
 		}else{
+			System.out.println("Setting this task timed out");
 			request.setTimedOut(true);
-			returnCompletedRequest(request);
+			tch.returnCompletedRequest(request);
 		}
 		
 	}
 	
-
+/**
+ * 
+ * @return  if there was WorkerNode to request a dispatch from.
+ */
 	public boolean invokeWorker(){
 		return _workerDispatcherListener.dispatchWorker();
 		
@@ -69,12 +73,18 @@ public class TaskScheduler{
 	 * @param request the request that needs to be returned
 	 */
 	public void returnCompletedRequest(Request request){
+		synchronized (request) {
 		TaskClientHandler destination = _completedRequestsDestinations.remove(request);
 		if(destination==null){
-			System.out.println("Received back a task that had timed out already. Now it's too late :(");
+			System.out.println("Received back a task that had timed out already. Now it's too late :("+
+					"\nThe task was: '"+request.getTask()+"'("+request.hashCode()+")");
+
 		}else{
+			System.out.println("Sending a completed task back ("+request.hashCode()+")");
 			destination.returnCompletedRequest(request);
 		}
+		}
+		
 			
 	}
 	
@@ -85,7 +95,7 @@ public class TaskScheduler{
 	public Request getNextRequest(){
 		Request r =_requestQueue.poll();
 		if(r!=null){
-		new Thread(new WorkerTimeOutRunner(r),"timeout"+r.getTask().hashCode()).start();
+		new Thread(new WorkerTimeOutRunner(r),"workertimeoutrunner"+r.getTask().hashCode()).start();
 		}
 		return r;
 	}
@@ -99,15 +109,22 @@ private Request _request;
 		}
 		
 		public void run() {
+			System.out.println("debug begin "+_request.hashCode());
 			try {
 				Thread.sleep(_worker_timeout*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			System.out.println("debug mid "+_request.hashCode());
 			synchronized (_request) {
-				System.out.println("A WorkerNode timed out");
+				System.out.println("debug mid2 "+_request.hashCode());
+				if(_completedRequestsDestinations.containsKey(_request)){
+					System.out.println("debug mid3 "+_request.hashCode());
+				System.out.println("A WorkerNode timed out"+
+						"\nThe task was: '"+_request.getTask()+"'("+_request.hashCode()+")");
 				_request.setTimedOut(true);
 				returnCompletedRequest(_request);
+				}
 				
 			}
 
@@ -134,9 +151,10 @@ private Request _request;
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					if(_requestQueue.contains(_request)){
+					if(!_requestQueue.contains(_request)){
 						break;
 					}
+					System.out.println("Re-dispatch request sent out");
 					if(!invokeWorker()){
 						_request.setTimedOut(true);
 						returnCompletedRequest(_request);

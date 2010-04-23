@@ -89,7 +89,7 @@ public class TaskClientHandler implements Runnable{
 				Request incomingRequest = (Request) incomingObject;
 				
 				if(DEBUG){
-					System.out.println("Received a request, queueing now");
+					System.out.println("Received a request ("+incomingRequest.hashCode()+"), queueing now");
 					synchronized (_requestsWaiting) {
 						assert(_requestsWaiting.contains(incomingRequest));
 						_requestsWaiting.add(incomingRequest);
