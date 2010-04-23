@@ -36,8 +36,8 @@ public class TaskClientHandler implements Runnable{
 		try {
 			_oos = new ObjectOutputStream(_socket.getOutputStream());
 		} catch (IOException e) {
-			System.err.println("Error when communicating with "
-					+ _socket.getInetAddress());
+			System.err.println("Connection with TaskClient at"
+					+ _socket.getInetAddress()+" has been broken");
 		}
 		if(DEBUG){
 			_requestsWaiting = new HashSet<Request>();

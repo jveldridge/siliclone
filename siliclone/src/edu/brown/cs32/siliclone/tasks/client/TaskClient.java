@@ -10,9 +10,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+
+
+
 
 import edu.brown.cs32.siliclone.tasks.Request;
 import edu.brown.cs32.siliclone.tasks.Task;
@@ -21,7 +26,7 @@ public class TaskClient implements Runnable{
 	
 	private Socket _socket;
 	private ObjectOutputStream _oos;
-	private ConcurrentHashMap<Request,Task> _returnedRequests;
+	private ConcurrentHashMap<Request,TaskTimeoutPair> _returnedRequests;
 	private HashSet<Request> _requestsWaiting;
 	private static final boolean DEBUG = true;
 	
@@ -38,11 +43,13 @@ public class TaskClient implements Runnable{
 	
 		_socket = new Socket(host,port);
 		_oos = new ObjectOutputStream(_socket.getOutputStream());
-		_returnedRequests = new ConcurrentHashMap<Request,Task>();
+		_returnedRequests = new ConcurrentHashMap<Request,TaskTimeoutPair>();
 		if(DEBUG){
 		_requestsWaiting = new HashSet<Request>();
 		}
-		new Thread(this,"TaskClient").start();
+		Thread t = new Thread(this,"TaskClient");
+		t.setDaemon(true);
+		t.start();
 		
 	}
 	
@@ -55,8 +62,9 @@ public class TaskClient implements Runnable{
 	 * @param task the Task that compute() needs to be called on
 	 * @return the modified task after calling compute() on it
 	 * @throws IOException
+	 * @throws TaskTimedOutException 
 	 */
-	public Task computeTask(Task task) throws IOException{
+	public Task computeTask(Task task) throws IOException, TaskTimedOutException{
 		
 		Request request = new Request(task);
 		
@@ -86,8 +94,11 @@ public class TaskClient implements Runnable{
 				_requestsWaiting.remove(request);
 			}
 			}
-			
-			return _returnedRequests.remove(request);
+			TaskTimeoutPair ttp = _returnedRequests.remove(request);
+			if(ttp.getTimeout()){
+				throw new TaskTimedOutException(ttp.getTask());
+			}
+			return ttp.getTask();
 			
 			
 		}
@@ -108,13 +119,20 @@ public class TaskClient implements Runnable{
 				Object incomingObject = ois.readObject();
 				if(DEBUG){
 					System.out.println("Received a task back!");
+				
 				}
 				if (!(incomingObject instanceof Request)) {
 					throw new ClassNotFoundException();
 				}
 				Request incomingRequest = (Request) incomingObject;
+				if(DEBUG){
+					if(incomingRequest.getTimedOut()){
+						System.out.println("... But it's timed out");
+					}
+				
+				}
 				synchronized(_returnedRequests){
-					_returnedRequests.putIfAbsent(incomingRequest, incomingRequest.getTask());
+					_returnedRequests.putIfAbsent(incomingRequest,new TaskTimeoutPair(incomingRequest.getTask(),incomingRequest.getTimedOut()));
 					_returnedRequests.notify();
 				}
 			
@@ -126,6 +144,27 @@ public class TaskClient implements Runnable{
 			System.err.println("Received non-Request data from the server at "
 					+ _socket.getInetAddress());
 		}
+	}
+	
+	private class TaskTimeoutPair{
+		
+		private Task _task;
+		private boolean _timeout;
+		
+		TaskTimeoutPair(Task task, boolean timeout){
+		_task = task;
+		_timeout =timeout;
+		}
+		
+		
+		public Task getTask(){
+			return _task;
+		}
+		
+		public boolean getTimeout(){
+			return _timeout;
+		}
+		
 	}
 
 }

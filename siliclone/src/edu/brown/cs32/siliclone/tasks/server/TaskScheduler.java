@@ -14,15 +14,22 @@ public class TaskScheduler{
 	ConcurrentHashMap<Request, TaskClientHandler> _completedRequestsDestinations;
 	WorkerDispatcherListener _workerDispatcherListener;
 	
-	/**
-	 * Makes a new Taskscheduler
+	private int _worker_timeout;
+	private int _dispatch_timeout;
+	
+/**
+ * Makes a new Taskscheduler
 	 * @param workerDispatcherListener there Will only be one workerDispatcherListener, but
 	 * to be good Object-Oriented programmers, we pass a reference to it just to be safe.
-	 */
-	public TaskScheduler(WorkerDispatcherListener workerDispatcherListener){
+ * @param dispatch_timeout when a new dispatch request is made, the amount of time given until the request is re-made
+ * @param worker_timeout after a task has been delivered to a WorkerNode, the amount of time until we give up on waiting for it to return
+ */
+	public TaskScheduler(WorkerDispatcherListener workerDispatcherListener, int dispatch_timeout, int worker_timeout){
 		_requestQueue = new ConcurrentLinkedQueue<Request>();
 		_completedRequestsDestinations = new ConcurrentHashMap<Request, TaskClientHandler>();
 		_workerDispatcherListener = workerDispatcherListener;
+		_worker_timeout=worker_timeout;
+		_dispatch_timeout=dispatch_timeout;
 	}
 	
 	
@@ -33,6 +40,7 @@ public class TaskScheduler{
 	 * such that we know where to return the request to.
 	 */
 	public void enqueueRequest(Request request, TaskClientHandler tch){
+		if(invokeWorker()){
 		if(!_requestQueue.add(request)){
 			System.err.println("A valid request failed to be added to the scheduler. This will result in a missed task!! (but will be ignored for now)");
 			Thread.dumpStack();
@@ -40,13 +48,18 @@ public class TaskScheduler{
 		if(_completedRequestsDestinations.put(request, tch) != null){
 			System.err.println("A valid request was added to the scheduler, that was already in the scheduler. This is very strange but will be ignored");
 		}
-		invokeWorker();
+		
+		new Thread(new DispatchTimeOutRunner(request),"dispatchertimeoutrunner").start();
+		}else{
+			request.setTimedOut(true);
+			returnCompletedRequest(request);
+		}
 		
 	}
 	
 
-	public void invokeWorker(){
-		_workerDispatcherListener.dispatchWorker();
+	public boolean invokeWorker(){
+		return _workerDispatcherListener.dispatchWorker();
 		
 	}
 	
@@ -56,7 +69,13 @@ public class TaskScheduler{
 	 * @param request the request that needs to be returned
 	 */
 	public void returnCompletedRequest(Request request){
-		_completedRequestsDestinations.remove(request).returnCompletedRequest(request);	
+		TaskClientHandler destination = _completedRequestsDestinations.remove(request);
+		if(destination==null){
+			System.out.println("Received back a task that had timed out already. Now it's too late :(");
+		}else{
+			destination.returnCompletedRequest(request);
+		}
+			
 	}
 	
 	/**
@@ -64,7 +83,73 @@ public class TaskScheduler{
 	 * @return null if there are no more jobs on the queue
 	 */
 	public Request getNextRequest(){
-		return _requestQueue.poll();
+		Request r =_requestQueue.poll();
+		if(r!=null){
+		new Thread(new WorkerTimeOutRunner(r),"timeout"+r.getTask().hashCode()).start();
+		}
+		return r;
 	}
+	
+	
+	private class WorkerTimeOutRunner implements Runnable{
+private Request _request;
+		
+		public WorkerTimeOutRunner(Request request) {
+		 	_request = request;
+		}
+		
+		public void run() {
+			try {
+				Thread.sleep(_worker_timeout*1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			synchronized (_request) {
+				System.out.println("A WorkerNode timed out");
+				_request.setTimedOut(true);
+				returnCompletedRequest(_request);
+				
+			}
+
+			
+		}
+		
+		
+	}
+	
+	
+	private class DispatchTimeOutRunner implements Runnable{
+				
+private Request _request;
+		
+		public DispatchTimeOutRunner(Request request) {
+		 	_request = request;
+		}
+		
+				
+				public void run() {
+					while(true){
+					try {
+						Thread.sleep(_dispatch_timeout*1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if(_requestQueue.contains(_request)){
+						break;
+					}
+					if(!invokeWorker()){
+						_request.setTimedOut(true);
+						returnCompletedRequest(_request);
+						break;
+					}
+					}
+
+					
+				}
+				
+				
+			}
+	
+	
 
 }

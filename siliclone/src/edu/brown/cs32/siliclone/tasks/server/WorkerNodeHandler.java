@@ -54,6 +54,8 @@ public class WorkerNodeHandler implements Runnable{
 				Object incomingObject;
 				try {
 					incomingObject = ois.readObject();
+					
+					synchronized (request) {
 					if (!(incomingObject instanceof Task)) {
 						throw new ClassNotFoundException();
 					}
@@ -61,7 +63,7 @@ public class WorkerNodeHandler implements Runnable{
 				request.setTask(incomingTask);
 				
 				_scheduler.returnCompletedRequest(request);
-				
+				}
 
 			} catch (ClassNotFoundException e) {
 				System.err.println("Ignored non-Task data from "
