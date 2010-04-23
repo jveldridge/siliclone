@@ -52,17 +52,17 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 	/* (non-Javadoc)
 	 * @see edu.brown.cs32.siliclone.client.connectors.Connectable#adjustHorizontal(int, edu.brown.cs32.siliclone.client.connectors.Connectable)
 	 */
-	@Override
+
 	public abstract void adjustHorizontal(int change, Direction cameFrom);
 	
 	
 	/* (non-Javadoc)
 	 * @see edu.brown.cs32.siliclone.client.connectors.Connectable#adjustVertical(int, edu.brown.cs32.siliclone.client.connectors.Connectable)
 	 */
-	@Override
+
 	public abstract void adjustVertical(int change, Direction cameFrom);
 
-	@Override
+
 	public void addConnection(Connectable toAdd, Direction dir)
 	{
 		//Only add new connection if you would not displace an existing connectable
@@ -87,7 +87,7 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 		}
 	}
 	
-	@Override
+
 	public void changeConnection(Connectable toAdd, Direction dir)
 	{
 		switch(dir)
@@ -106,7 +106,7 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 			break;
 		}
 	}	
-	@Override
+
 	final public void translate(int horizontal, int vertical, Direction cameFrom) {
 		this.setLeft(_beforeDrag.getLeft() + horizontal);
 		this.setTop(_beforeDrag.getTop() + vertical);
@@ -120,7 +120,7 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 			_down.translate(horizontal, vertical, Direction.UP);
 	}
 	
-	@Override
+
 	final public void removeConnection(Connectable toRemove)
 	{
 		//If toRemove matches any of this Connector's connections, remove it
@@ -151,12 +151,11 @@ public abstract class BaseConnector extends Canvas implements Connectable {
 	private class DragStateHandler implements DragRepositionStartHandler, DragResizeStartHandler
  {
 
-		@Override
 		public void onDragRepositionStart(DragRepositionStartEvent event) {
 			startDrag(null);
 		}
 
-		@Override
+
 		public void onDragResizeStart(DragResizeStartEvent event) {
 			startDrag(null);			
 		}

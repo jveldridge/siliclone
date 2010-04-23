@@ -17,14 +17,13 @@ public class Siliclone implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 
-		LoginScreen loginScreen = new LoginScreen();
+		//LoginScreen loginScreen = new LoginScreen();
 		MainView theOnlyView = new MainView();
         
         //RootPanel.get().add(mainLayout);
         //I had to use this to make the selection panel work right --Noah
-		loginScreen.draw();
-		//theOnlyView.draw();
-  
+		//loginScreen.draw();
+		theOnlyView.draw();
        
 	}
 }

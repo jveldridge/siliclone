@@ -72,18 +72,15 @@ public class LoginScreen extends HLayout {
 			submit.setAlign(Alignment.CENTER);
 			submit.addClickHandler(new ClickHandler() {
 				private final UserServiceAsync service = GWT.create(UserService.class); 
-				@Override
 				public void onClick(ClickEvent event) {
 					User u = new User(username.getDisplayValue(), password.getDisplayValue());
 					AsyncCallback<User> callback = new AsyncCallback<User>() {
 
-						@Override
 						public void onFailure(Throwable caught) {
 							caught.printStackTrace();
 							
 						}
-
-						@Override
+						
 						public void onSuccess(User result) {
 							System.out.println("RPC Success");							
 						}

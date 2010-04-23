@@ -126,7 +126,7 @@ public class NodeConnector extends BaseConnector implements Connectable {
 	
 	private class MakeStickyHandler implements RightMouseDownHandler {
 
-		@Override
+
 		public void onRightMouseDown(RightMouseDownEvent event) {
 			event.cancel();
 			//Can only switch to sticky node if some connection is missing
