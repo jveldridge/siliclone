@@ -1,9 +1,11 @@
 package edu.brown.cs32.siliclone.operators;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.smartgwt.client.docs.Positioning;
 import com.smartgwt.client.types.DragAppearance;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.DragRepositionStopEvent;
@@ -12,10 +14,11 @@ import com.smartgwt.client.widgets.events.MouseOutEvent;
 import com.smartgwt.client.widgets.events.MouseOutHandler;
 import com.smartgwt.client.widgets.events.MouseOverEvent;
 import com.smartgwt.client.widgets.events.MouseOverHandler;
-import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 import edu.brown.cs32.siliclone.client.WorkspaceView;
+import edu.brown.cs32.siliclone.client.connectors.StickyNodeConnector;
+import edu.brown.cs32.siliclone.client.connectors.VerticalConnector;
 
 
 
@@ -24,7 +27,7 @@ import edu.brown.cs32.siliclone.client.WorkspaceView;
  * OpView displays an Operator object to be displayed in a WorkspaceView and manipulated
  * by the client.
  */
-public class OpView extends VLayout {
+public class OpView extends Canvas {
 	private final Operator op;
 	private final PropertiesSelector selector;
 	
@@ -35,6 +38,10 @@ public class OpView extends VLayout {
 		this.op = op; //associate with operator, positions are related
 		setTop(op.getY());
 		setLeft(op.getX());
+		
+		//add the graphical representation of the operator
+		Widget opWidget = op.getWidget();
+		this.addChild(opWidget);
 		
 		//add close button
 		final Img close = new Img("close.png", 20, 20);
@@ -60,14 +67,32 @@ public class OpView extends VLayout {
 			}
 		});
 		
-		addMember(close);
+		//addMember(close);
+		addChild(close);
 		
-		//add the graphical representation of the operator
-		Widget opWidget = op.getWidget();
-		this.addMember(opWidget);
+		//this.addMember(opWidget);
 		
-		this.setShowEdges(true);
-		this.setEdgeSize(0); //This is the default, but w/out it getEdgeSize returns null
+		//add a connector
+		VerticalConnector out = new VerticalConnector();
+		out.setCanDragReposition(true);
+		out.setKeepInParentRect(true);
+		out.setDragAppearance(DragAppearance.TARGET);
+		out.setDragTarget(this);
+		out.setHeight(30);
+		
+		out.setTop(this.getBottom());
+		out.setLeft((this.getLeft() + this.getRight())/2);
+		
+		this.addPeer(out);
+		
+		StickyNodeConnector node = new StickyNodeConnector();
+		node.setTop(out.getBottom());
+		node.setLeft(out.getLeft());
+		node.setDragTarget(this);
+		this.addPeer(node);
+		
+		
+
 		this.setCanDragReposition(true);
 		this.setKeepInParentRect(true);
 		this.setDragAppearance(DragAppearance.TARGET);
@@ -77,17 +102,56 @@ public class OpView extends VLayout {
 		
 		initPropertiesSelector();
 		
-		this.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (selector.isVisible()) {
-					selector.hide();
-				}
-				else {
-					selector.show();
-				}
+		//add the run button
+		final Img run = new Img("runButton.png", 20, 20);
+		run.setVisible(false);
+		run.setTop(80);
+		
+		run.addMouseOverHandler(new MouseOverHandler() {	
+			public void onMouseOver(MouseOverEvent event) {
+				run.setSrc("runButton_mouseOver.png");
 			}
 		});
-		//addMember(new Button("Show Selector", new ShowSelectorHandler()));
+		
+		run.addMouseOutHandler(new MouseOutHandler() {
+			public void onMouseOut(MouseOutEvent event) {
+				run.setSrc("runButton.png");
+			}
+		});
+
+		this.addMouseOverHandler(new MouseOverHandler() {		
+			public void onMouseOver(MouseOverEvent event) {
+				run.setVisible(true);
+			}
+		});
+		
+		this.addMouseOutHandler(new MouseOutHandler() {	
+			public void onMouseOut(MouseOutEvent event) {
+				run.setVisible(false);
+			}
+		});
+		
+		run.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				SC.say("Run was clicked");
+			}
+		});
+		
+		this.addChild(run);
+		
+		 initPropertiesSelector();
+         
+         this.addClickHandler(new ClickHandler() {
+                 public void onClick(ClickEvent event) {
+                         if (selector.isVisible()) {
+                                 selector.hide();
+                         }
+                         else {
+                                 selector.show();
+                         }
+                 }
+         });
+
 	}
 	
 	/**
