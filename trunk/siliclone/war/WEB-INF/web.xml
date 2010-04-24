@@ -17,6 +17,16 @@
     <servlet-name>squareServlet</servlet-name>
     <url-pattern>/siliclone/square</url-pattern>
   </servlet-mapping>
+  
+   <servlet>
+  	<servlet-name>userServiceImpl</servlet-name>
+  	<servlet-class>edu.brown.cs32.siliclone.database.server.UserServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>userServiceImpl</servlet-name>
+    <url-pattern>/siliclone/user</url-pattern>
+  </servlet-mapping>
 
   <!-- Default page to serve -->
   <welcome-file-list>
