@@ -4,12 +4,14 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 //TODO serious work here
 public class TopMenu extends ToolStrip {
-	public TopMenu(){
+	public TopMenu(final Siliclone main){
         Canvas logoCanvas = new Canvas();
         Img logo = new Img("logo.gif", 100, 38);
         logoCanvas.addChild(logo);
@@ -34,6 +36,13 @@ public class TopMenu extends ToolStrip {
         settingsButton.setTitle("Settings");
         ToolStripButton logoutButton = new ToolStripButton();
         logoutButton.setTitle("Logout");
+        logoutButton.addClickHandler(new ClickHandler() {	
+			public void onClick(ClickEvent event) {
+				main.showLoginScreen();
+			}
+		});
+        
+        
         this.addButton(settingsButton); 
         this.addButton(logoutButton);
               

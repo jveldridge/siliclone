@@ -22,7 +22,7 @@ public class MainView extends Canvas {
         mainLayout.setHeight100();  
   
         //top menu
-        mainLayout.addMember(new TopMenu());  
+        mainLayout.addMember(new TopMenu(_main));  
   
         HLayout notMenuLayout = new HLayout();  
         notMenuLayout.setHeight("*");  
