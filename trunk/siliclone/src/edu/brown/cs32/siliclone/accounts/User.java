@@ -12,52 +12,63 @@ import java.io.Serializable;
  */
 public class User implements Serializable { //TODO: finish this class
 
-	private String name; //unique, valid, username 
-	private String email; //unique, valid, email (one account per email)
-	private String password; //valid password 
-	private boolean valid;
+	private static final long serialVersionUID = 8738599268117382574L;
 	
-	/**
-	 * TODO serialization
-	 */
-	private static final long serialVersionUID = 1L;
-
+	private String _name; //unique, valid, username 
+	private String _email; //unique, valid, email (one account per email)
+	private String _password; //valid password 
+	private boolean _valid;
+	
 	public User(){
+		
 	}
+	
 	public User(String name, String password){
-		
+		_name = name;
+		_password = password;
 	}
+	
 	public User(String name, String password, String email){
-		
+		_name = name;
+		_password = password;
+		_email = email;
 	}
+	
 	/**
 	 * @return The name of the user account, null if not yet successfully initialized.
 	 */
 	public String getName(){
-		return name;
+		return _name;
 	}
+	
 	public String getPassword(){
-		return password;	
+		return _password;	
 	}
+	
 	public String getEmail(){
-		return email;
+		return _email;
 	}
-	public boolean getValid(){
-		return valid;
+	
+	public boolean isValid() {
+		return _valid;
 	}
+	
 	/**
 	 * @param name The name to be set for this user. (not null)
 	 */
 	public void setName(String name){
-		this.name  = name;
+		_name  = name;
 	}
+	
 	public void setPassword(String password){
-		this.password = password;
+		_password = password;
 	}
+	
 	public void setEmail(String email){
-		this.email = email;
+		_email = email;
 	}
+	
 	public void setValid(boolean valid){
-		this.valid = valid;
+		_valid = valid;
 	}
 }

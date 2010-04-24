@@ -22,7 +22,7 @@ public class Database {
 		return singleConnection;
 	}
 	  
-	public static Connection getConnection(){
+	public static Connection getConnection() {
 	    String driver = "org.gjt.mm.mysql.Driver"; //must be in class path
 	    String url = "jdbc:mysql://everett-77.resnet.brown.edu/siliclone"; //must be running from dmhall's room
 	    String username = "javauser";
@@ -36,7 +36,7 @@ public class Database {
 	    try {
 	    	Connection conn = DriverManager.getConnection(url, username, password);
 	    	if(conn == null){
-	    		System.out.println("Could not connect to database at " + username);
+	    		System.out.println("Could not connect to database at " + url);
 	    		return null;
 	    	}
 	    	if(!validDB(conn)){
@@ -44,7 +44,8 @@ public class Database {
 	    	}
 		    return conn;
 	    } catch (SQLException e){
-	    	System.out.println("Could not connect to database at " + username);
+	    	System.out.println("Could not connect to database at " + url);
+	    	e.printStackTrace();
 	    	return null;
 	    }
 	  }
@@ -56,12 +57,12 @@ public class Database {
 		  try{
 			  Statement statement = conn.createStatement();
 			  
-			  statement.executeUpdate("create table if not exists users" +
+			  statement.executeUpdate("create table if not exists sili_users" +
 				  		"(name varchar(60) not null unique primary key," +
 				  		"email varchar(60) not null," +
 				  		"password varchar(60) not null);");
 			
-			  statement.executeUpdate("create table if not exists groups" +
+			  statement.executeUpdate("create table if not exists sili_groups" +
 				  		"(user varchar(60) not null," +
 				  		"groupname varchar(60) not null," +
 				  		"owner bool not null);");

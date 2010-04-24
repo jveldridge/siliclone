@@ -9,7 +9,10 @@ import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 
 public class MainView extends Canvas {
 
-	public MainView(){
+	private Siliclone _main;
+	
+	public MainView(Siliclone main){
+		_main = main;
 		
 		this.setWidth100();
 		this.setHeight100();

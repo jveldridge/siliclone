@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -23,7 +24,11 @@ import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 public class LoginScreen extends HLayout {
 
-	public LoginScreen() {
+	private Siliclone _main;
+	
+	public LoginScreen(Siliclone main) {
+		_main = main;
+		
 		this.setHeight100();
 		this.setWidth100();
 		this.setMembersMargin(20);
@@ -78,11 +83,16 @@ public class LoginScreen extends HLayout {
 
 						public void onFailure(Throwable caught) {
 							caught.printStackTrace();
-							
 						}
 						
 						public void onSuccess(User result) {
-							System.out.println("RPC Success");							
+							if (result.isValid()) {
+								_main.showMainView();
+								//SC.say("success!");
+							}
+							else {
+								SC.say("Bad username or password");
+							}
 						}
 					};
 					service.login(u, callback);
