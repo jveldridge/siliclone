@@ -1,26 +1,21 @@
 package edu.brown.cs32.siliclone.client;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
-import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.ButtonItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.PasswordItem;
-import com.smartgwt.client.widgets.form.fields.SubmitItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
-import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.LayoutSpacer;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-import edu.brown.cs32.siliclone.accounts.User;
-import edu.brown.cs32.siliclone.database.client.UserService;
-import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
+import edu.brown.cs32.siliclone.client.forms.LoginForm;
+import edu.brown.cs32.siliclone.client.forms.RegisterForm;
+
 
 public class LoginScreen extends HLayout {
 
@@ -41,11 +36,13 @@ public class LoginScreen extends HLayout {
 		lP.setHeight100();
 		lP.setWidth("35%");
 		
+		
 		this.addMember(iP);
 		this.addMember(lP);
 	}
 	
 	private class InfoPanel extends HLayout {
+		// TODO Auto-generated method stub
 		public InfoPanel() {
 			Img dna = new Img("dna.gif");
 			dna.setHeight100();
@@ -63,49 +60,37 @@ public class LoginScreen extends HLayout {
 	private class LoginPanel extends VLayout {
 		public LoginPanel() {
 			this.setBackgroundColor("#CCFFFF");
-			DynamicForm loginForm = new DynamicForm();
-			loginForm.setAutoFocus(true);
 			
-			final TextItem username = new TextItem("Username");
-			username.setRequired(true);
-			username.setSelectOnFocus(true);
+			this.setMembersMargin(20);
+			this.setLayoutLeftMargin(20);
+			this.setLayoutAlign(Alignment.CENTER);
 			
-			final PasswordItem password = new PasswordItem("Password");
-			password.setRequired(true);
-			
-			ButtonItem submit = new ButtonItem("Login!");
-			submit.setAlign(Alignment.CENTER);
-			submit.addClickHandler(new ClickHandler() {
-				private final UserServiceAsync service = GWT.create(UserService.class); 
-				public void onClick(ClickEvent event) {
-					User u = new User(username.getDisplayValue(), password.getDisplayValue());
-					AsyncCallback<User> callback = new AsyncCallback<User>() {
 
-						public void onFailure(Throwable caught) {
-							caught.printStackTrace();
-						}
-						
-						public void onSuccess(User result) {
-							if (result.isValid()) {
-								_main.showMainView();
-								//SC.say("success!");
-							}
-							else {
-								SC.say("Bad username or password");
-							}
-						}
-					};
-					service.login(u, callback);
+			Button register = new Button("Register");
+			register.addClickHandler(new ClickHandler(){
+				public void onClick(ClickEvent event) {
+					final Window w = new Window();
+					
+					w.setTitle("Register");
+
+					w.setShowCloseButton(true);
+					
+					w.addItem(new RegisterForm(_main, w));
+					
+					w.setAutoSize(true);
+					w.setAutoCenter(true);
+					w.show();
 				}
 			});
-			
-			loginForm.setFields(new FormItem[] {username, password, submit});
-			
-			loginForm.setAlign(Alignment.CENTER);
-			this.addMember(loginForm);
 
-			this.setAlign(Alignment.CENTER);
-			this.setAlign(VerticalAlignment.CENTER);
+			
+			
+			this.addMember(new LayoutSpacer());
+			this.addMember(new LoginForm(_main));
+			this.addMember(register);
+			
+			this.addMember(new LayoutSpacer());
+			
 		}
 	}
 	

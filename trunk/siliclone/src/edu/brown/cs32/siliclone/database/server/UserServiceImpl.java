@@ -27,10 +27,17 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			
+			
 			if(0 < statement.executeUpdate("update sili_users set password = '"
 					+ newPassword.hashCode() + "' where name = '" + u.getName() + "';")){
 				u.setPassword(newPassword);
 			}
+			
+			
+			/*
+			if(0 < statement.executeUpdate("update sili_users where name = '" + u.getName() + "';")){
+				u.setPassword(newPassword);
+			}*/
 		}catch (SQLException e){ e.printStackTrace();
 		}finally{
 			try {
