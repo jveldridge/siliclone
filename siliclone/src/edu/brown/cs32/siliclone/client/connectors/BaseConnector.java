@@ -17,8 +17,6 @@ import com.smartgwt.client.widgets.events.DragResizeStartHandler;
  */
 public abstract class BaseConnector extends Canvas implements Connectable {
 
-	
-	
 	protected Connectable _left, _right, _up, _down;
 	protected Rectangle _beforeDrag;
 	protected static final int LINE_WIDTH = 5, MIN_LENGTH = LINE_WIDTH, DEFAULT_LENGTH = 100;
