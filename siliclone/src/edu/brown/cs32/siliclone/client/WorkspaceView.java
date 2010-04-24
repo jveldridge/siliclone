@@ -37,14 +37,6 @@ public class WorkspaceView extends Canvas {
 		this.addDropOverHandler(new HoverHandle());
 		this.addDropHandler(new WorkDropHandle());
 		
-		//Add in test connectors
-		StickyNodeConnector testOne = new StickyNodeConnector();
-		StickyNodeConnector testTwo = new StickyNodeConnector();
-		
-		addChild(testOne);
-		addChild(testTwo);
-		testOne.moveTo(200, 200);
-		testTwo.moveTo(400, 600);
 	}
 	
 	/**
