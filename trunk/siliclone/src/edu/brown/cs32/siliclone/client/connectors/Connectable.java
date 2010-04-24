@@ -1,7 +1,7 @@
 package edu.brown.cs32.siliclone.client.connectors;
 
 public interface Connectable {
-
+	
 	public void startDrag(Direction dir);
 	
 	public void adjustVertical(int change, Direction cameFrom);
