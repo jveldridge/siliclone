@@ -65,7 +65,7 @@ public class LoginForm extends DynamicForm {
 		password.addKeyPressHandler(new KeyPressHandler() {
 			private final UserServiceAsync service = GWT.create(UserService.class); 
 			public void onKeyPress(KeyPressEvent event) {
-				if(event.getKeyName()!="Enter"){
+				if(!event.getKeyName().equals("Enter")){
 					return;
 				}
 				User u = new User(username.getDisplayValue(), password.getDisplayValue());
