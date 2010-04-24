@@ -1,6 +1,8 @@
 package edu.brown.cs32.siliclone.tasks.workerdispatcher;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -25,12 +27,12 @@ public class WorkerDispatcher {
 	private static JSch jsch;
 	
 	/**
-	 * WorkerDispatcher <host> <port> <command>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> <ssh-identity-file>]]
+	 * WorkerDispatcher <host> <port> <command>[<ssh-server> <ssh-user> <server-session-length> <ssh-identity-file>]]
 	 */
 	public static void main(String[] args) {
-		if(args.length!=3&&args.length!=7&args.length!=8){
+		if(args.length!=3&&args.length!=6&args.length!=7){
 		
-			System.err.println("WorkerDispatcher <host> <port> <command>[<ssh-server> <ssh-user> <ssh-password> <server-session-length> [<ssh-identity-file>]]");
+			System.err.println("WorkerDispatcher <host> <port> <command>[<ssh-server> <ssh-user> <server-session-length> [<ssh-identity-file>]]");
 			System.exit(1);
 		}
 		host = args[0];
@@ -42,18 +44,64 @@ public class WorkerDispatcher {
 	//	command = "java -cp "+args[2]+" edu.brown.cs32.siliclone.tasks.workernode.WorkerNode "+host+" "+port+" &";
 		command = args[2];
 		
-		if(args.length==7||args.length==8){
+		if(args.length==6||args.length==7){
 			
 			useremote = true;
 			server = args[3];
 			user = args[4];
-			String password = args[5];
-			timeout = Integer.parseInt(args[6]);
+			//String password = args[5];
+			
+			
+			
+			
+			
+			
+			
+			
+			System.out.println("Please enter password. Leave blank if not necessary");
+		    
+			/*
+			 *The following code comes from http://java.sun.com/developer/technicalArticles/Security/pwordmask/ 
+			 */
+			EraserThread et = new EraserThread("Password:");
+		      Thread mask = new Thread(et);
+		      mask.start();
+
+		      BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		      String password = "";
+
+		      try {
+		         password = in.readLine();
+		      } catch (IOException ioe) {
+		        ioe.printStackTrace();
+		      }
+		      // stop masking
+		      et.stopMasking();
+
+		      /*
+		       * Now it's our own code again
+		       */
+		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			timeout = Integer.parseInt(args[5]);
 			
 	        jsch=new JSch();  
-	        if(args.length==8){
+	        if(args.length==7){
 	        	try {
-					jsch.addIdentity(args[7]);
+					jsch.addIdentity(args[6]);
 				} catch (JSchException e) {
 					System.err.println("Error: "+e.getMessage());
 					e.printStackTrace();
@@ -63,14 +111,18 @@ public class WorkerDispatcher {
 	        //password will be given via UserInfo interface.
 	        ui=new MyUserInfo(password);
 	        
+	        sshConnect();
+	        
 			
 		}
 		
 		
 		Socket socket = null;
 		try {
+			System.out.println("Connecting to TaskServer...");
 			socket = new Socket(host, port+1);
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+			System.out.println("Connected to Server, now waiting for dispatch requests");
 			int incomingInt;
 			while(true){
 				incomingInt = ois.readInt();
@@ -87,6 +139,7 @@ public class WorkerDispatcher {
 			
 		} catch (UnknownHostException e) {
 			System.err.println("Could not connect to "+host+":"+(port+1));
+			System.exit(3);
 		} catch (IOException e) {
 			System.err.println("Error while communicating with "+host+":"+(port+1));
 			if(socket==null||!socket.isConnected()){
@@ -119,22 +172,17 @@ public class WorkerDispatcher {
 					System.err.println("Not connected to SSH server after trial.\nThis probably means the SSH server is down or you didn't give the right credentials\nDispatch failed.");
 					return;
 				}
+				
+				while(true){
 				Channel channel=null;
-		        try {
-		        	int j=0;
-		        	while(channel==null||channel.isClosed()){
-			      		try {
-			      			j++;
-			      			System.out.println(j);
+		        
+				try {
+		        	
 		        channel=sshSession.openChannel("exec");
 		        
 		      	
-						Thread.sleep((long) (Math.random()*100));
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-		      	}
+						
+
 		        
 		        
 		     // ((ChannelExec)channel).setCommand("sh dispatch.sh");
@@ -188,13 +236,19 @@ public class WorkerDispatcher {
 				
 				
 		        channel.disconnect();
+		        break;
+		        
+		        
 				
 				} catch (JSchException e) {
-					System.err.println("This is not good."+channel.isClosed());
+					if(channel.isClosed()){
+						break;
+					}
+					System.err.println("Problem dispatching job");
 					e.printStackTrace();
 				}
 				}
-			
+		}
 			
 			
 			
@@ -285,10 +339,63 @@ public class WorkerDispatcher {
 	      public void showMessage(String message){
 	    	  System.out.println(message);
 	      }
+	      
+	      
 
 		
 		
 	}
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    /**
+	     * From http://java.sun.com/developer/technicalArticles/Security/pwordmask/
+	     * masks the password input
+	     *
+	     */
+	    private static class EraserThread implements Runnable {
+	    	   private boolean stop;
+	    	 
+	    	   /**
+	    	    *@param The prompt displayed to the user
+	    	    */
+	    	   public EraserThread(String prompt) {
+	    	       System.out.print(prompt);
+	    	   }
+
+	    	   /**
+	    	    * Begin masking...display asterisks (*)
+	    	    */
+	    	   public void run () {
+	    	      stop = true;
+	    	      while (stop) {
+	    	         System.out.print("\010*");
+	    		 try {
+	    		    Thread.currentThread().sleep(1);
+	    	         } catch(InterruptedException ie) {
+	    	            ie.printStackTrace();
+	    	         }
+	    	      }
+	    	   }
+
+	    	   /**
+	    	    * Instruct the thread to stop masking
+	    	    */
+	    	   public void stopMasking() {
+	    	      this.stop = false;
+	    	   }
+	    	}
+
+	    
+	    
+	    
+	    
+	    
 	
 	
 }

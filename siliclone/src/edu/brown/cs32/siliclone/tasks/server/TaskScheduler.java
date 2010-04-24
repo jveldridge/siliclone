@@ -16,6 +16,7 @@ public class TaskScheduler{
 	
 	private int _worker_timeout;
 	private int _dispatch_timeout;
+	private int _max_retry_dispatches;
 	
 /**
  * Makes a new Taskscheduler
@@ -24,12 +25,13 @@ public class TaskScheduler{
  * @param dispatch_timeout when a new dispatch request is made, the amount of time given until the request is re-made
  * @param worker_timeout after a task has been delivered to a WorkerNode, the amount of time until we give up on waiting for it to return
  */
-	public TaskScheduler(WorkerDispatcherListener workerDispatcherListener, int dispatch_timeout, int worker_timeout){
+	public TaskScheduler(WorkerDispatcherListener workerDispatcherListener, int dispatch_timeout, int worker_timeout,int max_retry_dispatches){
 		_requestQueue = new ConcurrentLinkedQueue<Request>();
 		_completedRequestsDestinations = new ConcurrentHashMap<Request, TaskClientHandler>();
 		_workerDispatcherListener = workerDispatcherListener;
 		_worker_timeout=worker_timeout;
 		_dispatch_timeout=dispatch_timeout;
+		_max_retry_dispatches=max_retry_dispatches;
 	}
 	
 	
@@ -109,17 +111,13 @@ private Request _request;
 		}
 		
 		public void run() {
-			System.out.println("debug begin "+_request.hashCode());
 			try {
 				Thread.sleep(_worker_timeout*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println("debug mid "+_request.hashCode());
 			synchronized (_request) {
-				System.out.println("debug mid2 "+_request.hashCode());
 				if(_completedRequestsDestinations.containsKey(_request)){
-					System.out.println("debug mid3 "+_request.hashCode());
 				System.out.println("A WorkerNode timed out"+
 						"\nThe task was: '"+_request.getTask()+"'("+_request.hashCode()+")");
 				_request.setTimedOut(true);
@@ -145,7 +143,7 @@ private Request _request;
 		
 				
 				public void run() {
-					while(true){
+					for(int i=0;true;i++){
 					try {
 						Thread.sleep(_dispatch_timeout*1000);
 					} catch (InterruptedException e) {
@@ -155,7 +153,7 @@ private Request _request;
 						break;
 					}
 					System.out.println("Re-dispatch request sent out");
-					if(!invokeWorker()){
+					if(i==_max_retry_dispatches||!invokeWorker()){
 						_request.setTimedOut(true);
 						returnCompletedRequest(_request);
 						break;

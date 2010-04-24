@@ -9,18 +9,23 @@ package edu.brown.cs32.siliclone.tasks.server;
 public class TaskServer {
 
     /**
-     * Usage: TaskServer <port> [<worker-timeout> [<dispatch-timeout]]
+     * Usage: TaskServer <port> [<worker-timeout> [<dispatch-timeout [max-dispatch-retries]]]
      */
     public static void main(String[] args) {
         
     	if(args.length!=1&&args.length!=2&&args.length!=3){
     		
-			System.err.println("Usage: TaskServer <port> [<worker-timeout> [<dispatch-timeout]]");
+			System.err.println("Usage: TaskServer <port> [<worker-timeout> [<dispatch-timeout [max-dispatch-retries]]]");
+			
 			System.exit(1);
 		}
     	int workertimeout=30;
-    	int dispatchtimeout=3;
-    	if(args.length==3){
+    	int dispatchtimeout=15;
+    	int maxretrydispatches=3;
+    	if(args.length>=4){
+    		maxretrydispatches = Integer.parseInt(args[3]);
+    	}
+    	if(args.length>=3){
     		dispatchtimeout = Integer.parseInt(args[2]);
     	}
     	if(args.length>=2){
@@ -33,7 +38,7 @@ public class TaskServer {
     	
     	WorkerDispatcherListener workerDispatcherListener = new WorkerDispatcherListener(workerDispatcherPort);
     	
-    	TaskScheduler scheduler = new TaskScheduler(workerDispatcherListener,dispatchtimeout,workertimeout);
+    	TaskScheduler scheduler = new TaskScheduler(workerDispatcherListener,dispatchtimeout,workertimeout,maxretrydispatches);
     	
     	TaskClientListener taskClientListener = new TaskClientListener(taskClientPort, scheduler);    	
     	
