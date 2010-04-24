@@ -20,14 +20,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
 	public User changePassword(User u, String newPassword) {
 		// TODO Auto-generated method stub
-		if(!u.getValid() || newPassword == null || u.getName() == null){
+		if(!u.isValid() || newPassword == null || u.getName() == null){
 			return u;
 		}
 		Statement statement = null;
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			
-			if(0 < statement.executeUpdate("update users set password = '"
+			if(0 < statement.executeUpdate("update sili_users set password = '"
 					+ newPassword.hashCode() + "' where name = '" + u.getName() + "';")){
 				u.setPassword(newPassword);
 			}
@@ -55,7 +55,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			res = statement.executeQuery(
-					"select password from users where name = '" + u.getName() + "';");
+					"select password from sili_users where name = '" + u.getName() + "';");
 			if(res.first()){ //reached 1st entry - row for the specified user
 				String hashedPassword = res.getString(1); //starts indexing at 1 
 				if(hashedPassword.equals("" + u.getPassword().hashCode())){
@@ -88,7 +88,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			res = statement.executeQuery(
-					"select password from users where name = '" + u.getName() + "';");
+					"select password from sili_users where name = '" + u.getName() + "';");
 			if(res.next()){ //reached 1st entry - row for the specified user
 				res.close();
 				statement.close();
@@ -97,7 +97,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			res.close();
 			
 			if(0 < statement.executeUpdate(
-					"insert into users (name, email, password)" +
+					"insert into sili_users (name, email, password)" +
 					" values ('" + u.getName() + "', '" + u.getEmail() +
 					"', '" + u.getPassword().hashCode() + "');")){ //success
 				u.setValid(true);
@@ -112,53 +112,19 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		return u;
 	}
 
-	
-	public static void main(String[] args){
-		UserServiceImpl i = new UserServiceImpl();
-		User u = new User();
-		u.setName("user2");
-		u.setValid(false);
-		u.setEmail("email@site.com");
-		u.setPassword("password");
-		u = i.register(u);
-		if(u.getValid()){
-			System.out.println("successfully registered new user!");
-		}
-		
-		u.setValid(false);
-		u = i.login(u);
-		if(u.getValid()){
-			System.out.println("successfully logged in!");
-		}
-		
-		u = i.changePassword(u, "password");
-		if(u.getPassword().equals("password")){
-			System.out.println("And change the password!");
-		}
-		
-		try {
-			Database.getSingleConnection().close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
-
-	
-	
 	public User remove(User u) {
-		if(u.getName() == null || !u.getValid()){
+		if(u.getName() == null || !u.isValid()){
 			return u;
 		}
 
 		Statement statement = null;
 		try{ //delete group memberships, then delete user, leave groups/data that others might need.
 			statement = Database.getSingleConnection().createStatement();
-			statement.executeUpdate("delete from groups where user = '" + u.getName() + "';");
+			statement.executeUpdate("delete from sili_groups where user = '" + u.getName() + "';");
 			
 			if(0 < statement.executeUpdate(
-					"delete from users where name = '" + u.getName() + "';")){
+					"delete from sili_users where name = '" + u.getName() + "';")){
 				u.setValid(false);
 			}
 		}catch (SQLException e){ e.printStackTrace();
@@ -191,7 +157,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			statement = Database.getSingleConnection().createStatement();
 			
 			res = statement.executeQuery(
-					"select from groups where user = '" + u.getName() + 
+					"select from sili_groups where user = '" + u.getName() + 
 					"' and groupname = '" + group + 
 					"' and owner = true;");
 			if(!res.next()){ //group was not found
@@ -212,7 +178,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			
 			
 			res = statement.executeQuery(
-					"select from groups where user = '" + userToAdd +
+					"select from sili_groups where user = '" + userToAdd +
 					"' and groupname = " + group + "';");
 			if(res.next()){ //already member
 				res.close();
@@ -222,7 +188,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			res.close();
 			
 			if(0 < statement.executeUpdate(
-					"inset into groups (user, groupname, owner) values ('" +
+					"inset into sili_groups (user, groupname, owner) values ('" +
 					userToAdd + "', '" + group + "', false);")){
 				res.close();
 				statement.close();
@@ -245,7 +211,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
 	public String createGroup(User u, String group) {
 		// TODO Auto-generated method stub
-		if(!u.getValid() || u.getName() == null || group == null){
+		if(!u.isValid() || u.getName() == null || group == null){
 			return "Null value or invalid user passed to createGroup";
 		}
 		
@@ -254,7 +220,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			res = statement.executeQuery(
-					"select from groups where groupname = '" + group + "';");
+					"select from sili_groups where groupname = '" + group + "';");
 			if(res.next()){
 				res.close();
 				statement.close();
@@ -295,7 +261,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			
-			res = statement.executeQuery("Select group from groups where user = '" + 
+			res = statement.executeQuery("Select group from sili_groups where user = '" + 
 					u.getName() + "';");
 			while(res.next()){
 				available.add(res.getString(1));
@@ -323,7 +289,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			
-			res = statement.executeQuery("Select group from groups where user = '" + 
+			res = statement.executeQuery("Select group from sili_groups where user = '" + 
 					u.getName() + "' and owner = true;");
 			while(res.next()){
 				owned.add(res.getString(1));
@@ -354,7 +320,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			
-			res = statement.executeQuery("Select user from groups where groupname = '" + 
+			res = statement.executeQuery("Select user from sili_groups where groupname = '" + 
 					group + "';");
 			while(res.next()){
 				users.add(res.getString(1));
@@ -382,7 +348,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 			
-			res = statement.executeQuery("select from groups where user = '" + 
+			res = statement.executeQuery("select from sili_groups where user = '" + 
 					u.getName() + "' and owner = true and groupname = '" + group + "';");
 			if(!res.next()){
 				res.close();
@@ -390,9 +356,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 				return "Group " + group + " not found with owner " + u.getName();
 			}
 			res.close();
-			
-			statement.executeUpdate("delete from groups where user = '" + userToRemove + "'" +
-					"and groupname = '" + group + "';");
+			//TODO fix this
+			//statement.executeUpdate("delete from sili_groups where user = '" + userToRemove + "'" +
+				//	"and groupname = '" + group + "';");
 			statement.close();
 			return "User " + userToRemove + " removed from group " + group;
 		}catch (SQLException e){
@@ -414,7 +380,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			statement = Database.getSingleConnection().createStatement();
 
-			res = statement.executeQuery("select from groups where user = '" + 
+			res = statement.executeQuery("select from sili_groups where user = '" + 
 					u.getName() + "' and owner = true and groupname = '" + group + "';");
 			if(!res.next()){
 				res.close();
@@ -423,7 +389,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			}
 			res.close();
 			
-			statement.executeUpdate("delete from groups where groupname = '" + group + "';");
+			//statement.executeUpdate("delete from sili_groups where groupname = '" + group + "';");
 			statement.close();
 			return "Group " + group + " removed.";
 		}catch (SQLException e){
@@ -434,4 +400,37 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			return "Error connecting to database to remove group.";
 		}	
 	}
+	
+	
+	public static void main(String[] args){
+		UserServiceImpl i = new UserServiceImpl();
+		User u = new User();
+		u.setName("user2");
+		u.setValid(false);
+		u.setEmail("email@site.com");
+		u.setPassword("password");
+		u = i.register(u);
+		if(u.isValid()){
+			System.out.println("successfully registered new user!");
+		}
+		
+		u.setValid(false);
+		u = i.login(u);
+		if(u.isValid()){
+			System.out.println("successfully logged in!");
+		}
+		
+		u = i.changePassword(u, "password");
+		if(u.getPassword().equals("password")){
+			System.out.println("And change the password!");
+		}
+		
+		try {
+			Database.getSingleConnection().close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }
