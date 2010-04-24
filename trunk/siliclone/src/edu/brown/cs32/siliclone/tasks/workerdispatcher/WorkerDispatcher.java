@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.tools.ant.taskdefs.Sleep;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -117,13 +119,29 @@ public class WorkerDispatcher {
 					System.err.println("Not connected to SSH server after trial.\nThis probably means the SSH server is down or you didn't give the right credentials\nDispatch failed.");
 					return;
 				}
+				Channel channel=null;
 		        try {
-		        Channel channel=sshSession.openChannel("exec");
+		        	int j=0;
+		        	while(channel==null||channel.isClosed()){
+			      		try {
+			      			j++;
+			      			System.out.println(j);
+		        channel=sshSession.openChannel("exec");
+		        
+		      	
+						Thread.sleep((long) (Math.random()*100));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		      	}
+		        
+		        
 		     // ((ChannelExec)channel).setCommand("sh dispatch.sh");
 		    //  ((ChannelExec)channel).setCommand("rename 's/track/track1/' track*");
 		      ((ChannelExec)channel).setCommand(command);
 		        
-		        
+
 				channel.connect();
 				System.out.println("Remote Dispatch happened");
 				
@@ -172,7 +190,7 @@ public class WorkerDispatcher {
 		        channel.disconnect();
 				
 				} catch (JSchException e) {
-					System.err.println("This is not good.");
+					System.err.println("This is not good."+channel.isClosed());
 					e.printStackTrace();
 				}
 				}

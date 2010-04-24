@@ -128,7 +128,7 @@ public class TaskClient implements Runnable{
 				}
 				synchronized(_returnedRequests){
 					_returnedRequests.putIfAbsent(incomingRequest,new TaskTimeoutPair(incomingRequest.getTask(),incomingRequest.getTimedOut()));
-					_returnedRequests.notify();
+					_returnedRequests.notifyAll();
 				}
 			
 			}
