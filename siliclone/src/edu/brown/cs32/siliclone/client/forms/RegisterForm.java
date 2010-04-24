@@ -21,6 +21,7 @@ import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 public class RegisterForm extends DynamicForm {
 	
 	public RegisterForm(final Siliclone main, final Window w){
+
 		setAutoFocus(true);
 
 		final TextItem username = new TextItem("uname", "Enter username");
@@ -43,6 +44,7 @@ public class RegisterForm extends DynamicForm {
 			public void onClick(ClickEvent event) {
 				if(!password.getDisplayValue().equals(password2.getDisplayValue())){
 					SC.say("Passwords entered are not the same.");
+					return;
 				}
 				
 				User u = new User(username.getDisplayValue(), password.getDisplayValue(), 

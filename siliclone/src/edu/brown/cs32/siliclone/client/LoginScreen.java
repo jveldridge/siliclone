@@ -72,7 +72,8 @@ public class LoginScreen extends HLayout {
 					final Window w = new Window();
 					
 					w.setTitle("Register");
-
+					w.setIsModal(true);  
+					w.setShowModalMask(true);  
 					w.setShowCloseButton(true);
 					
 					w.addItem(new RegisterForm(_main, w));

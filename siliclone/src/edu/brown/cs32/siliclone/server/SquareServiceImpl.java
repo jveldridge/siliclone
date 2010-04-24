@@ -25,7 +25,7 @@ public class SquareServiceImpl extends RemoteServiceServlet implements
 		SquareTask remoteTaskOut = null;
 		try {
 			
-			TaskClient taskClient = new TaskClient("localhost", 2010);
+			TaskClient taskClient = new TaskClient("everett-77.resnet.brown.edu", 2010);
 			
 			remoteTaskOut = (SquareTask) taskClient.computeTask(remoteTaskIn);
 			
