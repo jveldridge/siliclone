@@ -3,12 +3,14 @@ package edu.brown.cs32.siliclone.database.client;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import edu.brown.cs32.siliclone.accounts.User;
 
 /**
  * The User Service manages account access.
  */
+@RemoteServiceRelativePath("user")
 public interface UserService extends RemoteService {
 	/**
 	 * Given a user object (username and password are set)
