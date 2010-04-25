@@ -13,22 +13,12 @@ import edu.brown.cs32.siliclone.dna.DNASequence;
 public class DataServiceImpl extends RemoteServiceServlet implements
 		DataService {
 
-	public Operator findOperation(User u, String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public DNASequence findSequence(User u, String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Workspace findWorkspace(User u, String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<Operator> getAvailableOperations(User u) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -41,11 +31,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 	public List<String> getAvailableWorkspaces(User u) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public boolean saveOperation(User user, Operator o) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public boolean saveSequence(User user, DNASequence s) {

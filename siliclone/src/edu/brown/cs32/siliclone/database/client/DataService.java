@@ -66,25 +66,4 @@ public interface DataService extends RemoteService {
 	 * @return The list of available sequences, not null
 	 */
 	List<String> getAvailableSequences(User u);
-	/**
-	 * Saves the operation to the database.
-	 * @param user The user with username defined. not null
-	 * @param o The operation to be saved. not null
-	 * @return true if saving was successful, false otherwise
-	 */
-	boolean saveOperation(User user, Operator o);
-	/**
-	 * Retrieves the given operator if available.
-	 * @param u The user, with username defined. not null
-	 * @param id The filename of the operator. not null.
-	 * @return The operator if successful, null otherwise.
-	 */
-	Operator findOperation(User u, String id);
-	/**
-	 * Lists available operator filenames. An empty list is 
-	 * returned if none are available.
-	 * @param u The user, with username defined. not null
-	 * @return The list of operator names, empty if none can be retrieved.
-	 */
-	List<Operator> getAvailableOperations(User u);
 }
