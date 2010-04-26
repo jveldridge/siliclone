@@ -27,8 +27,8 @@ public class Siliclone implements EntryPoint {
 		_loginScreen = new LoginScreen(this);
 		_mainView = new MainView(this);
        
-		//this.showMainView();
-		this.showLoginScreen();
+		this.showMainView();
+		//this.showLoginScreen();
 		_panel.draw();
 	}
 	
@@ -43,6 +43,6 @@ public class Siliclone implements EntryPoint {
 	}
 	
 	public void makeNewWorkspace() {
-		_mainView.addWorkspace(new BasicWorkspace());
+		_mainView.addWorkspace(new BasicWorkspace("New Workspace"));
 	}
 }

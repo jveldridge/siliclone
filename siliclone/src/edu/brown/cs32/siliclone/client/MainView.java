@@ -33,7 +33,7 @@ public class MainView extends Canvas {
         Tab initialTab = new Tab("New Workspace");
 		initialTab.setCanClose(true);
 		_workspaceTabs.addTab(initialTab);
-		initialTab.setPane(new WorkspaceView(new BasicWorkspace()));
+		initialTab.setPane(new WorkspaceView(new BasicWorkspace("New Workspace")));
   
         HLayout notMenuLayout = new HLayout();  
         notMenuLayout.setHeight("*");  
@@ -51,10 +51,11 @@ public class MainView extends Canvas {
 	
 	public void addWorkspace(Workspace w) {
 		Tab newTab = new Tab();
-		newTab.setTitle("New Workspace");
+		newTab.setTitle(w.getName());
 		newTab.setCanClose(true);
 		newTab.setPane(new WorkspaceView(w));
 		_workspaceTabs.addTab(newTab);
+		_workspaceTabs.selectTab(newTab);
 	}
 	
 }
