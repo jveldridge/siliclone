@@ -9,6 +9,7 @@ import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 import edu.brown.cs32.siliclone.dna.DNASequence;
 import edu.brown.cs32.siliclone.operators.Operator;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
+import edu.brown.cs32.siliclone.operators.pcr.PCRPropertiesSelector;
 
 public class TestOp implements Operator {
 	private String name;
@@ -35,7 +36,7 @@ public class TestOp implements Operator {
 
 	public PropertiesSelector getPropertiesSelector() {
 		// TODO Auto-generated method stub
-		return null; //new Label("Selector for " + name);
+		return new PCRPropertiesSelector(null);
 	}
 
 	public Widget getWidget() {
