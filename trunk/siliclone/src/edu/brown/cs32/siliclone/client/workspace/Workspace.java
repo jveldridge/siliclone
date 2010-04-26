@@ -8,6 +8,23 @@ import edu.brown.cs32.siliclone.operators.Operator;
 public interface Workspace extends Serializable {
 
 	/**
+	 * Sets the name of this workspace.  The name is chosen
+	 * entirely at the discretion of the user.
+	 * 
+	 * @param name the name that this workspace should have.
+	 */
+	public void setName(String name);
+	
+	/**
+	 * Returns the name of this workspace.  The name is not 
+	 * necessarily unique, as it is set entirely at the discretion
+	 * of the user.
+	 * 
+	 * @return The name of this workspace.
+	 */
+	public String getName();
+	
+	/**
 	 * @param o The operator to be added (not null)
 	 */
 	public void addOperator(Operator o);

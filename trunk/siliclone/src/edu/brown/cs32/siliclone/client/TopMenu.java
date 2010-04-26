@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.client;
 
+import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
@@ -35,6 +36,8 @@ public class TopMenu extends ToolStrip {
         ToolStripButton saveButton = new ToolStripButton();
         saveButton.setTitle("Save");
         saveButton.setWidth("100px");
+        saveButton.addClickHandler(new SaveClickHandler());
+        
         this.addButton(newButton); 
         this.addButton(loadButton); 
         this.addButton(saveButton);
@@ -61,7 +64,6 @@ public class TopMenu extends ToolStrip {
         this.setWidth100();
         this.setShowResizeBar(false);
         
-        saveButton.setDisabled(true);
 	}
 	
 	private class LoadClickHandler implements ClickHandler {
@@ -74,6 +76,19 @@ public class TopMenu extends ToolStrip {
 		
 		public void onClick(ClickEvent event) {
 			openDialog.show();
+		}
+	}
+	
+	private class SaveClickHandler implements ClickHandler {
+		
+		private Dialog saveDialog;
+		
+		public SaveClickHandler() {
+			saveDialog = new Dialog();
+		}
+		
+		public void onClick(ClickEvent event) {
+			saveDialog.show();
 		}
 	}
 	

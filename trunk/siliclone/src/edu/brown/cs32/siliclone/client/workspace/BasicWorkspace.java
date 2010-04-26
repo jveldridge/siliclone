@@ -14,10 +14,12 @@ public class BasicWorkspace implements Workspace {
 	
 	private HashMap <String, Object> _properties;
 	private List<Operator> _operators;
+	private String _name;
 
-	public BasicWorkspace() {
+	public BasicWorkspace(String name) {
 		_properties = new HashMap<String, Object>();
 		_operators = new ArrayList<Operator>();
+		_name = name;
 	}
 
 	public void addOperator(Operator o) {
@@ -42,6 +44,14 @@ public class BasicWorkspace implements Workspace {
 
 	public void removeProperty(String key) {
 		_properties.remove(key);
+	}
+
+	public String getName() {
+		return _name;
+	}
+
+	public void setName(String name) {
+		_name = name;
 	}
 
 
