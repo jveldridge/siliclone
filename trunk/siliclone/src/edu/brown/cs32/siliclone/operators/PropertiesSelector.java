@@ -1,6 +1,7 @@
 package edu.brown.cs32.siliclone.operators;
 
 import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.EdgedCanvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -20,12 +21,18 @@ public abstract class PropertiesSelector extends VLayout {
 		Button okButton = new Button("OK");
 		okButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				hide();
+				if (verifyFields()) {
+					processInput();
+				}
 			}
 		});
 		
 		this.addMember(_form);
 		this.addMember(okButton);
 	}
+	
+	protected abstract boolean verifyFields();
+	
+	protected abstract void processInput();
 	
 }
