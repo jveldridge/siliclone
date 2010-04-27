@@ -24,4 +24,16 @@ public class PCRPropertiesSelector extends PropertiesSelector {
 		this.setAlign(Alignment.CENTER);
 		
 	}
+
+	@Override
+	protected void processInput() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected boolean verifyFields() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

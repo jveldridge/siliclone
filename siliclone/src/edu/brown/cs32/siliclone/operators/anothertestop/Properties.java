@@ -67,4 +67,18 @@ public class Properties extends PropertiesSelector {
 		
 	}
 
+
+	@Override
+	protected void processInput() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	protected boolean verifyFields() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
