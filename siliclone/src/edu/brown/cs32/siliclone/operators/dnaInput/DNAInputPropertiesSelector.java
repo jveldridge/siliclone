@@ -18,8 +18,11 @@ import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 public class DNAInputPropertiesSelector extends PropertiesSelector {
 	
 	private TabSet _sourceTabs;
+	private DNAInputOp _operator;
 	
-	public DNAInputPropertiesSelector() {
+	public DNAInputPropertiesSelector(DNAInputOp op) {
+		_operator = op;
+		
 		this.setSize("300px", "250px");
 		this.clear();
 		_sourceTabs = new TabSet();
@@ -61,6 +64,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 			public void onClick(ClickEvent event) {
 				if (manualForm.validate()) {
 					String seq = manualSequence.getDisplayValue();
+					
 					
 					DNAInputPropertiesSelector.this.hide();
 				}
