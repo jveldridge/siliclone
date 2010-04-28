@@ -19,7 +19,7 @@ public class PCRPropertiesSelector extends PropertiesSelector {
 		valueMap.put("Pfu", "Pfu");
 		enzyme.setValueMap(valueMap);
 		
-		_form.setFields(enzyme);
+		_form.setFields(enzyme, _okButton);
 		
 		this.setAlign(Alignment.CENTER);
 		
