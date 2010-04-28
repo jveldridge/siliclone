@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.dna.DNASequence;
-import edu.brown.cs32.siliclone.operators.Operator;
+import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 /**
  * Services for saving and retrieving user data
@@ -40,7 +40,7 @@ public interface DataService extends RemoteService {
 	 * @param u The user, with name defined. not null
 	 * @return A list of workspace names that the user can retrieve, not null
 	 */
-	List<String> getAvailableWorkspaces(User u);
+	List<SequenceHook> getAvailableWorkspaces(User u);
 	
 	/**
 	 * Saves the given sequence to the database.
@@ -51,14 +51,7 @@ public interface DataService extends RemoteService {
 	 * @return True is success (the sequence is now in the database) false otherwise.
 	 */
 	boolean saveSequence(User user, DNASequence s);
-	/**
-	 * Retrieves the requested sequence if available.
-	 * @param u The user with username defined. not null
-	 * @param id The filename identifying the sequence.
-	 * @return The sequence requested, null if failure (does not exists, 
-	 * 	permissions, or error)
-	 */
-	DNASequence findSequence(User u, String id);
+
 	/**
 	 * Lists available sequence filenames. An empty list is returned 
 	 * if none are available.
