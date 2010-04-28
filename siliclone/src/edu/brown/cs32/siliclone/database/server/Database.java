@@ -19,9 +19,9 @@ public class Database {
 	
 	// TODO - load these strings from a .config?
 	private static final String DRIVER = "org.gjt.mm.mysql.Driver"; //must be in class path
-	private static final String URL = "jdbc:mysql://everett-77.resnet.brown.edu/siliclone"; //must be running from dmhall's room
-	private static final String USERNAME = "javauser";
-	private static final String PASSWORD = "siliclone";
+	private static final String URL = "jdbc:mysql://mysql.vxcv.com/cs032002";
+	private static final String USERNAME = "cs032002";
+	private static final String PASSWORD = "indy123";
 	
 	static{
 		try {
@@ -133,4 +133,9 @@ public class Database {
 			return false;
 		}
 	}
+	
+	public static void main(String[] argv) {
+		Database.initializeDB(getConnection());
+	}
+	
 }
