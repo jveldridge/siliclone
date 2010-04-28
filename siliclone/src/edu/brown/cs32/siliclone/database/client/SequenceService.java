@@ -1,18 +1,16 @@
-package edu.brown.cs32.siliclone.dna;
+package edu.brown.cs32.siliclone.database.client;
 
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map.Entry;
 
+import com.google.gwt.user.client.rpc.RemoteService;
+
+import edu.brown.cs32.siliclone.database.NoSuchSequenceException;
+import edu.brown.cs32.siliclone.dna.NucleotideString;
+import edu.brown.cs32.siliclone.dna.SequenceHook;
 import edu.brown.cs32.siliclone.dna.features.Feature;
 
-/**
- * Specifies the methods of a DNA sequence.
- * IMPLEMENTATIONS ARE INTENDED FOR SERVER-SIDE USE ONLY.
- * 
- * @author jeldridg
- */
-
-public interface DNASequence extends Serializable {
+public interface SequenceService extends RemoteService {
 
 	/**
 	 * Returns a String representing the nucleotides that make up this sequence.
@@ -23,7 +21,7 @@ public interface DNASequence extends Serializable {
 	 * 
 	 * @return a String representing the nucleotides that make up this sequence.
 	 */
-	public String getSequence();
+	public NucleotideString getSequence(SequenceHook seq) throws NoSuchSequenceException;
 	
 	/**
 	 * Returns a Collection of all Features of a given type present in the sequence.
@@ -32,7 +30,7 @@ public interface DNASequence extends Serializable {
 	 * @param featureType a String indicating the type of features being requested
 	 * @return a Collection of all Features of a given type present in the sequence.
 	 */
-	public Collection<Feature> getFeaturesOfType(String featureType);
+	public Collection<Feature> getFeaturesOfType(SequenceHook seq, String featureType) throws NoSuchSequenceException;
 	
 	/**
 	 * Adds a feature to the Collection of features of this sequence.
@@ -42,7 +40,7 @@ public interface DNASequence extends Serializable {
 	 * @param toAdd the feature that should be added to this collection
 	 * @param type a String representing the type of the feature to be added
 	 */
-	public void addFeature(Feature toAdd, String type);
+	public void addFeature(SequenceHook seq, Feature toAdd, String type) throws NoSuchSequenceException;
 	
 	
 	// >>>do we want to have a method to get a single Collection or List with all features?
@@ -54,7 +52,7 @@ public interface DNASequence extends Serializable {
 	 * 
 	 * @return the length of this DNASequence
 	 */
-	public int length();
+	public int length(SequenceHook seq) throws NoSuchSequenceException;
 	
 	/**
 	 * Adds information about a particular property of this sequence.  The key
@@ -66,7 +64,7 @@ public interface DNASequence extends Serializable {
 	 * @param key a String representing the name of the property being added
 	 * @param value	the value of the property being added
 	 */
-	public void addProperty(String key, Object value);
+	public void addProperty(SequenceHook seq, String key, Object value) throws NoSuchSequenceException;
 	
 	/**
 	 * Returns information about a particular property of this sequence.
@@ -76,6 +74,16 @@ public interface DNASequence extends Serializable {
 	 * @param key a String representing the name of the property requested
 	 * @return information about a particular property of this sequence.
 	 */
-	public Object getProperty(String key);
+	public Object getProperty(SequenceHook seq, String key) throws NoSuchSequenceException;
+	
+	/**
+	 * Adds the nucleotide sequence to the database.
+	 * 
+	 * @param nucleotides
+	 * @param features
+	 * @return a SequenceHook that can be used to reference the newly added sequence
+	 */
+	public SequenceHook saveSequence(NucleotideString nucleotides, Collection<Feature> features, 
+									 Collection<Entry<String,Object>> properties);
 	
 }

@@ -3,7 +3,7 @@ package edu.brown.cs32.siliclone.operators;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import edu.brown.cs32.siliclone.dna.DNASequence;
+import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 public abstract class AbstractOperator implements Operator {
 
@@ -11,7 +11,7 @@ public abstract class AbstractOperator implements Operator {
 	
 	protected int _xPos, _yPos;
 	protected ArrayList<Operator> _adjacent = new ArrayList<Operator>();
-	protected DNASequence _output;
+	protected SequenceHook _output;
 
 	public void cancel() {
 		// TODO Auto-generated method stub
@@ -43,6 +43,9 @@ public abstract class AbstractOperator implements Operator {
 		_yPos = y;
 	}
 
+	public SequenceHook getOutputSequence() {
+		return _output;
+	}
 	
 	
 }

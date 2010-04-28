@@ -6,6 +6,7 @@ import java.util.Collection;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
+import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 /**
  * Specifies the methods of an Operator object that will be used
@@ -66,11 +67,26 @@ public interface Operator extends Serializable {
 	 * @return The x-coordinate for this operator placed on a workspace.
 	 */
 	int getX();
+	
 	/**
 	 * @return The y-coordinate for this operator placed on a workspace.
 	 */
 	int getY();
+	
 	void setX(int x); 
+	
 	void setY(int y);
+	
+	/**
+	 * Returns the SequenceHook representing the DNA sequence that results
+	 * from running this operation with its current input.  If the output
+	 * sequence is not currently valid, the SequenceHook returned will cause
+	 * a NoSuchSequenceException to be thrown if it is passed to any RPC
+	 * that accesses the sequence database.
+	 * 
+	 * @return the SequenceHook representing the DNA sequence that results
+	 * from running this operation with its current input
+	 */
+	public SequenceHook getOutputSequence();
 	
 }
