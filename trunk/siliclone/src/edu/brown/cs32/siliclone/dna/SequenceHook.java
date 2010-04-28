@@ -11,17 +11,23 @@ import java.io.Serializable;
  */
 public class SequenceHook implements Serializable {
 
-	private int _hook;
+	private int _dataID;
+	private int _seqID;
 
 	//constructor for serialization
 	public SequenceHook() { }
 	
-	public SequenceHook(int hook) {
-		_hook = hook;
+	public SequenceHook(int dataID, int seqID) {
+		_dataID = dataID;
+		_seqID = seqID;
 	}
 	
-	public int getHook() {
-		return _hook;
+	public int getDataID() {
+		return _dataID;
+	}
+	
+	public int getSeqID() {
+		return _seqID;
 	}
 	
 }

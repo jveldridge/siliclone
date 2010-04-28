@@ -15,6 +15,7 @@ import edu.brown.cs32.siliclone.dna.SequenceHook;
  * and simply check the username.
  */
 public interface DataService extends RemoteService {
+	
 	/**
 	 * Saves the given workspace to the server's database.
 	 * The workspace defines a layout of many operators.
@@ -26,6 +27,7 @@ public interface DataService extends RemoteService {
 	 * @return true if saving was successful, false otherwise.
 	 */
 	boolean saveWorkspace(User user, Workspace w);
+	
 	/**
 	 * Retrieves the requested workspace, if the workspace exists and the user 
 	 * has permission. 
@@ -34,6 +36,7 @@ public interface DataService extends RemoteService {
 	 * @return If successful the requested workspace is returned, null otherwise.
 	 */
 	Workspace findWorkspace(User u, String id);
+	
 	/**
 	 * Gives a list of the saved workspace filenames available to the user. 
 	 * If no workspaces are available, returns an empty list.
