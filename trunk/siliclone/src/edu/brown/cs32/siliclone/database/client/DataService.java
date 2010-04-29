@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.database.client;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -26,7 +27,7 @@ public interface DataService extends RemoteService {
 	 * @param w The workspace to be saved. Not null
 	 * @return true if saving was successful, false otherwise.
 	 */
-	boolean saveWorkspace(User user, Workspace w);
+	boolean saveWorkspace(Workspace w, String name) throws IOException;
 	
 	/**
 	 * Retrieves the requested workspace, if the workspace exists and the user 
@@ -35,7 +36,7 @@ public interface DataService extends RemoteService {
 	 * @param id The "filename" of the workspace. not null
 	 * @return If successful the requested workspace is returned, null otherwise.
 	 */
-	Workspace findWorkspace(User u, String id);
+	Workspace findWorkspace(String name) throws IOException;
 	
 	/**
 	 * Gives a list of the saved workspace filenames available to the user. 
@@ -43,7 +44,7 @@ public interface DataService extends RemoteService {
 	 * @param u The user, with name defined. not null
 	 * @return A list of workspace names that the user can retrieve, not null
 	 */
-	List<SequenceHook> getAvailableWorkspaces(User u);
+	List<String> getAvailableWorkspaces() throws IOException;
 	
 	/**
 	 * Saves the given sequence to the database.
@@ -53,7 +54,7 @@ public interface DataService extends RemoteService {
 	 * @param s The sequence to write. not null
 	 * @return True is success (the sequence is now in the database) false otherwise.
 	 */
-	boolean saveSequence(User user, DNASequence s);
+	boolean saveSequence(DNASequence s, String name) throws IOException;
 
 	/**
 	 * Lists available sequence filenames. An empty list is returned 
@@ -61,5 +62,5 @@ public interface DataService extends RemoteService {
 	 * @param u The user, with username defined. not null
 	 * @return The list of available sequences, not null
 	 */
-	List<String> getAvailableSequences(User u);
+	List<SequenceHook> getAvailableSequences() throws IOException;
 }

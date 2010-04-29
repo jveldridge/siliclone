@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import edu.brown.cs32.siliclone.database.NoSuchSequenceException;
+import edu.brown.cs32.siliclone.database.client.NoSuchSequenceException;
 import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.SequenceHook;

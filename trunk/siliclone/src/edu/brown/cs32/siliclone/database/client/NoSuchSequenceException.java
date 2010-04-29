@@ -1,4 +1,6 @@
-package edu.brown.cs32.siliclone.database;
+package edu.brown.cs32.siliclone.database.client;
+
+import java.io.IOException;
 
 import edu.brown.cs32.siliclone.dna.SequenceHook;
 
@@ -11,7 +13,7 @@ import edu.brown.cs32.siliclone.dna.SequenceHook;
  * 
  * @author jeldridg
  */
-public class NoSuchSequenceException extends Exception {
+public class NoSuchSequenceException extends IOException {
 
 	private SequenceHook _hook;
 	

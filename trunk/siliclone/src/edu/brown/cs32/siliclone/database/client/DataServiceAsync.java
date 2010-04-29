@@ -11,15 +11,16 @@ import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 public interface DataServiceAsync {
 
-	void findWorkspace(User u, String id, AsyncCallback<Workspace> callback);
 
-	void getAvailableSequences(User u, AsyncCallback<List<String>> callback);
+	void saveSequence(DNASequence s, String name, AsyncCallback<Boolean> callback);
 
-	void getAvailableWorkspaces(User u, AsyncCallback<List<SequenceHook>> callback);
+	void getAvailableSequences(AsyncCallback<List<SequenceHook>> callback);
 
-	void saveSequence(User user, DNASequence s, AsyncCallback<Boolean> callback);
+	
+	
+	void saveWorkspace(Workspace w, String name, AsyncCallback<Boolean> callback);
 
-	void saveWorkspace(User user, Workspace w, AsyncCallback<Boolean> callback);
+	void findWorkspace(String name, AsyncCallback<Workspace> callback);
 
-
+	void getAvailableWorkspaces(AsyncCallback<List<String>> callback);
 }
