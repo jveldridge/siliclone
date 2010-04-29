@@ -19,7 +19,7 @@ public interface UserService extends RemoteService {
 	 * @param u The user being validated, with username and password. not null
 	 * @return True if the user was validated, false otherwise.
 	 */
-	User login(User u) throws IOException;
+	User login(User u) throws FailedConnectionException;
 	/**
 	 * Given a user that was already validated, changes their password in the 
 	 * database. Note that the user object needs to be updated with the password after.
@@ -34,7 +34,7 @@ public interface UserService extends RemoteService {
 	 * @param u The new user to be added. not null
 	 * @return true if registration was successful, false otherwise.
 	 */
-	User register(User u) throws IOException;
+	User register(User u) throws FailedConnectionException;
 	
 	
 	User remove(User u) throws IOException;

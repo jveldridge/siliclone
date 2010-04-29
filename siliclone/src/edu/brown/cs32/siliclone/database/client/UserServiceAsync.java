@@ -12,9 +12,9 @@ public interface UserServiceAsync {
 	void changePassword(String newPassword,
 			AsyncCallback<User> callback) throws IOException;
 
-	void login(User u, AsyncCallback<User> callback) throws IOException;
+	void login(User u, AsyncCallback<User> callback) throws FailedConnectionException;
 
-	void register(User u, AsyncCallback<User> callback) throws IOException;
+	void register(User u, AsyncCallback<User> callback) throws FailedConnectionException;
 
 	void remove(User u, AsyncCallback<User> callback) throws IOException;
 

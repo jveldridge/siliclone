@@ -16,12 +16,16 @@ import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.Siliclone;
+import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 public class LoginForm extends DynamicForm {
 	
-	public LoginForm(final Siliclone main){
+	private Siliclone _main;
+	
+	public LoginForm(final Siliclone main) {
+		_main = main;
 		setAutoFocus(true);
 		
 		final TextItem username = new TextItem("Username");
@@ -36,67 +40,52 @@ public class LoginForm extends DynamicForm {
 		
 		
 		submit.addClickHandler(new ClickHandler() {
-			private final UserServiceAsync service = GWT.create(UserService.class); 
 			public void onClick(ClickEvent event) {
 				User u = new User(username.getDisplayValue(), password.getDisplayValue());
-				AsyncCallback<User> callback = new AsyncCallback<User>() {
-
-					public void onFailure(Throwable caught) {
-						SC.say("Error connecting.");
-					}
-					
-					public void onSuccess(User result) {
-						if (result.isValid()) {
-							main.showMainView();
-							
-							//SC.say("success!");
-						}
-						else {
-							SC.say("Bad username or password");
-						}
-					}
-				};
-				service.login(u, callback);
+				LoginForm.this.login(u);
 			}
 		});
 		
-		
-		
-		password.addKeyPressHandler(new KeyPressHandler() {
-			private final UserServiceAsync service = GWT.create(UserService.class); 
+		password.addKeyPressHandler(new KeyPressHandler() {	
 			public void onKeyPress(KeyPressEvent event) {
 				if(!event.getKeyName().equals("Enter")){
 					return;
 				}
+				
 				User u = new User(username.getDisplayValue(), password.getDisplayValue());
-				AsyncCallback<User> callback = new AsyncCallback<User>() {
-
-					public void onFailure(Throwable caught) {
-						SC.say("Error connecting.");
-					}
-					
-					public void onSuccess(User result) {
-						if (result.isValid()) {
-							main.showMainView();
-							
-							//SC.say("success!");
-						}
-						else {
-							SC.say("Bad username or password");
-						}
-					}
-				};
-				service.login(u, callback);
+				LoginForm.this.login(u);
 			}
 		});
-		
-		
-		
 		
 		
 		setFields(new FormItem[] {username, password, submit});
 		
 		setAlign(Alignment.CENTER);
+	}
+	
+	private void login(User u) {
+		final UserServiceAsync service = GWT.create(UserService.class); 
+		
+		AsyncCallback<User> callback = new AsyncCallback<User>() {
+			public void onFailure(Throwable caught) {
+				SC.say("Error connecting.");
+			}
+			
+			public void onSuccess(User result) {
+				if (result != null) {
+					_main.showMainView();
+				}
+				else {
+					SC.say("Bad username or password");
+				}
+			}
+		};
+	
+		try {
+			service.login(u, callback);
+		} catch (FailedConnectionException e) {
+			SC.say("Could not connect to user database");
+		}
 	}
 
 }
