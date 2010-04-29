@@ -87,10 +87,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
 		
-		try{
-			PreparedStatement statement = conn.prepareStatement("select  from " + 
-					Database
-		}
+//		try{
+//			PreparedStatement statement = conn.prepareStatement("select  from " + 
+//					Database
+//		}
 		
 		// TODO Auto-generated method stub
 		return null;

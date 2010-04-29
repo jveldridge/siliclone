@@ -1,6 +1,6 @@
 package edu.brown.cs32.siliclone.database.server;
 
-
+//TODO move everything to finallys, throw proper types of exceptions, and comment code
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -40,7 +40,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 	
-	//null if no user  
+	//null if no user--change type of exception thrown
 	private User getLoggedIn() throws IOException{
 		User u = (User) this.getThreadLocalRequest().getSession().getAttribute("user");
 		if(u == null){
@@ -52,20 +52,25 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	private void setLoggedIn(User u){
 		this.getThreadLocalRequest().getSession().setAttribute("user", u);
 	}
-	
-	
 
-	public User login(User u) throws IOException{
+	/**
+	 * Logs in the user passed as a parameter.  If the login was successful,
+	 * the same user object will be returned.  If the login was unsuccessful,
+	 * this method returns null.
+	 * 
+	 * @param u User to be logged in
+	 * @return an object representing the User now logged in
+	 * @throws FailedConnectionException if connecting to the 
+	 * 		   database was unsuccessful
+	 */
+	public User login(User u) throws FailedConnectionException {
 		if(u == null || u.getName() == null || u.getPassword() == null){
 			return null;
 		}
+		
 		String password = encrypt(u.getPassword(), 50);
-		if(password == null){
-			return null;
-		}
 		
 		Connection conn = Database.getConnection();
-		
 		try{
 			PreparedStatement statement = conn.prepareStatement("select id, email from " + Database.USERS + " where " +
 					"name = ? and password = ? ;");
@@ -79,11 +84,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 				u.setPassword(null);
 				setLoggedIn(u);
 			}else {
-				u = null;
+				u = null; //no such user was found in the database
 			}
 			conn.close();
 			return u;
-		}catch (Exception e){ 
+		}catch (SQLException e){ 
 			e.printStackTrace();
 			try {
 				conn.close();
@@ -128,7 +133,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		
 
 	//todo javax.mail 
-	public User register(User u) throws IOException {
+	public User register(User u) throws FailedConnectionException {
 		if(u == null || u.getEmail() == null || u.getName() == null || u.getPassword() == null){
 			return null;
 		}
@@ -145,6 +150,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			
 			ResultSet res = statement.executeQuery();
 			
+			//TODO indicate to client in some what that this method is failing
+			//	   because there is already a User in the database with this login
+			//	   (perhaps a DuplicateUserException or something?)
 			if(res.next()){ //reached 1st entry - row for the specified user
 				conn.close();
 				return null;
