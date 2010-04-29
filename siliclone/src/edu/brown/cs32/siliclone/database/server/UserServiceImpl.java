@@ -2,6 +2,7 @@ package edu.brown.cs32.siliclone.database.server;
 
 
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -14,12 +15,11 @@ import java.util.List;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.brown.cs32.siliclone.accounts.User;
+import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 
 public class UserServiceImpl extends RemoteServiceServlet implements
 		UserService {
-	
-	//TODO better security?
 	
 	//source http://www.rgagnon.com/javadetails/java-0400.html
 	private String encrypt(String word, int maxLength){
@@ -40,125 +40,115 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 	
+	//null if no user  
+	private User getLoggedIn() throws IOException{
+		User u = (User) this.getThreadLocalRequest().getSession().getAttribute("user");
+		if(u == null){
+			throw new IOException("User is no longer logged in.");
+		}
+		return u;
+	}
 	
-	public User changePassword(User u, String newPassword) {
-		if(!u.isValid() || newPassword == null || u.getName() == null){
-			return u;
+	private void setLoggedIn(User u){
+		this.getThreadLocalRequest().getSession().setAttribute("user", u);
+	}
+	
+	
+
+	public User login(User u) throws IOException{
+		if(u == null || u.getName() == null || u.getPassword() == null){
+			return null;
+		}
+		String password = encrypt(u.getPassword(), 50);
+		if(password == null){
+			return null;
 		}
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			System.err.println("could not connect to database");
-			return u;
-		}
-		
-		String password = encrypt(newPassword, 50);
-		if(password == null){
-			return u;
-		}
-		
-		
-		PreparedStatement statement = null;
 		
 		try{
-			statement = conn.prepareStatement("update " + Database.USERS + 
+			PreparedStatement statement = conn.prepareStatement("select id, email from " + Database.USERS + " where " +
+					"name = ? and password = ? ;");
+			statement.setString(1, u.getName());
+			statement.setString(2, password);
+			
+			ResultSet res = statement.executeQuery();
+			if(res.first()){ //reached 1st entry - row for the specified user with password
+				u.setId(res.getInt(1));
+				u.setEmail(res.getString(2));
+				u.setPassword(null);
+				setLoggedIn(u);
+			}else {
+				u = null;
+			}
+			conn.close();
+			return u;
+		}catch (Exception e){ 
+			e.printStackTrace();
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+			throw new FailedConnectionException();
+		}
+	}
+	
+	
+	
+	public User changePassword(String newPassword) throws IOException {
+		User u = getLoggedIn();
+		if(newPassword == null){
+			return null;
+		}
+		
+		Connection conn = Database.getConnection();
+		
+		String password = encrypt(newPassword, 50);
+		if(password == null){ return null; }
+		
+		try{
+			PreparedStatement statement = conn.prepareStatement("update " + Database.USERS + 
 						" set password = ? where name = ? ;");
 			statement.setString(1, password);
 			statement.setString(2, u.getName());
 			
 			if(0 < statement.executeUpdate()){
-				u.setPassword(newPassword);
-			}
-			
-		}catch (SQLException e){ e.printStackTrace();
-		}finally{
-			try {
-				if(statement != null){ statement.close();}
 				conn.close();
-			} catch (SQLException e) { e.printStackTrace(); }
+			}else{
+				u = null;
+			}
+			return u;
+		}catch (SQLException e){ 
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+			throw new FailedConnectionException();
 		}
-		return u;
 	}
 
-	
-	
-	public User login(User u) {
 		
-		if(u.getName() == null || u.getPassword() == null){
-			return u;
+
+	//todo javax.mail 
+	public User register(User u) throws IOException {
+		if(u == null || u.getEmail() == null || u.getName() == null || u.getPassword() == null){
+			return null;
 		}
 
 		String password = encrypt(u.getPassword(), 50);
-		if(password == null){
-			return u;
-		}
+		if(password == null){ return null; }
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			System.err.println("could not connect to database");
-			return u;
-		}
-		
-		PreparedStatement statement = null;
-		ResultSet res = null;
-		try{
-			statement = conn.prepareStatement("select * from " + Database.USERS + " where " +
-					"name = ? and password = ? ;");
-			statement.setString(1, u.getName());
-			statement.setString(2, password);
-			
-			res = statement.executeQuery();
-			if(res.first()){ //reached 1st entry - row for the specified user with password
-				u.setValid(true);
-			}
-		}catch (Exception e){ e.printStackTrace();
-		}finally{
-			try {
-				if(res != null){ res.close();} 
-				if(statement != null){ statement.close(); }
-				conn.close();
-			}catch (SQLException e) { e.printStackTrace(); }
-		}
-		return u;
-	}
-
-	
-	
-	
-	public User register(User u) {
-		if(u.getEmail() == null || u.getEmail() == null || u.getPassword() == null){
-			return u;
-		}
-
-		String password = encrypt(u.getPassword(), 50);
-		if(password == null){
-			return u;
-		}
-		
-		Connection conn = Database.getConnection();
-		if(conn == null){
-			System.err.println("could not connect to database");
-			return u;
-		}
-		
-		PreparedStatement statement = null;
-		ResultSet res = null;
 		
 		try{
-			statement = conn.prepareStatement("select password from " + Database.USERS + 
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + 
 					" where name = ? ;");
 			statement.setString(1, u.getName());
 			
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			
 			if(res.next()){ //reached 1st entry - row for the specified user
-				res.close();
-				statement.close();
 				conn.close();
-				return u;
+				return null;
 			}
-			res.close();
-			statement.close();
 			
 			statement = conn.prepareStatement("insert into "+ Database.USERS + 
 					"(name, email, password) values (?,?,?);");
@@ -167,49 +157,47 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			statement.setString(3, password);
 			
 			if(0 < statement.executeUpdate()){
-				u.setValid(true);
+				statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;"); //all
+				statement.setString(1, u.getName());  // of this 
+				res= statement.executeQuery(); // will be 
+				u.setId(res.getInt(1));// deleted
+				conn.close();
+				u.setPassword(null);
+				setLoggedIn(u);//todo send email instead
+				return u;
+			}else{
+				conn.close();
+				throw new FailedConnectionException();
 			}
-		}catch (SQLException e){ e.printStackTrace();
-		}finally{
+		}catch (SQLException e){
 			try {
-				if(res != null) {res.close();}
-				if(statement != null){statement.close();
-				conn.close();}
-			}catch (SQLException e){e.printStackTrace();}
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+			throw new FailedConnectionException();
 		}
-		return u;
 	}
 
 	
-
-	public User remove(User u) {
-		if(u.getName() == null || !u.isValid()){
-			return u;
+	//todo email notification?
+	public User remove(User u)  throws IOException {
+		if(u== null || u.getName() == null){
+			return null;
 		}
 
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			System.err.println("could not connect to database");
-			return u;
-		}
 
-		PreparedStatement statement = null;
-		ResultSet res = null;
 		try{ //delete group memberships, then delete user, leave groups/data that others might need.
-			statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;" );
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;" );
 			statement.setString(1, u.getName());
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			if(!res.next()){
-				res.close();
-				statement.close();
 				conn.close();
-				return u;
+				return null;
 			}
 			int id = res.getInt(1);
-			res.close();
 			
 			if(0 < statement.executeUpdate("delete from " + Database.USERS + " where id = " + id + ";")){
-				u.setValid(false);
+				return null;
 			}
 			statement.executeUpdate("delete from " + Database.GROUP_PERMISSIONS + " where member_id = " + id);
 			statement.executeUpdate("delete from " + Database.WORKSPACE_USER_PERMISSIONS + " where user_id = " + id);
@@ -217,8 +205,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		}catch (SQLException e){ e.printStackTrace();
 		}finally{
 			try{
-				if(res != null){ res.close();}
-				if(statement != null){ statement.close();}
 				conn.close();
 			}catch (SQLException e){e.printStackTrace();}
 		}
@@ -228,44 +214,25 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
 	
 	
-	public String addToGroup(User u, String group, String userToAdd) {
-		if(u.getName() == null || group == null || userToAdd == null){
-			return "Null value given to addToGroup";
+	public String addToGroup(String group, String userToAdd) throws IOException {
+		User u = getLoggedIn();
+		if(group == null || userToAdd == null){
+			throw new IOException("A null value was passed to UserService.addToGroup.");
 		}
 
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			return "Connection error";
-		}
 		
-		PreparedStatement statement = null;
-		ResultSet res = null;
 		try{
-			statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;" );
-			statement.setString(1, u.getName());
-			res = statement.executeQuery();
-			if(!res.next()){
-				res.close();
-				statement.close();
-				conn.close();
-				return "could not find requesting user in database.";
-			}
-			int ownerId = res.getInt(1);
-			res.close();
-			statement.close();
+			int ownerId = u.getId();
 			
-			statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;" );
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;" );
 			statement.setString(1, userToAdd);
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			if(!res.next()){
-				res.close();
-				statement.close();
 				conn.close();
-				return "could not find user to add in database.";
+				return "could not find user "+userToAdd+ " to add in database.";
 			}
 			int newId = res.getInt(1);
-			res.close();
-			statement.close();
 
 			statement = conn.prepareStatement("select id from " + Database.GROUPS +
 					" where group_name = ? and owner_id = ?;");
@@ -273,15 +240,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			statement.setInt(2, ownerId);
 			res = statement.executeQuery();
 			if(!res.next()){
-				res.close();
-				statement.close();
 				conn.close();
-				return "could not group " + group + " with requesting owner.";
+				return "could not find group " + group + " with requesting owner " + u.getName();
 			}
 			int groupId = res.getInt(1);
-			res.close();
-			statement.close();
-			
 
 			statement = conn.prepareStatement("select id from " + Database.GROUP_PERMISSIONS +
 					" where group_id = ? and member_id = ?;");
@@ -289,31 +251,23 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			statement.setInt(2, newId);
 			res = statement.executeQuery();
 			if(!res.next()){
-				res.close();
-				statement.close();
 				conn.close();
 				return "User " + userToAdd + " is already a member of group " + group;
 			}
-			res.close();
-			statement.close();
 			
 			statement = conn.prepareStatement("insert into " + Database.GROUP_PERMISSIONS
 					+ " (group_id, member_id) values (?, ?);");
 			statement.setInt(1, groupId);
 			statement.setInt(2, newId);
 			if(0 < statement.executeUpdate()){
-				statement.close();
 				conn.close();
 				return "User " + userToAdd + " successfully added to group " + group;
 			}else {
-				statement.close();
 				conn.close();
 				return "Could not add user " + userToAdd + " to group " + group;
 			}
 		}catch (SQLException e){ 
 			try{
-				if(res != null){res.close();}
-				if(statement != null){statement.close();}
 				conn.close();
 			}catch(SQLException e1){e1.printStackTrace();}
 			return "Error calling database to add user to group.";
@@ -323,235 +277,164 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
 		
 
-	public String createGroup(User u, String group) {
-		if(!u.isValid() || u.getName() == null || group == null){
-			return "Null value or invalid user passed to createGroup";
+	public String createGroup(String group) throws IOException {
+		User u = getLoggedIn();
+		if(group == null){
+			return "Null value passed to UserService.createGroup";
 		}
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			return "Connection error";
-		}
 		
-		PreparedStatement statement = null;
-		ResultSet res = null;
 		try{
-			statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?");
-			statement.setString(1, u.getName());
-			res = statement.executeQuery();
-			if(!res.next()){
-				res.close();
-				statement.close();
-				conn.close();
-				return "error - user could not be found in database.";
-			}
-			int id = res.getInt(1);
-			res.close();
-			statement.close();
+			int id = u.getId();
 			
-			
-			statement = conn.prepareStatement("select id from " + Database.GROUPS + "where group_name = ?");
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS + "where group_name = ?");
 			statement.setString(1, group);
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			if(res.next()){
-				res.close();
-				statement.close();
 				conn.close();
 				return "Group with name " + group + " already exists";
 			}
-			res.close();
-			statement.close();
 			
 			statement = conn.prepareStatement("insert into " + Database.GROUPS + " (group_name, owner_id) values (?,?);");
 			statement.setString(1, group);
 			statement.setInt(2, id);
 			if(0 < statement.executeUpdate()){
-				statement.close();
 				conn.close();
 				return "Group " + group + " successfully created with owner " + u.getName();
 			}else {
-				statement.close();
 				conn.close();
 				return "Group " + group + " could not be added";
 			}
 		}catch (SQLException e){
 			try{
-				if(res != null){ res.close();}
-				if(statement != null){ statement.close();}
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
-			return "There was an error when making the group.";
+			throw new FailedConnectionException();
 		}
 	}
 
 
 	
 
-	public List<String> getAvailableGroups(User u) {
-		ArrayList<String> available = (ArrayList<String>) getOwnedGroups(u);
-		if(u.getName() == null){
-			return available;
-		}
+	public List<String> getAvailableGroups() throws IOException {
+		User u = getLoggedIn();
+		ArrayList<String> available = (ArrayList<String>) getOwnedGroups();
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			System.err.println("error connecting to database");
-			return available;
-		}
 		
-		PreparedStatement statement = null;
-		ResultSet res1 = null;
-		ResultSet res2 = null;
 		try{
-			statement = conn.prepareStatement("Select id from " + Database.USERS + " where name = ?");
-			statement.setString(1, u.getName());
-			res1 = statement.executeQuery();
-			if(!res1.next()){
-				res1.close();
-				statement.close();
-				conn.close();
-				System.err.println("Querying user could not be found " + u.getName());
-				return available;
-			}
-			int id = res1.getInt(1);
-			res1.close();
-			statement.close();
+			int id = u.getId();
 			
-			statement = conn.prepareStatement("Select group_id from " + Database.GROUP_PERMISSIONS + " where member_id = ?");
+			PreparedStatement statement = conn.prepareStatement("Select " + Database.GROUPS + ".group_name from " + 
+					Database.GROUP_PERMISSIONS + " left join " + Database.GROUPS + " on " +
+					Database.GROUP_PERMISSIONS + ".group_id = " + Database.GROUPS + ".id where " + 
+					Database.GROUP_PERMISSIONS + ".member_id = ?");
 			statement.setInt(1, id);
-			res1 = statement.executeQuery();
-			while(res1.next()){
-				res2 = statement.executeQuery("Select group_name from " + Database.GROUPS + " where id = " + res1.getInt(1));
-				available.add(res2.getString(1));
-				res2.close();
+			ResultSet res = statement.executeQuery();
+			while(res.next()){
+				available.add(res.getString(1));
 			}
-			res1.close();
-			statement.close();
-		}catch (SQLException e){e.printStackTrace();
-		}finally {
-			try{
-				if(res1 != null){ res1.close();}
-				if(res2 != null){ res2.close();}
-				if(statement != null){ statement.close();}
+			conn.close();
+			return available;
+		}catch (SQLException e){
+			try {
 				conn.close();
-			}catch (SQLException e){e.printStackTrace();}
+			} catch (SQLException e1) { e1.printStackTrace(); }
+			throw new FailedConnectionException();
 		}
-		return available;
 	}
 
 
 
-	public List<String> getOwnedGroups(User u) {
+	public List<String> getOwnedGroups() throws IOException {
+		User u = getLoggedIn();
+		
 		ArrayList<String> owned = new ArrayList<String>();
-		if(u.getName() == null){
-			return owned;
-		}
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			System.err.println("error connecting to database");
-			return owned;
-		}
 		
-		PreparedStatement statement = null;
-		ResultSet res = null;
 		try{
-			statement = conn.prepareStatement("Select id from " + Database.USERS + " where name = ?");
-			statement.setString(1, u.getName());
-			res = statement.executeQuery();
-			if(!res.next()){
-				res.close();
-				statement.close();
-				conn.close();
-				System.err.println("Querying user could not be found " + u.getName());
-				return owned;
-			}
-			int id = res.getInt(1);
-			res.close();
-			statement.close();
+			int id = u.getId();
 			
-			statement = conn.prepareStatement("Select group_name from " + Database.GROUPS + " where owner_id = ?");
+			PreparedStatement statement = conn.prepareStatement("Select group_name from " + Database.GROUPS + " where owner_id = ?");
 			statement.setInt(1, id);
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			while(res.next()){
 				owned.add(res.getString(1));
 			}
-			res.close();
-			statement.close();
-		}catch (SQLException e){e.printStackTrace();
-		}finally {
-			try{
-				if(res != null){ res.close();}
-				if(statement != null){ statement.close();}
+			conn.close();
+			return owned;
+		}catch (SQLException e){
+			try {
 				conn.close();
-			}catch (SQLException e){e.printStackTrace();}
+			} catch (SQLException e1) { e1.printStackTrace(); }
+			throw new FailedConnectionException();
 		}
-		return owned;
 	}
 
 
 
-	public List<String> getUsersWithAccessToGroup(String group) {
-		ArrayList<String> users = new ArrayList<String>();
+	public List<User> getUsersWithAccessToGroup(String group) throws IOException {
+		ArrayList<User> users = new ArrayList<User>();
+		
 		if(group == null){
 			return users;
 		}
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			System.err.println("error connecting to database");
-			return users;
-		}
 		
-		PreparedStatement statement = null;
-		ResultSet res1 = null;
-		ResultSet res2 = null;
 		try{
-			statement = conn.prepareStatement("select * from " + Database.GROUPS + " where group_name = ?");
+			PreparedStatement statement = conn.prepareStatement("select " + Database.GROUPS + ".id, " + 
+					Database.USERS + ".name, " + Database.USERS + ".email from "+ Database.GROUPS +
+					" left join " + Database.USERS + " on " + Database.GROUPS + ".owner_id = " + 
+					Database.USERS + ".id where " + Database.GROUPS + ".group_name = ?");
 			statement.setString(1, group);
-			res1 = statement.executeQuery();
-			if(!res1.next()){
-				res1.close();
-				statement.close();
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
 				conn.close();
 				return users;
 			}
-			int groupId = res1.getInt(1);
-			res2 = statement.executeQuery("select name from " + Database.USERS + " where id = " + res1.getInt(3));
-			users.add(res2.getString(1));
-			res2.close();
-			res1.close();
-			statement.close();
+			int groupId = res.getInt(1);
+			User owner = new User();
+			owner.setName(res.getString(2));
+			owner.setEmail(res.getString(3));
+			users.add(owner);
 			
-			statement = conn.prepareStatement("select member_id from " + Database.GROUP_PERMISSIONS + 
-					" where group_id = ?");
+			
+			statement = conn.prepareStatement("select " + Database.USERS + ".name, " + Database.USERS +
+					".email from " + Database.GROUP_PERMISSIONS + " left join " + Database.USERS + 
+					" on " + Database.GROUP_PERMISSIONS + ".member_id = " +
+					Database.USERS + ".id where " + Database.GROUP_PERMISSIONS + ".group_id = ?");
 			statement.setInt(1, groupId);
-			res1 = statement.executeQuery();
-			while(res1.next()){
-				res2 = statement.executeQuery("select name from " + Database.USERS + " where id = " + res1.getInt(1));
-				users.add(res2.getString(1));
-				res2.close();
+			res = statement.executeQuery();
+			while(res.next()){
+				User u = new User();
+				u.setName(res.getString(1));
+				u.setEmail(res.getString(2));
+				users.add(u);
 			}
-			res1.close();
-			statement.close();
-		}catch (SQLException e){e.printStackTrace();
-		}finally {
-			try{
-				if(res1 != null){ res1.close();}
-				if(res2 != null){ res2.close();}
-				if(statement != null){ statement.close();}
+			conn.close();
+			return users;
+		}catch (SQLException e){
+			try {
 				conn.close();
-			}catch (SQLException e){e.printStackTrace();}
+			} catch (SQLException e1) { e1.printStackTrace(); }
+			throw new FailedConnectionException();
 		}
-		return users;
 	}
 
 
 
 
-	public String removeFromGroup(User u, String group, String userToRemove) {
-		if(u.getName() == null || userToRemove == null || group == null){
-			return "Null value given";
+	public String removeFromGroup(String group, String userToRemove) throws IOException {
+		User u = getLoggedIn();
+		if(u == null){
+			throw new IOException("User is no longer logged in.");
+		}
+		
+		if(userToRemove == null || group == null){
+			throw new IOException("Null value given to UserService.removeFromGroup");
 		}
 
 		if(u.getName() == userToRemove){
@@ -559,50 +442,26 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		}
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			return "error connecting to database";
-		}
 
-		PreparedStatement statement = null;
-		ResultSet res = null;
 		try{
-			statement = conn.prepareStatement("select id from " + Database.USERS + "where name = ?");
-			statement.setString(1, u.getName());
-			res = statement.executeQuery();
-			if(!res.next()){
-				res.close();
-				statement.close();
-				conn.close();
-				return "Error- requesting user not found in database.";
-			}
-			int requestingId = res.getInt(1);
-			res.close();
-			
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?");
 			statement.setString(1, userToRemove);
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			if(!res.next()){
-				res.close();
-				statement.close();
 				conn.close();
 				return "User to remove not found in database.";
 			}
 			int toRemoveId = res.getInt(1);
-			res.close();
-			statement.close();
 			
 			statement = conn.prepareStatement("select id from " + Database.GROUPS + " where group_name = ? and owner_id = ?");
 			statement.setString(1, group);
-			statement.setInt(2, requestingId);
+			statement.setInt(2, u.getId());
 			res = statement.executeQuery();
 			if(!res.next()){
-				res.close();
-				statement.close();
 				conn.close();
 				return "Group " + group + " not found with owner " + u.getName();
 			}
 			int groupId = res.getInt(1);
-			res.close();
-			statement.close();
 			
 			statement = conn.prepareStatement("delete from " + Database.GROUP_PERMISSIONS + " where member_id = ? and group_id = ?");
 			statement.setInt(1, toRemoveId);
@@ -614,77 +473,59 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			}
 		}catch (SQLException e){
 			try{
-				if(res != null){res.close();}
-				if(statement != null){ statement.close();}
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
-			return "Error connecting to database to remove user from group.";
+			throw new FailedConnectionException();
 		}	
 	}
 	
 	
-	public String removeGroup(User u, String group){
-		if(u.getName() == null || group == null){
-			return "Null value given.";
+	public String removeGroup(String group) throws IOException{
+		User u = getLoggedIn();
+		if(u == null){
+			throw new IOException("User is no longer logged in.");
+		}
+		if(group == null){
+			throw new IOException("Null value given to UserService.removeGroup.");
 		}
 		
 		Connection conn = Database.getConnection();
-		if(conn == null){
-			return "error connecting to database";
-		}
 		
-		PreparedStatement statement = null;
-		ResultSet res = null;
 		try{
-			statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?");
-			statement.setString(1, u.getName());
-			res = statement.executeQuery();
-			if(!res.next()){
-				res.close();
-				statement.close();
-				conn.close();
-				return "error - could not find requesting user in database.";
-			}
-			int ownerId = res.getInt(1);
-			res.close();
-			statement.close();
+			int ownerId = u.getId();
 			
-			statement = conn.prepareStatement("select id from " + Database.GROUPS + "where group_name = ? and owner_id = ?");
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS + "where group_name = ? and owner_id = ?");
 			statement.setString(1, group);
 			statement.setInt(2, ownerId);
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			if(!res.next()){
-				res.close();
-				statement.close();
 				conn.close();
 				return "Group " + group + " not found with owner " + u.getName();
 			}
 			int groupId = res.getInt(1);
-			res.close();
 			
 			statement.executeUpdate("delete from " + Database.GROUP_PERMISSIONS + " where group_id = " + groupId);
 			statement.executeUpdate("delete from " + Database.WORKSPACE_GROUP_PERMISSIONS + " where group_id = " + groupId);
 			statement.executeUpdate("delete from " + Database.SEQUENCE_GROUP_PERMISSIONS + " where group_id = " + groupId);
 			statement.executeUpdate("delete from " + Database.GROUPS + " where id = " + groupId);
-			statement.close();
+			
+			conn.close();
 			return "Group " + group + " removed.";
 			
 		}catch (SQLException e){
 			try{
-				if(res != null){res.close();}
-				if(statement != null){ statement.close();}
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
-			return "Error connecting to database to remove group.";
+			throw new FailedConnectionException();
 		}	
 	}
 	
-	/**
+	
 	public static void main(String[] args){
+		/**
 		UserServiceImpl i = new UserServiceImpl();
 		User u = new User();
 		u.setName("user2");
-		u.setValid(false);
 		u.setEmail("email@site.com");
 		u.setPassword("password");
 		u = i.register(u);
@@ -702,13 +543,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		if(u.getPassword().equals("password")){
 			System.out.println("And change the password!");
 		}
-		
-		try {
-			Database.getSingleConnection().close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		**/
 	}
-*/
+
 }

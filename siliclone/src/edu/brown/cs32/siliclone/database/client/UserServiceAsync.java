@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.database.client;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -8,28 +9,28 @@ import edu.brown.cs32.siliclone.accounts.User;
 
 public interface UserServiceAsync {
 
-	void changePassword(User u, String newPassword,
-			AsyncCallback<User> callback);
+	void changePassword(String newPassword,
+			AsyncCallback<User> callback) throws IOException;
 
-	void login(User u, AsyncCallback<User> callback);
+	void login(User u, AsyncCallback<User> callback) throws IOException;
 
-	void register(User u, AsyncCallback<User> callback);
+	void register(User u, AsyncCallback<User> callback) throws IOException;
 
-	void remove(User u, AsyncCallback<User> callback);
+	void remove(User u, AsyncCallback<User> callback) throws IOException;
 
-	void createGroup(User u, String group, AsyncCallback<String> callback);
+	void createGroup(String group, AsyncCallback<String> callback) throws IOException;
 
-	void addToGroup(User u, String group, String userToAdd,
-			AsyncCallback<String> callback);
+	void addToGroup(String group, String userToAdd,
+			AsyncCallback<String> callback) throws IOException;
 
-	void getAvailableGroups(User u, AsyncCallback<List<String>> callback);
+	void getAvailableGroups(AsyncCallback<List<String>> callback) throws IOException;
 
-	void getOwnedGroups(User u, AsyncCallback<List<String>> callback);
+	void getOwnedGroups(AsyncCallback<List<String>> callback) throws IOException;
 
 	void getUsersWithAccessToGroup(String group,
-			AsyncCallback<List<String>> callback);
+			AsyncCallback<List<User>> callback) throws IOException;
 
-	void removeFromGroup(User u, String group, String userToRemove,
-			AsyncCallback<String> callback);
+	void removeFromGroup(String group, String userToRemove,
+			AsyncCallback<String> callback) throws IOException;
 	
 }

@@ -16,8 +16,8 @@ public class User implements Serializable { //TODO: finish this class
 	
 	private String _name; //unique, valid, username 
 	private String _email; //unique, valid, email (one account per email)
-	private String _password; //valid password 
-	private boolean _valid;
+	private String _password; //valid password
+	private int _id; //id in database
 	
 	public User(){
 		
@@ -49,8 +49,8 @@ public class User implements Serializable { //TODO: finish this class
 		return _email;
 	}
 	
-	public boolean isValid() {
-		return _valid;
+	public int getId(){
+		return _id;
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public class User implements Serializable { //TODO: finish this class
 		_email = email;
 	}
 	
-	public void setValid(boolean valid){
-		_valid = valid;
+	public void setId(int id){
+		_id = id;
 	}
 }

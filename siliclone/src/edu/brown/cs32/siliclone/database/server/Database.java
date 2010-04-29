@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
+
 
 /**
  * note - source http://www.java2s.com/Code/Java/Database-SQL-JDBC/HowtoserializedeserializeaJavaobjecttotheMySQLdatabase.htm
@@ -51,14 +53,17 @@ public class Database {
 	 * 
 	 * @return The server's database connection, null if there was an error when connecting. (prints errors to stdio)
 	 */
-	public static Connection getConnection() {
+	public static Connection getConnection() throws FailedConnectionException{
 		try {
 	    	Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+	    	if(conn == null){
+		    	throw new FailedConnectionException();
+	    	}
 	    	return conn;
 	    } catch (SQLException e){
 	    	System.err.println("Could not connect to database at " + URL);
 	    	e.printStackTrace();
-	    	return null;
+	    	throw new FailedConnectionException();
 	    }
 	}
 	  
@@ -115,6 +120,7 @@ public class Database {
 					SEQUENCES + 
 					"(id mediumint not null primary key auto_increment, " +
 					"name varchar(60) not null, " +
+					"seqid mediumint not null, " + 
 					"data longblob not null);");
 			statement.executeUpdate("create table if not exists " +
 					SEQUENCE_GROUP_PERMISSIONS +
@@ -135,7 +141,11 @@ public class Database {
 	}
 	
 	public static void main(String[] argv) {
-		Database.initializeDB(getConnection());
+		try{
+			Database.initializeDB(getConnection());
+		}catch( FailedConnectionException e){
+			System.err.println(e.getMessage());
+		}
 	}
 	
 }
