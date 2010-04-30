@@ -4,8 +4,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.util.ValueCallback;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Dialog;
 import com.smartgwt.client.widgets.Img;
@@ -105,16 +105,20 @@ public class TopMenu extends ToolStrip {
 		}
 		
 		public void onClick(ClickEvent event) {
-			BooleanCallback dialogCallback = new BooleanCallback() {			
-				public void execute(Boolean value) {
+			ValueCallback dialogCallback = new ValueCallback() {			
+				public void execute(String value) {
 					if (value != null) {
 						Workspace w = _main.getCurrentWorkspace();
-						_service.saveWorkspace(w, w.getName(), _callback);
+						try {
+							_service.saveWorkspace(w, w.getName(), _callback);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			};
 			
-			SC.ask("Save workspace...", "Enter a name for this workspace:", dialogCallback);
+			SC.askforValue("Save workspace...", "Enter a name for this workspace:", dialogCallback);
 		}
 	}
 	

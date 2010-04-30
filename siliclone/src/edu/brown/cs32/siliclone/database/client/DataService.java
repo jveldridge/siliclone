@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
@@ -15,6 +16,7 @@ import edu.brown.cs32.siliclone.dna.SequenceHook;
  * Note that all methods assume that the user has already been validated, 
  * and simply check the username.
  */
+@RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
 	
 	/**
@@ -45,16 +47,6 @@ public interface DataService extends RemoteService {
 	 * @return A list of workspace names that the user can retrieve, not null
 	 */
 	List<String> getAvailableWorkspaces() throws IOException;
-	
-	/**
-	 * Saves the given sequence to the database.
-	 * If a sequence of the same name already exists and is accessible, 
-	 * does not write anything but returns true.
-	 * @param user The user with username defined. not null
-	 * @param s The sequence to write. not null
-	 * @return True is success (the sequence is now in the database) false otherwise.
-	 */
-	boolean saveSequence(DNASequence s, String name) throws IOException;
 
 	/**
 	 * Lists available sequence filenames. An empty list is returned 
