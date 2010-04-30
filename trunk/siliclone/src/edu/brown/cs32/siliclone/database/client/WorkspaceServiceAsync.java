@@ -11,9 +11,9 @@ import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 public interface WorkspaceServiceAsync {
 
-	void saveWorkspace(Workspace w, String name, AsyncCallback<Void> callback);
+	void saveWorkspace(Workspace w, String name, AsyncCallback<Void> callback) throws DataServiceException;
 
-	void findWorkspace(String name, AsyncCallback<Workspace> callback);
+	void findWorkspace(String name, AsyncCallback<Workspace> callback) throws DataServiceException;
 
-	void getAvailableWorkspaces(AsyncCallback<List<String>> callback);
+	void getAvailableWorkspaces(AsyncCallback<List<String>> callback) throws DataServiceException;
 }

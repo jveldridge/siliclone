@@ -24,6 +24,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
+import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.WorkspaceService;
 import edu.brown.cs32.siliclone.database.client.WorkspaceServiceAsync;
 
@@ -138,7 +139,12 @@ public class TopMenu extends ToolStrip {
 				}
 				
 			};
-			_service.getAvailableWorkspaces(callback);
+			try{
+				_service.getAvailableWorkspaces(callback);
+			}catch (DataServiceException e){
+				e.printStackTrace();
+				SC.say(e.getMessage());
+			}
 		}
 	}
 	
@@ -147,33 +153,32 @@ public class TopMenu extends ToolStrip {
 	 */
 	private class SaveClickHandler implements ClickHandler {
 		private WorkspaceServiceAsync _service;
-		private AsyncCallback<Boolean> _callback;
+		private AsyncCallback<Void> _callback;
 		
 		public SaveClickHandler() {
 			_service = GWT.create(WorkspaceService.class);
-			_callback = new AsyncCallback<Boolean>() {
+			_callback = new AsyncCallback<Void>() {
 				public void onFailure(Throwable caught) {
 					SC.say("failure");
 					caught.printStackTrace();
 				}
 
-				public void onSuccess(Boolean result) {
+				public void onSuccess(Void result) {
 					SC.say("Workspace Saved");
 				}
 			};
 		}
 		
 		public void onClick(ClickEvent event) {
-			ValueCallback dialogCallback = new ValueCallback() {			
+			ValueCallback dialogCallback = new ValueCallback() {	
 				public void execute(String value) {
 					if (value != null) {
 						Workspace w = _main.getCurrentWorkspace();
-						try {
+						try{
 							_service.saveWorkspace(w, w.getName(), _callback);
-						} catch (Exception e) {
-							//TODO catch an appropriate exception for when a workspace with the
-							//	   passed name already exists, and display an appropriate message to the user
+						}catch (DataServiceException e) {
 							e.printStackTrace();
+							SC.say(e.getMessage());
 						}
 					}
 				}

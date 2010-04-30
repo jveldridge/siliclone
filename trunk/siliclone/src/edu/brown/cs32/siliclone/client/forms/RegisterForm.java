@@ -18,7 +18,7 @@ import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.Siliclone;
-import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
+import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
@@ -82,20 +82,15 @@ public class RegisterForm extends DynamicForm {
 						}
 						
 						public void onSuccess(User result) {
-							if (result != null) {
-								w.hide();
-								main.showMainView();
-							}
-							else {
-								SC.say("User already exists.");
-							}
+							w.hide();
+							main.showMainView();
 						}
 					};
 					
 					try {
 						service.register(u, callback);
-					} catch (FailedConnectionException e) {
-						SC.say("Could not connect to user database");
+					} catch (DataServiceException e) {
+						SC.say(e.getMessage());
 					}
 				}
 			}
