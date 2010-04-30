@@ -18,6 +18,9 @@
     <url-pattern>/siliclone/square</url-pattern>
   </servlet-mapping>
   
+  
+  
+  
    <servlet>
   	<servlet-name>userServiceImpl</servlet-name>
   	<servlet-class>edu.brown.cs32.siliclone.database.server.UserServiceImpl</servlet-class>
@@ -27,6 +30,33 @@
     <servlet-name>userServiceImpl</servlet-name>
     <url-pattern>/siliclone/user</url-pattern>
   </servlet-mapping>
+
+
+
+  
+   <servlet>
+  	<servlet-name>workspaceServiceImpl</servlet-name>
+  	<servlet-class>edu.brown.cs32.siliclone.database.server.WorkspaceServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>workspaceServiceImpl</servlet-name>
+    <url-pattern>/siliclone/workspace</url-pattern>
+  </servlet-mapping>
+
+
+
+   <servlet>
+  	<servlet-name>sequenceServiceImpl</servlet-name>
+  	<servlet-class>edu.brown.cs32.siliclone.database.server.SequenceServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>sequenceServiceImpl</servlet-name>
+    <url-pattern>/siliclone/sequence</url-pattern>
+  </servlet-mapping>
+
+  
 
   <!-- Default page to serve -->
   <welcome-file-list>
