@@ -1,8 +1,11 @@
 package edu.brown.cs32.siliclone.client;
 
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Dialog;
 import com.smartgwt.client.widgets.Img;
@@ -10,6 +13,10 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+
+import edu.brown.cs32.siliclone.client.workspace.Workspace;
+import edu.brown.cs32.siliclone.database.client.DataService;
+import edu.brown.cs32.siliclone.database.client.DataServiceAsync;
 
 //TODO serious work here
 public class TopMenu extends ToolStrip {
@@ -80,15 +87,34 @@ public class TopMenu extends ToolStrip {
 	}
 	
 	private class SaveClickHandler implements ClickHandler {
-		
-		private Dialog saveDialog;
+		private DataServiceAsync _service;
+		private AsyncCallback<Boolean> _callback;
 		
 		public SaveClickHandler() {
-			saveDialog = new Dialog();
+			_service = GWT.create(DataService.class);
+			_callback = new AsyncCallback<Boolean>() {
+				public void onFailure(Throwable caught) {
+					SC.say("failure");
+					caught.printStackTrace();
+				}
+
+				public void onSuccess(Boolean result) {
+					SC.say("Workspace Saved");
+				}
+			};
 		}
 		
 		public void onClick(ClickEvent event) {
-			saveDialog.show();
+			BooleanCallback dialogCallback = new BooleanCallback() {			
+				public void execute(Boolean value) {
+					if (value != null) {
+						Workspace w = _main.getCurrentWorkspace();
+						_service.saveWorkspace(w, w.getName(), _callback);
+					}
+				}
+			};
+			
+			SC.ask("Save workspace...", "Enter a name for this workspace:", dialogCallback);
 		}
 	}
 	

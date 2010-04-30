@@ -126,7 +126,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 //		}
 		
 		// TODO Auto-generated method stub
-		return null;
+		//return null;
 	}
 
 	public List<String> getAvailableWorkspaces() throws IOException {
