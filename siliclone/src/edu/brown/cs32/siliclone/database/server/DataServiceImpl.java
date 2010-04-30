@@ -147,7 +147,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 			//add those with group member access (not group owner)
 			statement = conn.prepareStatement("select t2.name from " +
 					Database.WORKSPACE_GROUP_PERMISSIONS + " as t1 inner join (" + Database.WORKSPACES + 
-					" as t2, " + Database.GROUP_PERMISSIONS + " as t3) pm (t1.group_id = t3.group_id and " +
+					" as t2, " + Database.GROUP_PERMISSIONS + " as t3) on (t1.group_id = t3.group_id and " +
 					"t1.workspace_id = t2.id) where t3.member_id = ?;");
 			statement.setInt(1, u.getId());
 			res = statement.executeQuery();
