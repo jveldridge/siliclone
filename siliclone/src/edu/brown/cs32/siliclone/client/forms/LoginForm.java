@@ -16,7 +16,7 @@ import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.Siliclone;
-import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
+import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
@@ -68,23 +68,18 @@ public class LoginForm extends DynamicForm {
 		
 		AsyncCallback<User> callback = new AsyncCallback<User>() {
 			public void onFailure(Throwable caught) {
-				SC.say("Error connecting.");
+				SC.say("Error connecting to server.");
 			}
 			
 			public void onSuccess(User result) {
-				if (result != null) {
-					_main.showMainView();
-				}
-				else {
-					SC.say("Bad username or password");
-				}
+				_main.showMainView();
 			}
 		};
 	
 		try {
 			service.login(u, callback);
-		} catch (FailedConnectionException e) {
-			SC.say("Could not connect to user database");
+		} catch (DataServiceException e) {
+			SC.say(e.getMessage());
 		}
 	}
 
