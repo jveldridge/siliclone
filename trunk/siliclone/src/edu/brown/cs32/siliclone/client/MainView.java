@@ -57,5 +57,10 @@ public class MainView extends Canvas {
 		_workspaceTabs.addTab(newTab);
 		_workspaceTabs.selectTab(newTab);
 	}
+
+	public Workspace getCurrentWorkspace() {
+		WorkspaceView w = (WorkspaceView) _workspaceTabs.getSelectedTab().getPane();
+		return w.getWorkspace();
+	}
 	
 }

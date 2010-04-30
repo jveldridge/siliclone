@@ -1,11 +1,10 @@
 package edu.brown.cs32.siliclone.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 
 import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
+import edu.brown.cs32.siliclone.client.workspace.Workspace;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -44,5 +43,9 @@ public class Siliclone implements EntryPoint {
 	
 	public void makeNewWorkspace() {
 		_mainView.addWorkspace(new BasicWorkspace("New Workspace"));
+	}
+
+	public Workspace getCurrentWorkspace() {
+		return _mainView.getCurrentWorkspace();
 	}
 }

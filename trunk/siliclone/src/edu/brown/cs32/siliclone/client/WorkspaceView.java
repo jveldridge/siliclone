@@ -91,5 +91,9 @@ public class WorkspaceView extends Canvas {
 			}
 		}
 	}
+
+	public Workspace getWorkspace() {
+		return workspace;
+	}
 	
 }
