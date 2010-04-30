@@ -61,12 +61,14 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	public void addFeature(SequenceHook seq, Feature toAdd)
 			throws DataServiceException {
-		verifyAccess(seq);
+		//verifyAccess(seq);
+		if(seq == null || toAdd == null){
+			throw new DataServiceException("Null value passed to SequenceService.addFeature");
+		}
 		
 		Connection conn = Database.getConnection();
-		
 		try{
-			PreparedStatement statement = conn.prepareStatement("select data from " + 
+			PreparedStatement statement = conn.prepareStatement("select features from " + 
 					Database.SEQUENCE_DATA + " where id = ?");
 			statement.setInt(1, seq.getDataID());
 			ResultSet res = statement.executeQuery();
@@ -86,7 +88,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			statement.setObject(1, features);
 			statement.setInt(2, seq.getDataID());
 			if (0 >= statement.executeUpdate()){
-				throw new DataServiceException("Sequence data could not be saved.");
+				throw new DataServiceException("Sequence features could not be saved.");
 			}
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
@@ -95,43 +97,185 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
-		
 	}
 
 	public void addProperty(SequenceHook seq, String key, Object value)
 			throws DataServiceException {
+		if(seq == null || key == null || value == null){
+			throw new DataServiceException("Null value passed to SequenceService.addProperty");
+		}
+		//verifyAccess(seq);
 		
-		
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select properties from " + 
+					Database.SEQUENCE_DATA + " where id = ?");
+			statement.setInt(1, seq.getDataID());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Sequence could not be found in the database.");
+			}
+			Map<String, Object> properties = (Map<String, Object>) res.getObject(1);
+			if(properties.containsKey(key)){
+				throw new DataServiceException("Sequence already contains property with given key.");
+			}
+
+			properties.put(key, value);
+
+			statement = conn.prepareStatement("update " + Database.SEQUENCE_DATA + 
+					" set properties = ? where id = ?");
+			statement.setObject(1, properties);
+			statement.setInt(2, seq.getDataID());
+			if (0 >= statement.executeUpdate()){
+				throw new DataServiceException("Sequence properties could not be saved.");
+			}
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
 	}
 
 	public Collection<Feature> getFeaturesOfType(SequenceHook seq,
 			String featureType) throws DataServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		if(seq == null || featureType == null){
+			throw new DataServiceException("Null value passed to SequenceService.getFeaturesOfType");
+		}
+		//verifyAccess(seq);
+		
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select features from " +
+					Database.SEQUENCE_DATA + " where id = ?");
+			statement.setInt(1, seq.getDataID());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Sequence could not be found in the database.");
+			}
+			return ((Map<String, Collection<Feature>>) res.getObject(1)).get(featureType);
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
 	}
 
 	public Object getProperty(SequenceHook seq, String key)
 			throws DataServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		if(seq == null || key == null){
+			throw new DataServiceException("Null value passed to SequenceService.getProperty");
+		}
+		//verifyAccess(seq);
+		
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select properties from " +
+					Database.SEQUENCE_DATA + " where id = ?");
+			statement.setInt(1, seq.getDataID());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Sequence could not be found in the database.");
+			}
+			Object property = ((Map<String, Object>) res.getObject(1)).get(key);
+			if(property == null){
+				throw new DataServiceException("Sequence property not found with key " + key);
+			}
+			return property;
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
 	}
 
 	public NucleotideString getSequence(SequenceHook seq)
 			throws DataServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		if(seq == null){
+			throw new DataServiceException("Null value passed to SequenceService.getSequence");
+		}
+		//verifyAccess(seq);
+		
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select data from " +
+					Database.SEQUENCES + " where id = ?");
+			statement.setInt(1, seq.getSeqID());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Sequence could not be found in the database.");
+			}
+			return (NucleotideString) res.getObject(1);
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
 	}
 
 	public int length(SequenceHook seq) throws DataServiceException {
-		// TODO Auto-generated method stub
-		return 0;
+		return getSequence(seq).getLength();
 	}
 
 	public SequenceHook saveSequence(NucleotideString nucleotides,
-			Collection<Feature> features, String seqName,
+			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, Object> properties) throws DataServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		if(nucleotides == null || features == null || seqName == null || properties == null){
+			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
+		}
+		//verifyAccess(seq);
+		
+		Connection conn = Database.getConnection();
+		
+		try{
+			PreparedStatement statement = conn.prepareStatement("select * from " +
+					Database.SEQUENCE_DATA + " where name = ?");
+			statement.setString(1, seqName);
+			ResultSet res = statement.executeQuery();
+			if(res.next()){
+				throw new DataServiceException("Sequence data with name " + seqName + " already exists");
+			}
+			
+			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
+					" (data) values (?);");
+			statement.setObject(1, nucleotides);
+			statement.executeUpdate();
+			
+			res = statement.getGeneratedKeys();
+			if(!res.next()){
+				throw new DataServiceException("Error saving sequence to database.");
+			}
+			int seqID = res.getInt(1);
+			
+			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_DATA + 
+					" (name, seq_id, features, properties) values (?,?,?,?)");
+			statement.setString(1, seqName);
+			statement.setInt(2, seqID);
+			statement.setObject(3, features);
+			statement.setObject(4, properties);
+			statement.executeUpdate();
+			
+			res = statement.getGeneratedKeys();
+			if(!res.next()){
+				throw new DataServiceException("Error saving sequence data to database.");
+			}
+			int dataID = res.getInt(1);
+			
+			return new SequenceHook(dataID, seqID, seqName);
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
 	}
 
 }

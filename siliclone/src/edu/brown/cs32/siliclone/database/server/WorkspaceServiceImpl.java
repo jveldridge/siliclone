@@ -32,7 +32,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 	//TODO compression?
 	public void saveWorkspace(Workspace w, String name) throws DataServiceException {
 		if(w == null || name == null){
-			throw new DataServiceException("null value given to DataService.saveWorkspace");
+			throw new DataServiceException("null value given to WorkspaceService.saveWorkspace");
 		}
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();

@@ -116,14 +116,14 @@ public class Database {
 			statement.executeUpdate("create table if not exists " +
 					SEQUENCES + 
 					"(id mediumint not null primary key auto_increment, " +
-					"name varchar(60) not null, " +
 					"data longblob not null);");
 			statement.executeUpdate("create table if not exists " + 
 					SEQUENCE_DATA + 
 					"(id mediumint not null primary key auto_increment, " +
 					"name varchare(60) not null, " + 
 					"seq_id mediumint not null, " +
-					"data longblob not null);");
+					"features longblob not null, " +
+					"properties longblob not null);");
 			statement.executeUpdate("create table if not exists " +
 					SEQUENCE_GROUP_PERMISSIONS +
 					"(data_id mediumint not null, " +
