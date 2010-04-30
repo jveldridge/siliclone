@@ -14,6 +14,7 @@ import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataService;
 import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
+import edu.brown.cs32.siliclone.database.client.NoSuchWorkspaceException;
 import edu.brown.cs32.siliclone.dna.DNASequence;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
 
@@ -87,6 +88,38 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
 		
+		try{
+			PreparedStatement statement = conn.prepareStatement("select t2.data from " +
+					Database.WORKSPACE_USER_PERMISSIONS + " as t1 left join " + 
+					Database.WORKSPACES + " as t2 on t1.workspace_id = t2.id where t2.name = ? " +
+							"and t1.user_id = ?;");
+			statement.setString(1, name);
+			statement.setInt(2, u.getId());
+			ResultSet res = statement.executeQuery();
+			if(res.next()){
+				return (Workspace) res.getObject(1);
+			}
+			
+			statement = conn.prepareStatement("select t2.data from " + 
+					Database.WORKSPACE_GROUP_PERMISSIONS + " as t1 inner join (" + Database.WORKSPACES + 
+					" as t2, " + Database.GROUP_PERMISSIONS + " as t2) on (t1.group_id = t2.group_id and " +
+					"t1.workspace_id = t2.id) where t3.member_id = ? and t2.name = ?");
+			statement.setInt(1, u.getId());
+			statement.setString(2, name);
+			res = statement.executeQuery();
+			if(res.next()){
+				return (Workspace) res.getObject(1);
+			}
+			
+			throw new NoSuchWorkspaceException();
+		}catch (SQLException e){
+			throw new FailedConnectionException();
+		}finally {
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
+		
 //		try{
 //			PreparedStatement statement = conn.prepareStatement("select  from " + 
 //					Database
@@ -104,7 +137,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 			// add those with explicit user access
 			PreparedStatement statement = conn.prepareStatement("select t2.name from " +
 					Database.WORKSPACE_USER_PERMISSIONS + " as t1 left join " + 
-					Database.WORKSPACES + " as t2 on t1.workspace_id == t2.id where t1.user_id = ?;");
+					Database.WORKSPACES + " as t2 on t1.workspace_id = t2.id where t1.user_id = ?;");
 			statement.setInt(1, u.getId());
 			ResultSet res = statement.executeQuery();
 			while(res.next()){
