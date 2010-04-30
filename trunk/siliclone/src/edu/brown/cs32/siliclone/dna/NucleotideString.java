@@ -1,5 +1,7 @@
 package edu.brown.cs32.siliclone.dna;
 
+import java.io.Serializable;
+
 /**
  * Represents the actual string of nucleotides that make
  * up a DNA sequence.  This class contains a variety of
@@ -9,6 +11,6 @@ package edu.brown.cs32.siliclone.dna;
  * 
  * @author jeldridg
  */
-public class NucleotideString {
+public class NucleotideString implements Serializable{
 
 }

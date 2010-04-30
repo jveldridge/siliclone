@@ -12,29 +12,27 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
-import edu.brown.cs32.siliclone.database.client.DataService;
-import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
-import edu.brown.cs32.siliclone.database.client.NoSuchWorkspaceException;
+import edu.brown.cs32.siliclone.database.client.DataServiceException;
+import edu.brown.cs32.siliclone.database.client.WorkspaceService;
 import edu.brown.cs32.siliclone.dna.DNASequence;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
 
-public class DataServiceImpl extends RemoteServiceServlet implements
-		DataService {
+public class WorkspaceServiceImpl extends RemoteServiceServlet implements
+		WorkspaceService {
 
-	//null if no user  
-	private User getLoggedIn() throws IOException{
+	private User getLoggedIn() throws DataServiceException{
 		User u = (User) this.getThreadLocalRequest().getSession().getAttribute("user");
 		if(u == null){
-			throw new IOException("User is no longer logged in.");
+			throw new DataServiceException("User is no longer logged in.");
 		}
 		return u;
 	}
 	
 	
-	//todo compression?
-	public boolean saveWorkspace(Workspace w, String name) throws IOException {
+	//TODO compression?
+	public void saveWorkspace(Workspace w, String name) throws DataServiceException {
 		if(w == null || name == null){
-			throw new IOException("null value given to DataService.saveWorkspace");
+			throw new DataServiceException("null value given to DataService.saveWorkspace");
 		}
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
@@ -45,14 +43,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 			statement.setString(1, name);
 			ResultSet res = statement.executeQuery();
 			if(res.next()){
-				conn.close();
-				throw new IOException("Workspace with name " + name + " already exists.");
+				throw new DataServiceException("Workspace with name " + name + " already exists.");
 			}
 			
 			statement = conn.prepareStatement("insert into "+ Database.WORKSPACES + "(name, data) values (?,?)");
 			statement.setString(1, name);
 			statement.setObject(2, w);
-			
 			statement.executeUpdate();
 			
 			statement = conn.prepareStatement("select id from " + Database.WORKSPACES +
@@ -60,8 +56,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 			statement.setString(1, name);
 			res = statement.executeQuery();
 			if(!res.next()){
-				conn.close();
-				throw new IOException("Workspace with name " + name + " could not be written.");
+				throw new DataServiceException("Workspace with name " + name + " could not be written.");
 			}
 			int workspaceId = res.getInt(1);
 			
@@ -69,22 +64,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 					"(workspace_id, user_id) values (?, ?)");
 			statement.setInt(1, workspaceId);
 			statement.setInt(2, u.getId());
-			if(0 < statement.executeUpdate()){
-				conn.close();
-				return true;
-			}else {
-				conn.close();
-				throw new IOException("Could not update permissions to new workspace.");
+			if(0 >= statement.executeUpdate()){
+				throw new DataServiceException("Could not update permissions to new workspace.");
 			}
 		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
 			try {
 				conn.close();
 			} catch (SQLException e1) { e1.printStackTrace(); }
-			throw new FailedConnectionException();
 		}
 	}
 	
-	public Workspace findWorkspace(String name) throws IOException {
+	public Workspace findWorkspace(String name) throws DataServiceException {
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
 		
@@ -109,27 +101,21 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 			res = statement.executeQuery();
 			if(res.next()){
 				return (Workspace) res.getObject(1);
+			}else{
+				throw new DataServiceException("No workspace with name " + name + 
+						" was found with permissions granted to user " + u.getName());
 			}
 			
-			throw new NoSuchWorkspaceException();
 		}catch (SQLException e){
-			throw new FailedConnectionException();
+			throw new DataServiceException("Error connecting to database.");
 		}finally {
 			try {
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
-		
-//		try{
-//			PreparedStatement statement = conn.prepareStatement("select  from " + 
-//					Database
-//		}
-		
-		// TODO Auto-generated method stub
-		//return null;
 	}
 
-	public List<String> getAvailableWorkspaces() throws IOException {
+	public List<String> getAvailableWorkspaces() throws DataServiceException {
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
 		ArrayList<String> available = new ArrayList<String>();
@@ -154,78 +140,15 @@ public class DataServiceImpl extends RemoteServiceServlet implements
 			while(res.next()){
 				available.add(res.getString(1));
 			}
-			conn.close();
 			return available;
 		}
 		catch(SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
 			try{
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
-			throw new FailedConnectionException();
 		}
 	}
-
-	
-	
-
-	
-	public boolean saveSequence(DNASequence s, String name) throws IOException {
-		if(s == null || name == null){
-			throw new IOException("null value given to DataService.saveSequence");
-		}
-		User u = getLoggedIn();
-		Connection conn = Database.getConnection();
-		
-		try{
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.SEQUENCES +
-					" where name = ?");
-			statement.setString(1, name);
-			ResultSet res = statement.executeQuery();
-			if(res.next()){
-				conn.close();
-				throw new IOException("Sequence with name " + name + " already exists.");
-			}
-			
-			statement = conn.prepareStatement("insert into "+ Database.SEQUENCES + "(name, data) values (?,?)");
-			statement.setString(1, name);
-			statement.setObject(2, s);
-			
-			statement.executeUpdate();
-			
-			statement = conn.prepareStatement("select id from " + Database.SEQUENCES +
-					" where name = ?");
-			statement.setString(1, name);
-			res = statement.executeQuery();
-			if(!res.next()){
-				conn.close();
-				throw new IOException("Sequence with name " + name + " could not be written.");
-			}
-			int sequenceId = res.getInt(1);
-			
-			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_USER_PERMISSIONS + 
-					"(sequence_id, user_id) values (?, ?)");
-			statement.setInt(1, sequenceId);
-			statement.setInt(2, u.getId());
-			if(0 < statement.executeUpdate()){
-				conn.close();
-				return true;
-			}else {
-				conn.close();
-				throw new IOException("Could not update permissions to new sequence.");
-			}
-		}catch (SQLException e){
-			try {
-				conn.close();
-			} catch (SQLException e1) { e1.printStackTrace(); }
-			throw new FailedConnectionException();
-		}
-	}
-
-	public List<SequenceHook> getAvailableSequences() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
 
 }

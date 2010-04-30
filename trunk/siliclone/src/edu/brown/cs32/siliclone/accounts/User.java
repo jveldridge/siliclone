@@ -14,61 +14,61 @@ public class User implements Serializable { //TODO: finish this class
 
 	private static final long serialVersionUID = 8738599268117382574L;
 	
-	private String _name; //unique, valid, username 
-	private String _email; //unique, valid, email (one account per email)
-	private String _password; //valid password
-	private int _id; //id in database
+	private String name; //unique, valid, username 
+	private String email; //unique, valid, email (one account per email)
+	private String password; //valid password
+	private int id; //id in database
 	
 	public User(){
 		
 	}
 	
 	public User(String name, String password){
-		_name = name;
-		_password = password;
+		this.name = name;
+		this.password = password;
 	}
 	
 	public User(String name, String password, String email){
-		_name = name;
-		_password = password;
-		_email = email;
+		this.name = name;
+		this.password = password;
+		this.email = email;
 	}
 	
 	/**
 	 * @return The name of the user account, null if not yet successfully initialized.
 	 */
 	public String getName(){
-		return _name;
+		return this.name;
 	}
 	
 	public String getPassword(){
-		return _password;	
+		return this.password;	
 	}
 	
 	public String getEmail(){
-		return _email;
+		return this.email;
 	}
 	
 	public int getId(){
-		return _id;
+		return this.id;
 	}
 	
 	/**
 	 * @param name The name to be set for this user. (not null)
 	 */
 	public void setName(String name){
-		_name  = name;
+		this.name  = name;
 	}
 	
 	public void setPassword(String password){
-		_password = password;
+		this.password = password;
 	}
 	
 	public void setEmail(String email){
-		_email = email;
+		this.email = email;
 	}
 	
 	public void setId(int id){
-		_id = id;
+		this.id = id;
 	}
 }

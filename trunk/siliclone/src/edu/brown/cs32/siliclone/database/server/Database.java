@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import edu.brown.cs32.siliclone.database.client.FailedConnectionException;
+import edu.brown.cs32.siliclone.database.client.DataServiceException;
 
 
 /**
@@ -31,7 +31,6 @@ public class Database {
 		} catch (ClassNotFoundException e) {
 			System.err.println("Could not load mysql driver.");
 			e.printStackTrace();
-			
 		}
 	}
 	
@@ -42,6 +41,7 @@ public class Database {
 	public static final String WORKSPACE_GROUP_PERMISSIONS = "workspace_group_permissions";
 	public static final String WORKSPACE_USER_PERMISSIONS = "workspace_user_permissions";
 	public static final String SEQUENCES = "sequences";
+	public static final String SEQUENCE_DATA = "sequence_data";
 	public static final String SEQUENCE_GROUP_PERMISSIONS = "sequence_group_permissions";
 	public static final String SEQUENCE_USER_PERMISSIONS = "sequence_user_permissions";
 	
@@ -53,17 +53,14 @@ public class Database {
 	 * 
 	 * @return The server's database connection, null if there was an error when connecting. (prints errors to stdio)
 	 */
-	public static Connection getConnection() throws FailedConnectionException{
+	public static Connection getConnection() throws DataServiceException{
 		try {
 	    	Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-	    	if(conn == null){
-		    	throw new FailedConnectionException();
-	    	}
 	    	return conn;
 	    } catch (SQLException e){
 	    	System.err.println("Could not connect to database at " + URL);
 	    	e.printStackTrace();
-	    	throw new FailedConnectionException();
+	    	throw new DataServiceException("Error connecting to the database.");
 	    }
 	}
 	  
@@ -120,30 +117,37 @@ public class Database {
 					SEQUENCES + 
 					"(id mediumint not null primary key auto_increment, " +
 					"name varchar(60) not null, " +
-					"seqid mediumint not null, " + 
+					"data longblob not null);");
+			statement.executeUpdate("create table if not exists " + 
+					SEQUENCE_DATA + 
+					"(id mediumint not null primary key auto_increment, " +
+					"name varchare(60) not null, " + 
+					"seq_id mediumint not null, " +
 					"data longblob not null);");
 			statement.executeUpdate("create table if not exists " +
 					SEQUENCE_GROUP_PERMISSIONS +
-					"(sequence_id mediumint not null, " +
+					"(data_id mediumint not null, " +
 					"group_id mediumint not null);");
 			statement.executeUpdate("create table if not exists " +
 					SEQUENCE_USER_PERMISSIONS + 
-					"(sequence_id mediumint not null, " +
+					"(data_id mediumint not null, " +
 					"user_id mediumint not null); ");
-			
-			statement.close();
 			  
 			return true;  
 		}catch (SQLException e){
 			System.out.println("Could not create table in database from " + conn);
 			return false;
+		} finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void main(String[] argv) {
 		try{
 			Database.initializeDB(getConnection());
-		}catch( FailedConnectionException e){
+		}catch(DataServiceException e){
 			System.err.println(e.getMessage());
 		}
 	}

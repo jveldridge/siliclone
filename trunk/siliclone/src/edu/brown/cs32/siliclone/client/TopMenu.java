@@ -24,8 +24,8 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
-import edu.brown.cs32.siliclone.database.client.DataService;
-import edu.brown.cs32.siliclone.database.client.DataServiceAsync;
+import edu.brown.cs32.siliclone.database.client.WorkspaceService;
+import edu.brown.cs32.siliclone.database.client.WorkspaceServiceAsync;
 
 //TODO serious work here
 public class TopMenu extends ToolStrip {
@@ -86,7 +86,7 @@ public class TopMenu extends ToolStrip {
 		
 		private Dialog _dialog;
 		private ListGrid _sequenceGrid;
-		private DataServiceAsync _service;
+		private WorkspaceServiceAsync _service;
 		private String _workspaceToLoad;
 		
 		public LoadClickHandler() {
@@ -116,7 +116,7 @@ public class TopMenu extends ToolStrip {
 			_dialog.addItem(_sequenceGrid);
 			_dialog.addItem(okButton);
 								
-			_service = GWT.create(DataService.class);
+			_service = GWT.create(WorkspaceService.class);
 		}
 		
 		public void onClick(ClickEvent event) {
@@ -146,11 +146,11 @@ public class TopMenu extends ToolStrip {
 	 * ClickHandler for the "Save" workspace button.
 	 */
 	private class SaveClickHandler implements ClickHandler {
-		private DataServiceAsync _service;
+		private WorkspaceServiceAsync _service;
 		private AsyncCallback<Boolean> _callback;
 		
 		public SaveClickHandler() {
-			_service = GWT.create(DataService.class);
+			_service = GWT.create(WorkspaceService.class);
 			_callback = new AsyncCallback<Boolean>() {
 				public void onFailure(Throwable caught) {
 					SC.say("failure");

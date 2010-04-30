@@ -9,11 +9,9 @@ import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.dna.DNASequence;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
 
-public interface DataServiceAsync {
+public interface WorkspaceServiceAsync {
 
-	void getAvailableSequences(AsyncCallback<List<SequenceHook>> callback);
-
-	void saveWorkspace(Workspace w, String name, AsyncCallback<Boolean> callback);
+	void saveWorkspace(Workspace w, String name, AsyncCallback<Void> callback);
 
 	void findWorkspace(String name, AsyncCallback<Workspace> callback);
 
