@@ -29,7 +29,7 @@ public interface SequenceServiceAsync {
 	void length(SequenceHook seq, AsyncCallback<Integer> callback) throws DataServiceException;
 
 	void saveSequence(NucleotideString nucleotides,
-			Collection<Feature> features,
+			Map<String, Collection<Feature>> features,
 			String seqName,
 			Map<String, Object> properties,
 			AsyncCallback<SequenceHook> callback) throws DataServiceException;

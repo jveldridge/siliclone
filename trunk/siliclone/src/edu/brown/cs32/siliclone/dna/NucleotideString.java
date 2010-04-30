@@ -12,5 +12,7 @@ import java.io.Serializable;
  * @author jeldridg
  */
 public class NucleotideString implements Serializable{
-
+	public int getLength(){
+		return 0;
+	}
 }
