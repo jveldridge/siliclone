@@ -9,13 +9,15 @@ import edu.brown.cs32.siliclone.operators.Operator;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 public class PCROperator extends AbstractOperator {
-
-	private static final long serialVersionUID = 4455559319147828401L;
 	
 	private Widget _image;
 	private PCRPropertiesSelector _propertiesSelector;
 	
 	public PCROperator() {
+
+	}
+	
+	public void init() {
 		_image = new Img("pcr.gif");
 		_propertiesSelector = new PCRPropertiesSelector(this);
 	}

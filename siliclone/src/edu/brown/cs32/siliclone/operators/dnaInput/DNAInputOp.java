@@ -11,12 +11,17 @@ import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 public class DNAInputOp extends AbstractOperator {
 	
-	private Widget _image;
-	private DNAInputPropertiesSelector _properties;
+	transient private Widget image;
+	transient private DNAInputPropertiesSelector properties;
 	
 	public DNAInputOp() {
-		_image = new Img("dnaInput.gif");
-		_properties = new DNAInputPropertiesSelector(this);
+		//this.image = new Img("dnaInput.gif");
+		//this.properties = new DNAInputPropertiesSelector(this);
+	}
+	
+	public void init() {
+		this.image = new Img("dnaInput.gif");
+		this.properties = new DNAInputPropertiesSelector(this);
 	}
 
 	public void addCompletedListener(CompletedListener l) {
@@ -35,11 +40,11 @@ public class DNAInputOp extends AbstractOperator {
 	}
 
 	public PropertiesSelector getPropertiesSelector() {
-		return _properties;
+		return properties;
 	}
 
 	public Widget getWidget() {
-		return _image;
+		return image;
 	}
 
 }
