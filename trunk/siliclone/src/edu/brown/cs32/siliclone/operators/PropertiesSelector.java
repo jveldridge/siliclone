@@ -9,18 +9,18 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public abstract class PropertiesSelector extends VLayout {
 	
-	protected DynamicForm _form;
-	protected ButtonItem _okButton;
+	protected DynamicForm form;
+	protected ButtonItem okButton;
 
 	public PropertiesSelector() {
-		_form = new DynamicForm();
+		form = new DynamicForm();
 		
 		this.setBackgroundColor("#C0C0C0");
 		this.setEdgeSize(5);
 		this.setEdgeBackgroundColor("#000000");
 		this.setOpacity(20);
-		_okButton = new ButtonItem("OK");
-		_okButton.addClickHandler(new ClickHandler() {
+		okButton = new ButtonItem("OK");
+		okButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (verifyFields()) {
 					processInput();
@@ -28,8 +28,8 @@ public abstract class PropertiesSelector extends VLayout {
 			}
 		});
 		
-		_okButton.setAlign(Alignment.CENTER);
-		this.addMember(_form);
+		okButton.setAlign(Alignment.CENTER);
+		this.addMember(form);
 	}
 	
 	protected abstract boolean verifyFields();

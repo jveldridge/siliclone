@@ -10,16 +10,16 @@ import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 public class PCROperator extends AbstractOperator {
 	
-	private Widget _image;
-	private PCRPropertiesSelector _propertiesSelector;
+	transient private Widget image;
+	transient private PCRPropertiesSelector propertiesSelector;
 	
 	public PCROperator() {
 
 	}
 	
 	public void init() {
-		_image = new Img("pcr.gif");
-		_propertiesSelector = new PCRPropertiesSelector(this);
+		image = new Img("pcr.gif");
+		propertiesSelector = new PCRPropertiesSelector(this);
 	}
 
 	public void addCompletedListener(CompletedListener l) {
@@ -38,11 +38,11 @@ public class PCROperator extends AbstractOperator {
 	}
 
 	public PropertiesSelector getPropertiesSelector() {
-		return _propertiesSelector;
+		return propertiesSelector;
 	}
 
 	public Widget getWidget() {
-		return _image;
+		return image;
 	}
 
 	public int getNumInputs() {
