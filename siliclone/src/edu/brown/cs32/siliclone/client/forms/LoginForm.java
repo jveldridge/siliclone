@@ -76,12 +76,12 @@ public class LoginForm extends DynamicForm {
 			}
 		};
 	
-		/*try {
+		try {
 			service.login(u, callback);
 		} catch (DataServiceException e) {
 			SC.say(e.getMessage());
-		}*/
-		_main.showMainView();
+		}
+		//_main.showMainView();
 	}
 
 }

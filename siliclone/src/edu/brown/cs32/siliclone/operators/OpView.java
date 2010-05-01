@@ -14,6 +14,8 @@ import com.smartgwt.client.widgets.events.DragRepositionStartEvent;
 import com.smartgwt.client.widgets.events.DragRepositionStartHandler;
 import com.smartgwt.client.widgets.events.DragRepositionStopEvent;
 import com.smartgwt.client.widgets.events.DragRepositionStopHandler;
+import com.smartgwt.client.widgets.events.DropOverEvent;
+import com.smartgwt.client.widgets.events.DropOverHandler;
 import com.smartgwt.client.widgets.events.MouseOutEvent;
 import com.smartgwt.client.widgets.events.MouseOutHandler;
 import com.smartgwt.client.widgets.events.MouseOverEvent;
@@ -151,15 +153,16 @@ public class OpView extends Canvas {//implements Connectable {
          
          this.addClickHandler(new ClickHandler() {
                  public void onClick(ClickEvent event) {
+                	 	bringToFront();
                          if (selector.isVisible()) {
                                  selector.hide();
                          }
                          else {
                                  selector.show();
+                                 selector.bringToFront();
                          }
                  }
          });
-         
          
          inputs = new InputNode[op.getNumInputs()];
          for(int i = 0; i < inputs.length; i ++){
@@ -223,7 +226,6 @@ public class OpView extends Canvas {//implements Connectable {
 			op.setX(getLeft());
 			op.setY(getTop());
 		}
-		
 	}
 	/*
 	public void addConnection(Connectable toAdd, Direction dir) {		// TODO Auto-generated method stub

@@ -77,14 +77,13 @@ public class OutputDragger extends Canvas {
 		addMouseOverHandler(new HoverStart());
 		addMouseOutHandler(new HoverStop());
 		addDragStopHandler(new DragStop());
-		
 	}
 
 	private class DragStart implements DragStartHandler { 
 		public void onDragStart(DragStartEvent event) {
 			startX = getLeft();
 			startY = getTop();
-			bringToFront();
+			getParentElement().sendToBack();
 		}
 	}
 	
