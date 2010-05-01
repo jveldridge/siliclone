@@ -13,7 +13,6 @@ public abstract class AbstractOperator implements Operator {
 	protected Operator[] inputs;
 	protected SequenceHook outputSequence; 
 	protected Collection<Operator> children = new ArrayList<Operator>();
-
 	
 	//TODO better algorithm? if this is used when there already was a loop, goes into infinite loop
 	//used to check if the operator is connected to itself through inputs

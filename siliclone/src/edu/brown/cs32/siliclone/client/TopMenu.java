@@ -174,6 +174,7 @@ public class TopMenu extends ToolStrip {
 				public void execute(String value) {
 					if (value != null) {
 						Workspace w = _main.getCurrentWorkspace();
+						w.setName(value);
 						try{
 							_service.saveWorkspace(w, w.getName(), _callback);
 						}catch (DataServiceException e) {
