@@ -96,6 +96,7 @@ public class InputNode extends Canvas {
 	
 	private class DropHoverStart implements DropOverHandler {
 		public void onDropOver(DropOverEvent event) {
+			getParentElement().bringToFront();
 			if(!isConnected){
 				setBackgroundColor(HOVER_COLOR);
 			}
@@ -116,7 +117,7 @@ public class InputNode extends Canvas {
 			if(isConnected){
 				disconnect();
 			}
-		}	
+		}
 	}
 	
 	private class Acceptor implements DropHandler {
