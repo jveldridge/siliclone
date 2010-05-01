@@ -40,7 +40,7 @@ public class ConnectingLine extends Canvas {
 		addChild(middleLine);
 		bottomLine = new Canvas();
 		bottomLine.setBackgroundColor(LINE_COLOR);
-		bottomLine.setWidth(LINE_WIDTH);
+		bottomLine.setStyleName("2px solid dotted");
 		addChild(bottomLine);
 	}
 	
