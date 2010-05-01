@@ -1,8 +1,10 @@
 package edu.brown.cs32.siliclone.database.server;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -50,7 +54,13 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			
 			statement = conn.prepareStatement("insert into "+ Database.WORKSPACES + "(name, data) values (?,?)");
 			statement.setString(1, name);
-			statement.setObject(2, w);
+			ByteArrayOutputStream baout = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(baout));
+			oos.writeObject(w);
+			oos.close();
+			statement.setBinaryStream(2,new ByteArrayInputStream(baout.toByteArray()));
+
+			//statement.setObject(2, w);
 			statement.executeUpdate();
 			
 			statement = conn.prepareStatement("select id from " + Database.WORKSPACES +
@@ -71,6 +81,9 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			}
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally{
 			try {
 				conn.close();
@@ -94,7 +107,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			if(res.next()){
 				Blob b = res.getBlob("data");
 				ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
-				ObjectInputStream ois = new ObjectInputStream(bis);
+				ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(bis));
 				return (Workspace) ois.readObject();
 			}
 			
