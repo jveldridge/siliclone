@@ -45,4 +45,8 @@ public class PCROperator extends AbstractOperator {
 		return _image;
 	}
 
+	public int getNumInputs() {
+		return 3;
+	}
+
 }

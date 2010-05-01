@@ -1,5 +1,7 @@
 package edu.brown.cs32.siliclone.client;
 
+import java.util.HashMap;
+
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.util.EventHandler;
 
@@ -27,10 +29,23 @@ public class WorkspaceView extends Canvas {
 		
 		
 		this.workspace = workspace;
+		
+		HashMap<Operator, OpView> opViews = new HashMap<Operator, OpView>(); //this is necessary for connecting
 		for(Operator op : workspace.getOperators()){ //TODO validation of op position?
-													  //what constitutes a valid position?
-			addChild(new OpView(op, this));
+			opViews.put(op, new OpView(op, this));
+			addChild(opViews.get(op));
 		}
+		for(Operator op : workspace.getOperators()){
+			for(int i = 0; i < op.getInputs().size(); i++){
+				Operator input = op.getInputs().get(i);
+				if(input != null){
+					opViews.get(op).getInputs()[i].connect(
+							opViews.get(input).getOutput());
+				}
+			}
+		}
+		
+		
 		
 		this.setCanAcceptDrop(true);
 		
@@ -54,6 +69,7 @@ public class WorkspaceView extends Canvas {
 		workspace.removeOperator(op);
 		
 		//and remove the OpView from the Workspaceview
+		
 		removeChild(view);
 	}
 	
@@ -64,7 +80,9 @@ public class WorkspaceView extends Canvas {
 	 */
 	private class HoverHandle implements DropOverHandler{
 		public void onDropOver(DropOverEvent event) {
-			setBackgroundColor("#FAF8CC");
+			if(EventHandler.getDragTarget() instanceof OpView){
+				setBackgroundColor("#FAF8CC");
+			}
 		}
 		
 	}
