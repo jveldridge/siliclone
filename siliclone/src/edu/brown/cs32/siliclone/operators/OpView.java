@@ -44,6 +44,8 @@ public class OpView extends Canvas {//implements Connectable {
 	public OpView(final Operator op, final WorkspaceView workspace){
 		this.op = op; //associate with operator, positions are related
 		this.op.init();
+		this.addDragRepositionStopHandler(new RepositionHandler());
+		
 		setTop(op.getY());
 		setLeft(op.getX());
 		
@@ -167,7 +169,7 @@ public class OpView extends Canvas {//implements Connectable {
         	 inputs[i].setTop(0);
         	 inputs[i].setLeft(getWidth() * i / inputs.length + close.getWidth());
          }
-         output = new OutputDragger(op);
+         output = new OutputDragger(op, getWidth() / 2, getHeight());
          addChild(output);
          output.setTop(getHeight());
          output.setLeft(getWidth() / 2 + output.getWidth() / 2);

@@ -38,8 +38,8 @@ public abstract class AbstractOperator implements Operator {
 		inputs[slotNum] = input;
 	}
 
-	public List<Operator> getInputs(){
-		return Arrays.asList(inputs);
+	public Operator[] getInputs(){
+		return inputs;
 	}
 	
 	public void addChild(Operator op) throws OperatorCycleException {
@@ -55,7 +55,7 @@ public abstract class AbstractOperator implements Operator {
 	}
 	
 	public void removeInput(int slotNum){
-		if(0 < slotNum && slotNum < inputs.length){
+		if(0 <= slotNum && slotNum < inputs.length){
 			inputs[slotNum].removeChild(this);
 			inputs[slotNum] = null;
 		}
