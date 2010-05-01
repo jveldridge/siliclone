@@ -11,8 +11,25 @@ import java.io.Serializable;
  * 
  * @author jeldridg
  */
-public class NucleotideString implements Serializable{
+@SuppressWarnings("serial")
+public class NucleotideString implements Serializable {
+	
+	private String seq;
+	
+	@SuppressWarnings("unused")
+	private NucleotideString() {
+		//constructor for serialization
+	}
+	
+	public NucleotideString(String seq) {
+		this.seq = seq;
+	}
+	
 	public int getLength(){
 		return 0;
+	}
+	
+	public String getString() {
+		return seq;
 	}
 }

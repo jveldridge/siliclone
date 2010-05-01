@@ -1,7 +1,10 @@
 package edu.brown.cs32.siliclone.operators.dnaInput;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.TitleOrientation;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
@@ -13,6 +16,11 @@ import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
+import edu.brown.cs32.siliclone.database.client.DataServiceException;
+import edu.brown.cs32.siliclone.database.client.SequenceService;
+import edu.brown.cs32.siliclone.database.client.SequenceServiceAsync;
+import edu.brown.cs32.siliclone.dna.NucleotideString;
+import edu.brown.cs32.siliclone.dna.SequenceHook;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 public class DNAInputPropertiesSelector extends PropertiesSelector {
@@ -23,13 +31,14 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	public DNAInputPropertiesSelector(DNAInputOp op) {
 		_operator = op;
 		
-		this.setSize("300px", "250px");
+		this.setSize("400px", "300px");
 		this.clear();
 		_sourceTabs = new TabSet();
 		
 		//initialize tabs
 		this.initManualEntryTab();
 		this.initUploadTab();
+		this.initSavedSeqTab();
 		this.initNCBITab();
 
 		this.addMember(_sourceTabs);
@@ -52,7 +61,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		final TextAreaItem manualSequence = new TextAreaItem("Sequence");
 		RegExpValidator manualEntryVal = new RegExpValidator();
 		manualEntryVal.setErrorMessage("Invalid sequence: only A,C,G,T are permitted.");
-		manualEntryVal.setExpression("^(A|C|G|T)+$");
+		manualEntryVal.setExpression("^(A|C|G|T|a|t|g|c)+$");
 		manualSequence.setValidators(manualEntryVal);
 		
 		//TODO add ability for user to enter annotations
@@ -60,11 +69,24 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		manualEntryPane.addChild(manualForm);
 		
 		ButtonItem manualEntrySubmit = new ButtonItem("OK");
-		manualEntrySubmit.addClickHandler(new ClickHandler() {	
+		manualEntrySubmit.addClickHandler(new ClickHandler() {
+			private SequenceServiceAsync _service = GWT.create(SequenceService.class);
+			
 			public void onClick(ClickEvent event) {
 				if (manualForm.validate()) {
 					String seq = manualSequence.getDisplayValue();
-					
+					AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
+						public void onFailure(Throwable caught) {
+							SC.say(caught.getMessage());
+						}
+
+						public void onSuccess(SequenceHook result) {
+							_operator.setSequence(result);
+						}
+					};
+					try {
+						_service.saveSequence(new NucleotideString(seq), null, null, null, callback);
+					} catch (DataServiceException e) {}
 					
 					DNAInputPropertiesSelector.this.hide();
 				}
@@ -105,6 +127,14 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		ncbiTab.setTitle("NCBI");
 		ncbiTab.setPane(ncbiPane);
 		_sourceTabs.addTab(ncbiTab);
+	}
+	
+	private void initSavedSeqTab() {
+		Canvas ssPane = new Canvas();
+		Tab ssTab = new Tab();
+		ssTab.setTitle("Saved Sequence");
+		ssTab.setPane(ssPane);
+		_sourceTabs.addTab(ssTab);
 	}
 
 	@Override

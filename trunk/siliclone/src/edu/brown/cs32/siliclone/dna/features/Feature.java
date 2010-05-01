@@ -2,6 +2,8 @@ package edu.brown.cs32.siliclone.dna.features;
 
 import java.io.Serializable;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * Specifies the required methods of a Feature of a DNASequence.
  * 
@@ -20,7 +22,7 @@ public interface Feature extends Serializable {
 	 * of what this value may be are up to the individual Feature
 	 * implementations.
 	 */
-	public Object getValue();
+	public IsSerializable getValue();
 	
 	/**
 	 * Returns the position of the nucleotide at which this feature starts

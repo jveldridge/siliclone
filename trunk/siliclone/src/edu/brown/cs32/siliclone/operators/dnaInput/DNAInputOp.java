@@ -15,8 +15,11 @@ public class DNAInputOp extends AbstractOperator {
 	transient private DNAInputPropertiesSelector properties;
 	
 	public DNAInputOp() {
-		//this.image = new Img("dnaInput.gif");
-		//this.properties = new DNAInputPropertiesSelector(this);
+		
+	}
+	
+	public void setSequence(SequenceHook seq) {
+		outputSequence = seq;
 	}
 	
 	public void init() {
