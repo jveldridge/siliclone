@@ -66,6 +66,8 @@ public class InputNode extends Canvas {
 				connection = new ConnectingLine(this, out);
 				getParentElement().getParentElement().addChild(connection);
 				connection.reposition();
+				o.getParentElement().bringToFront();
+				o.bringToFront();
 			} catch (OperatorCycleException e) {
 				SC.say(e.getMessage());
 			}
@@ -112,8 +114,7 @@ public class InputNode extends Canvas {
 			if(isConnected){
 				disconnect();
 			}
-		}
-		
+		}	
 	}
 	
 	private class Acceptor implements DropHandler {

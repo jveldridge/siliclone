@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.smartgwt.client.types.DragAppearance;
+import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.DragRepositionStartEvent;
@@ -22,7 +23,7 @@ import com.smartgwt.client.widgets.events.MouseOverHandler;
 import edu.brown.cs32.siliclone.operators.Operator;
 
 public class OutputDragger extends Canvas {
-	private static final int WIDTH = 4, HEIGHT = 4;
+	private static final int WIDTH = 7, HEIGHT = 7;
 	private static final String STATIONARY_COLOR = "#882288", 
 								HOVER_COLOR = "#BBBBBB";
 	
@@ -82,6 +83,7 @@ public class OutputDragger extends Canvas {
 		public void onDragRepositionStart(DragRepositionStartEvent event) {
 			startX = getLeft();
 			startY = getTop();
+			bringToFront();
 		}
 	}
 	
