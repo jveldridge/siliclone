@@ -5,8 +5,8 @@
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SmartGWT"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Hsqldb"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MysqlDriver"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Smart GWT"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jsch"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Mysqldriver"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

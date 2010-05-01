@@ -31,9 +31,9 @@ public interface Operator extends Serializable {
 	
 	public List<Operator> getInputs();
 	
-	public void addChild(Operator op) throws OperatorCycleException;
-	
 	public void removeInput(int slotNum);
+	
+	public void addChild(Operator op) throws OperatorCycleException;
 	
 	public Collection<Operator> getChildren();
 	
