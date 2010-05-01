@@ -69,18 +69,19 @@ public class OutputDragger extends Canvas {
 		setWidth(WIDTH);
 		setBackgroundColor(STATIONARY_COLOR);
 		
-		setCanDragReposition(true);
+		setCanDragReposition(false);
+		setCanDrag(true);
 		setCanDrop(true);
 		setDragAppearance(DragAppearance.TARGET);
-		addDragRepositionStartHandler(new DragStart());
+		addDragStartHandler(new DragStart());
 		addMouseOverHandler(new HoverStart());
 		addMouseOutHandler(new HoverStop());
-		addDragRepositionStopHandler(new DragStop());
+		addDragStopHandler(new DragStop());
 		
 	}
 
-	private class DragStart implements DragRepositionStartHandler { 
-		public void onDragRepositionStart(DragRepositionStartEvent event) {
+	private class DragStart implements DragStartHandler { 
+		public void onDragStart(DragStartEvent event) {
 			startX = getLeft();
 			startY = getTop();
 			bringToFront();
@@ -100,8 +101,8 @@ public class OutputDragger extends Canvas {
 		
 	}
 	
-	private class DragStop implements DragRepositionStopHandler {
-		public void onDragRepositionStop(DragRepositionStopEvent event) {
+	private class DragStop implements DragStopHandler {
+		public void onDragStop(DragStopEvent event) {
 			setLeft(startX);
 			setTop(startY);
 			setBackgroundColor(STATIONARY_COLOR);
