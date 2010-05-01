@@ -1,6 +1,9 @@
 package edu.brown.cs32.siliclone.database.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,8 +17,6 @@ import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.WorkspaceService;
-import edu.brown.cs32.siliclone.dna.DNASequence;
-import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		WorkspaceService {
@@ -88,27 +89,41 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			statement.setString(1, name);
 			statement.setInt(2, u.getId());
 			ResultSet res = statement.executeQuery();
+
 			if(res.next()){
-				return (Workspace) res.getObject(1);
+				Blob b = res.getBlob("data");
+				ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
+				ObjectInputStream ois = new ObjectInputStream(bis);
+				return (Workspace) ois.readObject();
 			}
 			
 			statement = conn.prepareStatement("select t2.data from " + 
 					Database.WORKSPACE_GROUP_PERMISSIONS + " as t1 inner join (" + Database.WORKSPACES + 
-					" as t2, " + Database.GROUP_PERMISSIONS + " as t2) on (t1.group_id = t2.group_id and " +
+					" as t2, " + Database.GROUP_PERMISSIONS + " as t3) on (t1.group_id = t3.group_id and " +
 					"t1.workspace_id = t2.id) where t3.member_id = ? and t2.name = ?");
 			statement.setInt(1, u.getId());
 			statement.setString(2, name);
 			res = statement.executeQuery();
 			if(res.next()){
-				return (Workspace) res.getObject(1);
+				Blob b = res.getBlob("data");
+				ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
+				ObjectInputStream ois = new ObjectInputStream(bis);
+				return (Workspace) ois.readObject();
 			}else{
 				throw new DataServiceException("No workspace with name " + name + 
 						" was found with permissions granted to user " + u.getName());
 			}
 			
-		}catch (SQLException e){
+		} catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
-		}finally {
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
+		} catch(ClassNotFoundException e){
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
+		} finally {
 			try {
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
