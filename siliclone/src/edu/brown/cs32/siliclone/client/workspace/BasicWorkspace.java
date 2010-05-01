@@ -44,8 +44,6 @@ public class BasicWorkspace implements Workspace {
 	}
 
 	public void removeOperator(Operator o) {
-		//TODO
-		o = null;
 		operators.remove(o);
 	}
 

@@ -34,6 +34,7 @@ public class WorkspaceView extends Canvas {
 		HashMap<Operator, OpView> opViews = new HashMap<Operator, OpView>(); //this is necessary for connecting
 		for(Operator op : workspace.getOperators()){ //TODO validation of op position?
 			opViews.put(op, new OpView(op, this));
+			op.getPropertiesSelector().hide();
 			addChild(opViews.get(op));
 		}
 		for(Operator op : workspace.getOperators()){
