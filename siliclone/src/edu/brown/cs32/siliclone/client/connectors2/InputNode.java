@@ -68,6 +68,7 @@ public class InputNode extends Canvas {
 				connection.reposition();
 				o.getParentElement().bringToFront();
 				o.bringToFront();
+				this.getParentElement().bringToFront(); //moving the canvas seems to allow more drops
 			} catch (OperatorCycleException e) {
 				SC.say(e.getMessage());
 			}
@@ -83,6 +84,7 @@ public class InputNode extends Canvas {
 			connection.hide();
 			connection = null;
 			setBackgroundColor(EMPTY_COLOR);
+			this.getParentElement().bringToFront();
 		}
 	}
 	
