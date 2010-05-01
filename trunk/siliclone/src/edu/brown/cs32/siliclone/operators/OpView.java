@@ -83,7 +83,6 @@ public class OpView extends Canvas {//implements Connectable {
 		//this.addMember(opWidget);
 		
 		
-
 		this.setCanDragReposition(true);
 		this.setKeepInParentRect(true);
 		this.setDragAppearance(DragAppearance.TARGET);
