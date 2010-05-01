@@ -35,12 +35,12 @@ public class ConnectingLine extends Canvas {
 		addChild(topLine);
 		middleLine = new Canvas();
 		middleLine.setBackgroundColor(LINE_COLOR);
-		middleLine.setMinHeight(LINE_WIDTH);
-		middleLine.setHeight(LINE_WIDTH);
+		//middleLine.setMinHeight(LINE_WIDTH);
+		middleLine.setBottom(middleLine.getTop() + LINE_WIDTH); //some property makes set height fail
 		addChild(middleLine);
 		bottomLine = new Canvas();
 		bottomLine.setBackgroundColor(LINE_COLOR);
-		bottomLine.setStyleName("2px solid dotted");
+		bottomLine.setWidth(LINE_WIDTH);
 		addChild(bottomLine);
 	}
 	
