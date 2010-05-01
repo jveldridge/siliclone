@@ -1,7 +1,11 @@
 package edu.brown.cs32.siliclone.operators.dnaInput;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.util.SC;
@@ -21,6 +25,7 @@ import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.database.client.SequenceServiceAsync;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
+import edu.brown.cs32.siliclone.dna.features.Feature;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 public class DNAInputPropertiesSelector extends PropertiesSelector {
@@ -58,6 +63,9 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		final DynamicForm manualForm = new DynamicForm();
 		manualForm.setTitleOrientation(TitleOrientation.TOP);
 		
+		final TextItem seqName = new TextItem("Name");
+		seqName.setEndRow(true);
+		
 		final TextAreaItem manualSequence = new TextAreaItem("Sequence");
 		RegExpValidator manualEntryVal = new RegExpValidator();
 		manualEntryVal.setErrorMessage("Invalid sequence: only A,C,G,T are permitted.");
@@ -81,11 +89,12 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 						}
 
 						public void onSuccess(SequenceHook result) {
+							SC.say("Sequence saved successfully.");
 							_operator.setSequence(result);
 						}
 					};
 					try {
-						_service.saveSequence(new NucleotideString(seq), null, null, null, callback);
+						_service.saveSequence(new NucleotideString(seq), new HashMap<String,Collection<Feature>>(), seqName.getDisplayValue(), new HashMap<String,IsSerializable>(), callback);
 					} catch (DataServiceException e) {}
 					
 					DNAInputPropertiesSelector.this.hide();
@@ -93,7 +102,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 			}
 		});
 		
-		manualForm.setFields(manualSequence, manualEntrySubmit);
+		manualForm.setFields(seqName, manualSequence, manualEntrySubmit);
 		manualEntryTab.setPane(manualEntryPane);
 		_sourceTabs.addTab(manualEntryTab);
 		_sourceTabs.selectTab(manualEntryTab);

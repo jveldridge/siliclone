@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -285,7 +286,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		
 		try{
 			PreparedStatement statement = conn.prepareStatement("select * from " +
-					Database.SEQUENCE_DATA + " where name = ?");
+					Database.SEQUENCE_DATA + " where name = ?", Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, seqName);
 			ResultSet res = statement.executeQuery();
 			if(res.next()){
@@ -293,7 +294,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			}
 			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
-					" (data) values (?);");
+					" (data) values (?);", Statement.RETURN_GENERATED_KEYS);
 			statement.setObject(1, nucleotides);
 			statement.executeUpdate();
 			
@@ -304,7 +305,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			int seqID = res.getInt(1);
 			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_DATA + 
-					" (name, seq_id, features, properties) values (?,?,?,?)");
+					" (name, seq_id, features, properties) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, seqName);
 			statement.setInt(2, seqID);
 			statement.setObject(3, features);
@@ -319,6 +320,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			
 			return new SequenceHook(dataID, seqID, seqName);
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try {
