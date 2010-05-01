@@ -8,7 +8,7 @@ import edu.brown.cs32.siliclone.operators.Operator;
 
 public class OutputNode extends Canvas {
 	private Operator owner;
-
+	
 	public OutputNode(Operator owner){
 		this.owner = owner;
 		this.setHeight(2);

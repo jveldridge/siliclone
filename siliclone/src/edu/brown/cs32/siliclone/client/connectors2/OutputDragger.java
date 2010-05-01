@@ -44,6 +44,11 @@ public class OutputDragger extends Canvas {
 			i.reposition();
 		}
 	}
+	public void disconnect(){
+		for(InputNode i : recipients){
+			i.disconnect();
+		}
+	}
 	
 	public Operator getOwner(){
 		return owner;
@@ -97,6 +102,5 @@ public class OutputDragger extends Canvas {
 			setTop(startY);
 			setBackgroundColor(STATIONARY_COLOR);
 		}
-		
 	}
 }

@@ -10,6 +10,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 
 import edu.brown.cs32.siliclone.client.connectors.StickyNodeConnector;
+import edu.brown.cs32.siliclone.client.connectors2.InputNode;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.operators.OpView;
 import edu.brown.cs32.siliclone.operators.Operator;
@@ -45,8 +46,6 @@ public class WorkspaceView extends Canvas {
 			}
 		}
 		
-		
-		
 		this.setCanAcceptDrop(true);
 		
 		this.addDropOverHandler(new HoverHandle());
@@ -69,7 +68,10 @@ public class WorkspaceView extends Canvas {
 		workspace.removeOperator(op);
 		
 		//and remove the OpView from the Workspaceview
-		
+		for(InputNode i : view.getInputs()){
+			i.disconnect();
+		}
+		view.getOutput().disconnect();
 		removeChild(view);
 	}
 	
