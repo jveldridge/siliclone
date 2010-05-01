@@ -78,4 +78,8 @@ public class AnotherTestOp extends AbstractOperator {
 		
 	}
 
+	public int getNumInputs() {
+		return 1;
+	}
+
 }

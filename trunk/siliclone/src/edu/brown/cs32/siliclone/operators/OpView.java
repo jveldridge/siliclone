@@ -21,8 +21,8 @@ import com.smartgwt.client.widgets.events.MouseOverHandler;
 import edu.brown.cs32.siliclone.client.WorkspaceView;
 import edu.brown.cs32.siliclone.client.connectors.Connectable;
 import edu.brown.cs32.siliclone.client.connectors.Direction;
-import edu.brown.cs32.siliclone.client.connectors.StickyNodeConnector;
-import edu.brown.cs32.siliclone.client.connectors.VerticalConnector;
+import edu.brown.cs32.siliclone.client.connectors2.InputNode;
+import edu.brown.cs32.siliclone.client.connectors2.OutputDragger;
 
 
 
@@ -31,12 +31,12 @@ import edu.brown.cs32.siliclone.client.connectors.VerticalConnector;
  * OpView displays an Operator object to be displayed in a WorkspaceView and manipulated
  * by the client.
  */
-public class OpView extends Canvas implements Connectable {
+public class OpView extends Canvas {//implements Connectable {
 	private final Operator op;
 	private final PropertiesSelector selector;
-	private VerticalConnector _output;
-	private VerticalConnector _input;
 	private Rectangle _beforeDrag;
+	private InputNode[] inputs;
+	private OutputDragger output;
 	
 	/**
 	 * @param op An already initialized operator that this OpView described (not null)
@@ -80,53 +80,30 @@ public class OpView extends Canvas implements Connectable {
 		
 		//this.addMember(opWidget);
 		
-		//add a connector for output
-		_output = new VerticalConnector(this, null);
-		_output.setHeight(30);
-		_output.setTop(this.getBottom());
-		_output.setLeft((this.getLeft() + this.getRight())/2);
 		
-		this.addPeer(_output);
-		
-		
-		StickyNodeConnector node = new StickyNodeConnector(null, null, _output, null);
-		_output.addConnection(node, Direction.DOWN);
-		node.setTop(_output.getBottom());
-		node.setLeft(_output.getLeft());
-		this.addPeer(node);
-		
-		//add a connector for input
-		_input = new VerticalConnector(null, this);
-		_input.setHeight(30);
-		_input.moveTo((this.getLeft() + this.getRight())/2, this.getTop() - _input.getHeight());
-		this.addPeer(_input);
-		
-		StickyNodeConnector inNode = new StickyNodeConnector(null, null, null, _input);
-		_input.addConnection(inNode, Direction.UP);
-		inNode.moveTo(_input.getLeft(), _input.getTop() - inNode.getHeight());
-		this.addPeer(inNode);
 
 		this.setCanDragReposition(true);
 		this.setKeepInParentRect(true);
 		this.setDragAppearance(DragAppearance.TARGET);
-		this.addDragRepositionStopHandler(new RepositionHandler());
+		//this.addDragRepositionStopHandler(new RepositionHandler());
 		this.addDragRepositionMoveHandler(new DragRepositionMoveHandler() {
 			
 			public void onDragRepositionMove(DragRepositionMoveEvent event) {
-				int horizontal = getLeft() - _beforeDrag.getLeft();
-				int vertical = getTop() - _beforeDrag.getTop();
-				if(_input != null)
-					_input.translate(horizontal, vertical, Direction.DOWN);
-				if(_output != null)
-					_output.translate(horizontal, vertical, Direction.UP);
+				for(InputNode i : inputs)
+					if(i != null){
+						i.reposition();
+					}
+				output.reposition();
+//				int horizontal = getLeft() - _beforeDrag.getLeft();
+//				int vertical = getTop() - _beforeDrag.getTop();
 			}
 		});
-		this.addDragRepositionStartHandler(new DragRepositionStartHandler() {
-			
-			public void onDragRepositionStart(DragRepositionStartEvent event) {
-				startDrag(null);
-			}
-		});
+//		this.addDragRepositionStartHandler(new DragRepositionStartHandler() {
+//			
+//			public void onDragRepositionStart(DragRepositionStartEvent event) {
+//				startDrag(null);
+//			}
+//		});
 
 		selector = op.getPropertiesSelector();
 		
@@ -181,8 +158,29 @@ public class OpView extends Canvas implements Connectable {
                          }
                  }
          });
-
+         
+         
+         inputs = new InputNode[op.getNumInputs()];
+         for(int i = 0; i < inputs.length; i ++){
+        	 inputs[i] = new InputNode(i, op);
+        	 addChild(inputs[i]);
+        	 inputs[i].setTop(0);
+        	 inputs[i].setLeft(getWidth() * i / inputs.length + close.getWidth());
+         }
+         output = new OutputDragger(op);
+         addChild(output);
+         output.setTop(getHeight());
+         output.setLeft(getWidth() / 2 + output.getWidth() / 2);
 	}
+	
+	public InputNode[] getInputs(){
+		return inputs;
+	}
+	
+	public OutputDragger getOutput(){
+		return output;
+	}
+	
 	
 	/**
 	 * Creates a separate draggable window in the workspace for the 
@@ -225,6 +223,7 @@ public class OpView extends Canvas implements Connectable {
 		}
 		
 	}
+	/*
 	public void addConnection(Connectable toAdd, Direction dir) {		// TODO Auto-generated method stub
 		//Should not add connections to the OpView directly - the output and input lines
 		//are created with the OpView and should never change
@@ -233,20 +232,11 @@ public class OpView extends Canvas implements Connectable {
 	public void adjustHorizontal(int change, Direction cameFrom) {
 		this.setLeft(_beforeDrag.getLeft() + change);
 		op.setX(this.getLeft());
-		if(_input != null && cameFrom != Direction.UP)
-			_input.adjustHorizontal(change, Direction.DOWN);
-		if(_output != null && cameFrom != Direction.DOWN)
-			_output.adjustHorizontal(change, Direction.UP);		
 	}
 
 	public void adjustVertical(int change, Direction cameFrom) {
 		this.setTop(_beforeDrag.getTop() + change);
 		op.setY(this.getTop());
-		if(_input != null && cameFrom != Direction.UP)
-			_input.adjustVertical(change, Direction.DOWN);
-		if(_output != null && cameFrom != Direction.DOWN)
-			_output.adjustVertical(change, Direction.UP);
-		
 	}
 
 	public void changeConnection(Connectable toAdd, Direction dir) {
@@ -261,21 +251,13 @@ public class OpView extends Canvas implements Connectable {
 
 	public void startDrag(Direction dir) {
 		_beforeDrag = this.getRect();
-		if(_input != null && dir != Direction.UP)
-			_input.startDrag(Direction.DOWN);
-		if(_output != null && dir != Direction.DOWN)
-			_output.startDrag(Direction.UP);
-		
 	}
 
 	public void translate(int horizontal, int vertical, Direction cameFrom) {
 		this.setLeft(_beforeDrag.getLeft() + horizontal);
 		this.setTop(_beforeDrag.getTop() + vertical);
 		op.setX(getLeft());
-		op.setY(getTop());
-		if(_input != null && cameFrom != Direction.UP)
-			_input.translate(horizontal, vertical, Direction.DOWN);
-		if(_output != null && cameFrom != Direction.DOWN)
-			_output.translate(horizontal, vertical, Direction.UP);
 	}
+	*/
+	
 }

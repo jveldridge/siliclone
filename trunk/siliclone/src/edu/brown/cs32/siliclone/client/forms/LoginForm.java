@@ -68,7 +68,7 @@ public class LoginForm extends DynamicForm {
 		
 		AsyncCallback<User> callback = new AsyncCallback<User>() {
 			public void onFailure(Throwable caught) {
-				SC.say("Error connecting to server.");
+				SC.say(caught.getMessage());
 			}
 			
 			public void onSuccess(User result) {
@@ -76,11 +76,12 @@ public class LoginForm extends DynamicForm {
 			}
 		};
 	
-		try {
-			service.login(u, callback);
-		} catch (DataServiceException e) {
-			SC.say(e.getMessage());
-		}
+		//try {
+		//	service.login(u, callback);
+		//} catch (DataServiceException e) {
+			//SC.say(e.getMessage());
+		//}
+		_main.showMainView();
 	}
 
 }

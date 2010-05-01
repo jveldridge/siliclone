@@ -1,6 +1,7 @@
 package edu.brown.cs32.siliclone.operators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import edu.brown.cs32.siliclone.dna.SequenceHook;
 public abstract class AbstractOperator implements Operator {
 	
 	protected int x, y;
-	protected Operator[] inputs;
+	protected Operator[] inputs = new Operator[getNumInputs()];
 	protected SequenceHook outputSequence; 
 	protected Collection<Operator> children = new ArrayList<Operator>();
 	
@@ -37,6 +38,10 @@ public abstract class AbstractOperator implements Operator {
 		inputs[slotNum] = input;
 	}
 
+	public List<Operator> getInputs(){
+		return Arrays.asList(inputs);
+	}
+	
 	public void addChild(Operator op) throws OperatorCycleException {
 		children.add(op);
 		if(this.containsCycle(op, this)){

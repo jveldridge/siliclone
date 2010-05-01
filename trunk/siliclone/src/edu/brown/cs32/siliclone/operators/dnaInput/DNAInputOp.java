@@ -50,4 +50,8 @@ public class DNAInputOp extends AbstractOperator {
 		return image;
 	}
 
+	public int getNumInputs() {
+		return 0;
+	}
+
 }
