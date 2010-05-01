@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.database.client;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public interface SequenceService extends RemoteService {
 	 * @param key a String representing the name of the property being added
 	 * @param value	the value of the property being added
 	 */
-	public void addProperty(SequenceHook seq, String key, Object value) throws DataServiceException;
+	public void addProperty(SequenceHook seq, String key, Serializable value) throws DataServiceException;
 	
 	/**
 	 * Returns information about a particular property of this sequence.
@@ -75,7 +76,7 @@ public interface SequenceService extends RemoteService {
 	 * @param key a String representing the name of the property requested
 	 * @return information about a particular property of this sequence.
 	 */
-	public Object getProperty(SequenceHook seq, String key) throws DataServiceException;
+	public Serializable getProperty(SequenceHook seq, String key) throws DataServiceException;
 	
 	/**
 	 * Adds the nucleotide sequence to the database.
@@ -85,6 +86,6 @@ public interface SequenceService extends RemoteService {
 	 * @return a SequenceHook that can be used to reference the newly added sequence
 	 */
 	public SequenceHook saveSequence(NucleotideString nucleotides, Map<String, Collection<Feature>> features, 
-									String seqName,  Map<String,Object> properties) throws DataServiceException;
+									String seqName,  Map<String,Serializable> properties) throws DataServiceException;
 	
 }
