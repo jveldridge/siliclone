@@ -1,6 +1,10 @@
 package edu.brown.cs32.siliclone.database.server;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,12 +16,14 @@ import java.util.Map;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.brown.cs32.siliclone.accounts.User;
+import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
 import edu.brown.cs32.siliclone.dna.features.Feature;
 
+@SuppressWarnings("serial")
 public class SequenceServiceImpl extends RemoteServiceServlet implements SequenceService{
 
 	private User getLoggedIn() throws DataServiceException{
@@ -139,6 +145,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection<Feature> getFeaturesOfType(SequenceHook seq,
 			String featureType) throws DataServiceException {
 		if(seq == null || featureType == null){
@@ -155,9 +162,27 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			return ((Map<String, Collection<Feature>>) res.getObject(1)).get(featureType);
+			
+			Blob b = res.getBlob(1);
+			ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
+			ObjectInputStream ois = null;
+			try {
+				ois = new ObjectInputStream(bis);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return ((Map<String, Collection<Feature>>) ois.readObject()).get(featureType);
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
 		}finally{
 			try {
 				conn.close();
@@ -165,6 +190,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public Serializable getProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		if(seq == null || key == null){
@@ -181,13 +207,25 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			Serializable property = ((Map<String, Serializable>) res.getObject(1)).get(key);
+			
+			Blob b = res.getBlob(1);
+			ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
+			ObjectInputStream ois = new ObjectInputStream(bis);
+			Serializable property = ((Map<String, Serializable>) ois.readObject()).get(key);
 			if(property == null){
 				throw new DataServiceException("Sequence property not found with key " + key);
 			}
 			return property;
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
 		}finally{
 			try {
 				conn.close();
@@ -211,9 +249,20 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			return (NucleotideString) res.getObject(1);
+			Blob b = res.getBlob(1);
+			ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
+			ObjectInputStream ois = new ObjectInputStream(bis);
+			return (NucleotideString) ois.readObject();
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
 		}finally{
 			try {
 				conn.close();
