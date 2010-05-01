@@ -13,9 +13,7 @@ public class OutputNode extends Canvas {
 		this.owner = owner;
 		this.setHeight(2);
 		this.setWidth(2);
-		this.setBackgroundColor("#00ff00");
-		
-	}
+		this.setBackgroundColor("#00ff00");	}
 	public Operator getOwner(){
 		return owner;
 	}

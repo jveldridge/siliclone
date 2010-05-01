@@ -81,7 +81,6 @@ public class LoginForm extends DynamicForm {
 		} catch (DataServiceException e) {
 			SC.say(e.getMessage());
 		}
-		_main.showMainView();
 	}
 
 }

@@ -22,7 +22,6 @@ public class PCRPropertiesSelector extends PropertiesSelector {
 		form.setFields(enzyme, okButton);
 		
 		this.setAlign(Alignment.CENTER);
-		
 	}
 
 	@Override
