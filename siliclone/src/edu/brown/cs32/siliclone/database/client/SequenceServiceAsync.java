@@ -32,7 +32,7 @@ public interface SequenceServiceAsync {
 	void saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features,
 			String seqName,
-			Map<String, Serializable> properties,
+			Map<String, IsSerializable> properties,
 			AsyncCallback<SequenceHook> callback) throws DataServiceException;
 
 }
