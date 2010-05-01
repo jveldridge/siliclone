@@ -2,6 +2,7 @@ package edu.brown.cs32.siliclone.operators;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.user.client.ui.Widget;
 
@@ -22,21 +23,46 @@ public interface Operator extends Serializable {
 	 * 
 	 * @param slotNum the number of the slot to which the input is being added
 	 * @param input the DNASequences that should be the input to this slot
+	 * @throws OperatorConnectionException 
 	 */
-	public void setInput(int slotNum, Operator input);
+	public void setInput(int slotNum, Operator input) throws OperatorCycleException;
 	
+	public void addChild(Operator op) throws OperatorCycleException;
+	
+	public void removeInput(int slotNum);
+	
+	public Collection<Operator> getChildren();
+	
+	public void removeChild(Operator op);
+	
+	
+
+	/**
+	 * Returns the SequenceHook representing the DNA sequence that results
+	 * from running this operation with its current input.  If the output
+	 * sequence is not currently valid, the SequenceHook returned will cause
+	 * a NoSuchSequenceException to be thrown if it is passed to any RPC
+	 * that accesses the sequence database.
+	 * 
+	 * @return the SequenceHook representing the DNA sequence that results
+	 * from running this operation with its current input
+	 */
+	public SequenceHook getOutputSequence();
+	
+	
+	//NOTE Operator is serializable! these need to be transient or (even better) not fields
 	/**
 	 * Causes the Operator to show a floating window that allows the user to
 	 * select properties for the operator.
 	 * >>> It probably makes more sense for this to be a getPropertiesSelector method
 	 *     that returns a PropertiesSelector object (which the workspace can then
 	 *     display appropriately), right?
+	 *     
 	 */
 	public PropertiesSelector getPropertiesSelector();
 	
 	public Widget getWidget();
 	
-	public void addCompletedListener(CompletedListener l);
 	
 	/**
 	 * Runs the Operation that this Operator controls.  This method simply calls
@@ -53,15 +79,6 @@ public interface Operator extends Serializable {
 	 */
 	public void cancel();
 	
-	public void connect(Operator adjacent);
-	
-	/**
-	 * Returns the Operators adjacent to this Operator; that is, all Operators
-	 * that have the output of this Operator as an input.
-	 * 
-	 * @return the Operators adjacent to this Operator
-	 */
-	public Collection<Operator> getAdjacentOperators();
 	
 	/**
 	 * @return The x-coordinate for this operator placed on a workspace.
@@ -76,17 +93,5 @@ public interface Operator extends Serializable {
 	void setX(int x); 
 	
 	void setY(int y);
-	
-	/**
-	 * Returns the SequenceHook representing the DNA sequence that results
-	 * from running this operation with its current input.  If the output
-	 * sequence is not currently valid, the SequenceHook returned will cause
-	 * a NoSuchSequenceException to be thrown if it is passed to any RPC
-	 * that accesses the sequence database.
-	 * 
-	 * @return the SequenceHook representing the DNA sequence that results
-	 * from running this operation with its current input
-	 */
-	public SequenceHook getOutputSequence();
 	
 }

@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.database.server;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -99,7 +100,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
-	public void addProperty(SequenceHook seq, String key, Object value)
+	public void addProperty(SequenceHook seq, String key, Serializable value)
 			throws DataServiceException {
 		if(seq == null || key == null || value == null){
 			throw new DataServiceException("Null value passed to SequenceService.addProperty");
@@ -115,7 +116,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			Map<String, Object> properties = (Map<String, Object>) res.getObject(1);
+			Map<String, Serializable> properties = (Map<String, Serializable>) res.getObject(1);
 			if(properties.containsKey(key)){
 				throw new DataServiceException("Sequence already contains property with given key.");
 			}
@@ -164,7 +165,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
-	public Object getProperty(SequenceHook seq, String key)
+	public Serializable getProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		if(seq == null || key == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperty");
@@ -180,7 +181,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			Object property = ((Map<String, Object>) res.getObject(1)).get(key);
+			Serializable property = ((Map<String, Serializable>) res.getObject(1)).get(key);
 			if(property == null){
 				throw new DataServiceException("Sequence property not found with key " + key);
 			}
@@ -226,7 +227,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 
 	public SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, Object> properties) throws DataServiceException {
+			Map<String, Serializable> properties) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}

@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.database.client;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,14 +16,14 @@ public interface SequenceServiceAsync {
 	void addFeature(SequenceHook seq, Feature toAdd,
 			AsyncCallback<Void> callback) throws DataServiceException;
 
-	void addProperty(SequenceHook seq, String key, Object value,
+	void addProperty(SequenceHook seq, String key, Serializable value,
 			AsyncCallback<Void> callback) throws DataServiceException;
 
 	void getFeaturesOfType(SequenceHook seq, String featureType,
 			AsyncCallback<Collection<Feature>> callback) throws DataServiceException;
 
 	void getProperty(SequenceHook seq, String key,
-			AsyncCallback<Object> callback) throws DataServiceException;
+			AsyncCallback<Serializable> callback) throws DataServiceException;
 
 	void getSequence(SequenceHook seq, AsyncCallback<NucleotideString> callback) throws DataServiceException;
 
@@ -31,7 +32,7 @@ public interface SequenceServiceAsync {
 	void saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features,
 			String seqName,
-			Map<String, Object> properties,
+			Map<String, Serializable> properties,
 			AsyncCallback<SequenceHook> callback) throws DataServiceException;
 
 }
