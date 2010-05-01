@@ -35,7 +35,13 @@ public interface Operator extends Serializable {
 	
 	public void removeChild(Operator op);
 	
-	
+	/**
+	 * Method to be called upon construction of an Operator to initialize
+	 * its GUI components.  (This is necessary because these components do
+	 * not get serialized, so they must be reconstructed when an object is
+	 * deserialized).
+	 */
+	public void init();
 
 	/**
 	 * Returns the SequenceHook representing the DNA sequence that results

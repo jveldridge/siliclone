@@ -43,6 +43,7 @@ public class OpView extends Canvas implements Connectable {
 	 */
 	public OpView(final Operator op, final WorkspaceView workspace){
 		this.op = op; //associate with operator, positions are related
+		this.op.init();
 		setTop(op.getY());
 		setLeft(op.getX());
 		
