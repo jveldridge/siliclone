@@ -17,6 +17,7 @@ import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 
+@SuppressWarnings("serial")
 public class UserServiceImpl extends RemoteServiceServlet implements
 		UserService {
 	

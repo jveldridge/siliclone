@@ -18,6 +18,7 @@ import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.WorkspaceService;
 
+@SuppressWarnings("serial")
 public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		WorkspaceService {
 
