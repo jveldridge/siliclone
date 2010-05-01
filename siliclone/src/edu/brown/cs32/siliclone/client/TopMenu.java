@@ -137,9 +137,7 @@ public class TopMenu extends ToolStrip {
 			_service = GWT.create(WorkspaceService.class);
 		}
 		
-		public void onClick(ClickEvent event) {
-			
-			
+		public void onClick(ClickEvent event) {	
 			AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 				public void onFailure(Throwable caught) {
 					SC.say("failure");

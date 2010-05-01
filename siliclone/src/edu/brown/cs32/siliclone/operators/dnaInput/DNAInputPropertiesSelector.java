@@ -81,8 +81,9 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 			private SequenceServiceAsync _service = GWT.create(SequenceService.class);
 			
 			public void onClick(ClickEvent event) {
-				if (manualForm.validate()) {
-					String seq = manualSequence.getDisplayValue();
+				String name = seqName.getDisplayValue();
+				String seq = manualSequence.getDisplayValue();
+				if (!name.equals("") && !seq.equals("") && manualForm.validate()) {
 					AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
 						public void onFailure(Throwable caught) {
 							SC.say(caught.getMessage());
@@ -94,11 +95,11 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 						}
 					};
 					try {
-						_service.saveSequence(new NucleotideString(seq), new HashMap<String,Collection<Feature>>(), seqName.getDisplayValue(), new HashMap<String,IsSerializable>(), callback);
+						_service.saveSequence(new NucleotideString(seq), new HashMap<String,Collection<Feature>>(), name, new HashMap<String,IsSerializable>(), callback);
 					} catch (DataServiceException e) {}
-					
-					DNAInputPropertiesSelector.this.hide();
 				}
+				
+				DNAInputPropertiesSelector.this.hide();
 			}
 		});
 		
