@@ -30,10 +30,12 @@ public class OutputDragger extends Canvas {
 	private Operator owner;
 	private Collection<InputNode> recipients;
 	
-	public OutputDragger(Operator owner){
+	public OutputDragger(Operator owner, int x, int y){
 		this.owner = owner;
 		init();
 		recipients = new ArrayList<InputNode>();
+		startX = x;
+		startY = y;
 	}
 	
 	public void addRecipient(InputNode i){

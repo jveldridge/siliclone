@@ -29,7 +29,7 @@ public interface Operator extends Serializable {
 	
 	public int getNumInputs();
 	
-	public List<Operator> getInputs();
+	public Operator[] getInputs();
 	
 	public void removeInput(int slotNum);
 	

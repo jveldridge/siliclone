@@ -28,7 +28,6 @@ public class WorkspaceView extends Canvas {
 		this.setWidth100();
 		this.setShowEdges(true);
 		
-		
 		this.workspace = workspace;
 		
 		HashMap<Operator, OpView> opViews = new HashMap<Operator, OpView>(); //this is necessary for connecting
@@ -38,8 +37,8 @@ public class WorkspaceView extends Canvas {
 			addChild(opViews.get(op));
 		}
 		for(Operator op : workspace.getOperators()){
-			for(int i = 0; i < op.getInputs().size(); i++){
-				Operator input = op.getInputs().get(i);
+			for(int i = 0; i < op.getInputs().length; i++){
+				Operator input = op.getInputs()[i];
 				if(input != null){
 					opViews.get(op).getInputs()[i].connect(
 							opViews.get(input).getOutput());
