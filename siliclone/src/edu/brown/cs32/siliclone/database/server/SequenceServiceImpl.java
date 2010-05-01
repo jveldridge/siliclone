@@ -3,7 +3,6 @@ package edu.brown.cs32.siliclone.database.server;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,10 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.brown.cs32.siliclone.accounts.User;
-import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
@@ -106,7 +105,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
-	public void addProperty(SequenceHook seq, String key, Serializable value)
+	public void addProperty(SequenceHook seq, String key, IsSerializable value)
 			throws DataServiceException {
 		if(seq == null || key == null || value == null){
 			throw new DataServiceException("Null value passed to SequenceService.addProperty");
@@ -122,7 +121,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			Map<String, Serializable> properties = (Map<String, Serializable>) res.getObject(1);
+			Map<String, IsSerializable> properties = (Map<String, IsSerializable>) res.getObject(1);
 			if(properties.containsKey(key)){
 				throw new DataServiceException("Sequence already contains property with given key.");
 			}
@@ -191,7 +190,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	}
 
 	@SuppressWarnings("unchecked")
-	public Serializable getProperty(SequenceHook seq, String key)
+	public IsSerializable getProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		if(seq == null || key == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperty");
@@ -211,7 +210,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			Blob b = res.getBlob(1);
 			ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
 			ObjectInputStream ois = new ObjectInputStream(bis);
-			Serializable property = ((Map<String, Serializable>) ois.readObject()).get(key);
+			IsSerializable property = ((Map<String, IsSerializable>) ois.readObject()).get(key);
 			if(property == null){
 				throw new DataServiceException("Sequence property not found with key " + key);
 			}
@@ -276,7 +275,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 
 	public SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, Serializable> properties) throws DataServiceException {
+			Map<String, IsSerializable> properties) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}

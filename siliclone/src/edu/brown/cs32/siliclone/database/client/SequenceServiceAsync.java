@@ -3,9 +3,9 @@ package edu.brown.cs32.siliclone.database.client;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
@@ -16,14 +16,14 @@ public interface SequenceServiceAsync {
 	void addFeature(SequenceHook seq, Feature toAdd,
 			AsyncCallback<Void> callback) throws DataServiceException;
 
-	void addProperty(SequenceHook seq, String key, Serializable value,
+	void addProperty(SequenceHook seq, String key, IsSerializable value,
 			AsyncCallback<Void> callback) throws DataServiceException;
 
 	void getFeaturesOfType(SequenceHook seq, String featureType,
 			AsyncCallback<Collection<Feature>> callback) throws DataServiceException;
 
 	void getProperty(SequenceHook seq, String key,
-			AsyncCallback<Serializable> callback) throws DataServiceException;
+			AsyncCallback<IsSerializable> callback) throws DataServiceException;
 
 	void getSequence(SequenceHook seq, AsyncCallback<NucleotideString> callback) throws DataServiceException;
 
