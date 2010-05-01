@@ -120,7 +120,7 @@ public class Database {
 			statement.executeUpdate("create table if not exists " + 
 					SEQUENCE_DATA + 
 					"(id mediumint not null primary key auto_increment, " +
-					"name varchare(60) not null, " + 
+					"name varchar(60) not null, " + 
 					"seq_id mediumint not null, " +
 					"features longblob not null, " +
 					"properties longblob not null);");
@@ -135,6 +135,7 @@ public class Database {
 			  
 			return true;  
 		}catch (SQLException e){
+			e.printStackTrace();
 			System.out.println("Could not create table in database from " + conn);
 			return false;
 		} finally{

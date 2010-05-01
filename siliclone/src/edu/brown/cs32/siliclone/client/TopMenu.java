@@ -23,6 +23,7 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
+import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.WorkspaceService;
@@ -100,7 +101,9 @@ public class TopMenu extends ToolStrip {
 			_sequenceGrid.setShowAllRecords(true);
 			_sequenceGrid.addSelectionChangedHandler(new SelectionChangedHandler() {			
 				public void onSelectionChanged(SelectionEvent event) {
-					_workspaceToLoad = _sequenceGrid.getSelection()[0].getAttribute("name");
+					if (_sequenceGrid.getSelection().length > 0) {
+						_workspaceToLoad = _sequenceGrid.getSelection()[0].getAttribute("name");
+					}
 				}
 			});
 			
@@ -108,9 +111,23 @@ public class TopMenu extends ToolStrip {
 			_sequenceGrid.setFields(name);
 			
 			Button okButton = new Button("Load");
-			okButton.addClickHandler(new ClickHandler() {	
+			okButton.addClickHandler(new ClickHandler() {
+				AsyncCallback<Workspace> callback = new AsyncCallback<Workspace>() {
+					public void onFailure(Throwable caught) {
+						SC.say(caught.getMessage());
+					}
+
+					public void onSuccess(Workspace result) {
+						_main.addWorkspace(result);
+					}
+				};
+				
 				public void onClick(ClickEvent event) {
-					SC.say(_workspaceToLoad);
+					try {
+						_service.findWorkspace(_workspaceToLoad, callback);
+					} catch (DataServiceException e) {}
+					
+					_dialog.hide();
 				}
 			});
 			
@@ -193,8 +210,10 @@ public class TopMenu extends ToolStrip {
 	 * ClickHandler for the "New" workspace button
 	 */
 	private class NewClickHandler implements ClickHandler {
+		private int counter = 1;
 		public void onClick(ClickEvent event) {
-			_main.makeNewWorkspace();
+			_main.addWorkspace(new BasicWorkspace("New Workspace (" + counter + ")"));
+			counter++;
 		}
 	}
 }

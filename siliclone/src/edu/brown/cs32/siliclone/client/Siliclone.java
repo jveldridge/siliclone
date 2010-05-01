@@ -41,8 +41,8 @@ public class Siliclone implements EntryPoint {
 		_panel.addChild(_mainView);
 	}
 	
-	public void makeNewWorkspace() {
-		_mainView.addWorkspace(new BasicWorkspace("New Workspace"));
+	public void addWorkspace(Workspace w) {
+		_mainView.addWorkspace(w);
 	}
 
 	public Workspace getCurrentWorkspace() {
