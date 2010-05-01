@@ -172,6 +172,7 @@ public class OpView extends Canvas {//implements Connectable {
          addChild(output);
          output.setTop(getHeight());
          output.setLeft(getWidth() / 2 + output.getWidth() / 2);
+         bringToFront();
 	}
 	
 	public InputNode[] getInputs(){
