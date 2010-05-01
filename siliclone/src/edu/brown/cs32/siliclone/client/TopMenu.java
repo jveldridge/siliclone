@@ -147,6 +147,12 @@ public class TopMenu extends ToolStrip {
 				}
 
 				public void onSuccess(List<String> result) {
+					//remove old data
+					for (ListGridRecord r : _sequenceGrid.getRecords()) {
+						_sequenceGrid.removeData(r);
+					}
+					
+					//add new data
 					for (String w : result) {
 						ListGridRecord rec = new ListGridRecord();
 						rec.setAttribute("name", w);
