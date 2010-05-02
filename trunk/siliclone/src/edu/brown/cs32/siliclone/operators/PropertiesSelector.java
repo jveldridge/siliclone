@@ -25,6 +25,7 @@ public abstract class PropertiesSelector extends VLayout {
 				if (verifyFields()) {
 					processInput();
 				}
+				PropertiesSelector.this.hide();
 			}
 		});
 		
