@@ -6,12 +6,21 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.data.fields.DataSourceBinaryField;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.FileItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
@@ -27,6 +36,10 @@ import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
 import edu.brown.cs32.siliclone.dna.features.Feature;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
+import gwtupload.client.IUploader;
+import gwtupload.client.PreloadedImage;
+import gwtupload.client.SingleUploader;
+import gwtupload.client.IUploadStatus.Status;
 
 public class DNAInputPropertiesSelector extends PropertiesSelector {
 	
@@ -116,13 +129,57 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	private void initUploadTab() {
 		Tab uploadTab = new Tab();
 		uploadTab.setTitle("Upload");
-		
 		Canvas uploadPane = new Canvas();
 		
-		DynamicForm uploadForm = new DynamicForm();
-		uploadForm.setFields(new TextItem("hi"));
-		uploadPane.addChild(uploadForm);
+	    SingleUploader single1 = new SingleUploader();
+	    uploadPane.addChild(single1);
+	    single1.addOnFinishUploadHandler(new IUploader.OnFinishUploaderHandler() {
+	        public void onFinish(IUploader uploader) {
+	        	if (uploader.getStatus() == Status.SUCCESS) {
+	        		SC.say(uploader.fileUrl());
+	        	}
+	        	else {
+	        		SC.say("Something bad happened");
+	        	}
+	        }});
+/*
+		final DataSource data = new DataSource();
+		DataSourceField key = new DataSourceField("key", FieldType.INTEGER);
+		key.setPrimaryKey(true);
+		DataSourceBinaryField dsbf = new DataSourceBinaryField("file");
+		data.setFields(key, dsbf);
+		data.setClientOnly(true);
 		
+		final DynamicForm uploadForm = new DynamicForm();
+		ButtonItem upload = new ButtonItem("Upload");
+		upload.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				DSCallback fetchCallback = new DSCallback() {
+					public void execute(DSResponse response, Object rawData, DSRequest request) {
+						System.out.println("fetch response: " + response);
+						System.out.println("fetch object: " + rawData);
+						System.out.println("fetch request: " + request.getDataAsString());
+					}
+				};
+				DSCallback saveCallback = new DSCallback() {	
+					public void execute(DSResponse response, Object rawData, DSRequest request) {
+						System.out.println("save response: " + response);
+						System.out.println("save object: " + rawData);
+						System.out.println("save request: " + request.getDataAsString());
+					}
+				};
+				
+				uploadForm.saveData(saveCallback);
+				data.fetchData(new Criteria("data", "*"), fetchCallback);
+			}
+		});
+
+		FileItem toUpload = new FileItem("File");
+		uploadForm.setFields(toUpload, upload);
+		uploadForm.setDataSource(data);
+		
+		uploadPane.addChild(uploadForm);
+		*/
 		uploadTab.setPane(uploadPane);
 		_sourceTabs.addTab(uploadTab);
 	}
