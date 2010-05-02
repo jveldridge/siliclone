@@ -57,4 +57,5 @@ public interface UserService extends RemoteService {
 	 * @return empty if group not found
 	 */
 	List<User> getUsersWithAccessToGroup(String group) throws DataServiceException;
+	List<User> getAllUsers() throws DataServiceException;
 }
