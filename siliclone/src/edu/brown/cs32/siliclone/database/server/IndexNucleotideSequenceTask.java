@@ -36,7 +36,7 @@ public class IndexNucleotideSequenceTask implements Task {
 			}
 			Blob b = res.getBlob(2);
 			NucleotideString ns =  (NucleotideString) Database.loadCompressedObject(b);
-			ns.makeIndex(0);
+			ns.makeIndex(6);
 			res.updateObject(2, ns);
 			res.updateInt(3, ns.getIndexDepth());
 			res.updateRow();
