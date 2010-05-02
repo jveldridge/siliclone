@@ -13,6 +13,8 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Dialog;
 import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -20,9 +22,12 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
+import edu.brown.cs32.siliclone.client.forms.AccountsForm;
+import edu.brown.cs32.siliclone.client.forms.RegisterForm;
 import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
@@ -64,6 +69,7 @@ public class TopMenu extends ToolStrip {
         
         ToolStripButton settingsButton = new ToolStripButton();
         settingsButton.setTitle("Settings");
+        settingsButton.addClickHandler(new SettingsClickHandler());
         ToolStripButton logoutButton = new ToolStripButton();
         logoutButton.setTitle("Logout");
         logoutButton.addClickHandler(new ClickHandler() {	
@@ -214,6 +220,28 @@ public class TopMenu extends ToolStrip {
 		public void onClick(ClickEvent event) {
 			_main.addWorkspace(new BasicWorkspace("New Workspace (" + counter + ")"));
 			counter++;
+		}
+	}
+	
+	
+	private class SettingsClickHandler implements ClickHandler{
+		public void onClick(ClickEvent e){
+			final Window w = new Window();
+			VLayout v = new VLayout();
+			v.addChild(new Label("Groups"));
+			
+			v.addChild(new AccountsForm());
+			
+			w.setTitle("Settings");
+			w.setIsModal(true);  
+			w.setShowModalMask(true);  
+			w.setShowCloseButton(true);
+			
+			w.addItem(v);
+			
+			w.setAutoSize(true);
+			w.setAutoCenter(true);
+			w.show();
 		}
 	}
 }
