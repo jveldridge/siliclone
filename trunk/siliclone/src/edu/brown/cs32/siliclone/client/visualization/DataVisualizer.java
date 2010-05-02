@@ -11,7 +11,7 @@ import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 public class DataVisualizer implements Visualizer {
 
-	public Widget Visualize(SequenceHook seq) {
+	public Widget visualize(SequenceHook seq) {
 		DrawingArea toReturn = new DrawingArea(600,600);
 		if(seq == null){
 			toReturn.add(new Ellipse(50 , 50, 45, 20));

@@ -14,6 +14,8 @@ import edu.brown.cs32.siliclone.dna.features.Feature;
 @RemoteServiceRelativePath("sequence")
 public interface SequenceService extends RemoteService {
 
+	public String getNucleotides(SequenceHook seq) throws DataServiceException;
+	
 	/**
 	 * Returns a String representing the nucleotides that make up this sequence.
 	 * The String will consist of characters A,C,G,T for nucleotides adenine,
@@ -23,7 +25,7 @@ public interface SequenceService extends RemoteService {
 	 * 
 	 * @return a String representing the nucleotides that make up this sequence.
 	 */
-	public NucleotideString getSequence(SequenceHook seq) throws DataServiceException;
+	//public NucleotideString getSequence(SequenceHook seq) throws DataServiceException;
 	
 	/**
 	 * Returns a Collection of all Features of a given type present in the sequence.

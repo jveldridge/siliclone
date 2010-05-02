@@ -25,7 +25,7 @@ public interface SequenceServiceAsync {
 	void getProperty(SequenceHook seq, String key,
 			AsyncCallback<IsSerializable> callback) throws DataServiceException;
 
-	void getSequence(SequenceHook seq, AsyncCallback<NucleotideString> callback) throws DataServiceException;
+	//void getSequence(SequenceHook seq, AsyncCallback<NucleotideString> callback) throws DataServiceException;
 
 	void length(SequenceHook seq, AsyncCallback<Integer> callback) throws DataServiceException;
 
@@ -40,5 +40,7 @@ public interface SequenceServiceAsync {
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, IsSerializable> properties,
 			AsyncCallback<SequenceHook> callback);
+
+	void getNucleotides(SequenceHook seq, AsyncCallback<String> callback);
 
 }

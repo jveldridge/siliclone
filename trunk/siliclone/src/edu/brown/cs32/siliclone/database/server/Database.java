@@ -167,13 +167,13 @@ public class Database {
 	
 	
 	private static OutputStream getCompressedOutputStream(OutputStream os) throws IOException{
-		return new GZIPOutputStream(os);
-		//return os;
+		//return new GZIPOutputStream(os);
+		return os;
 	}
 	
 	private static InputStream getCompressedInputStream(InputStream is) throws IOException{
-		return new GZIPInputStream(is);
-		//return is;
+		//return new GZIPInputStream(is);
+		return is;
 	}
 	
 	public static void saveCompressedObject(PreparedStatement statement, int columnindex, Object objectToWrite) throws IOException, SQLException{
