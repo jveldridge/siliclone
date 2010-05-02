@@ -32,9 +32,9 @@ public class DatabaseTest {
 	
 	@Test
 	public void saveNucleotideTest(){
-		NucleotideString ns = new NucleotideString("aattccgccggttaa");
+		NucleotideString ns = new NucleotideString("cgattccgccggttacgatcgatcgactgatgacgtagctagttagctagctgatcgactgacttcgtagtcagtcagtcagtgatcagtcagtcagtcagcatgtgtagtcagtcagtcagttctacgtgacgacgagctacgtgtcagtacgatcgatcgctgatcagtacgcatga");
 		try {
-			new SequenceServiceImpl().saveSequence(ns, new HashMap<String, Collection<Feature>>(), "someinterestingname", new HashMap<String, IsSerializable>());
+			new SequenceServiceImpl().saveSequence(ns, new HashMap<String, Collection<Feature>>(), "someinterestingname"+Math.random(), new HashMap<String, IsSerializable>());
 		} catch (DataServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

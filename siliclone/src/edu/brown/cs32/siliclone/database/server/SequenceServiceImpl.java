@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import sun.misc.Cache;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import edu.brown.cs32.siliclone.TasksDelegation;
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.SequenceService;
@@ -256,9 +258,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
 			Blob b = res.getBlob(1);
-			ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
-			ObjectInputStream ois = new ObjectInputStream(bis);
-			return (NucleotideString) ois.readObject();
+			return (NucleotideString) Database.loadCompressedObject(b);
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
@@ -307,25 +307,33 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			PreparedStatement statement2 = conn.prepareStatement("select * from " +
 					Database.SEQUENCES + " where hash = ?");
 			statement2.setInt(1, nucleotides.hashCode());
-			ResultSet res2 = statement.executeQuery();
-			while(res.next()){
-				Blob b2 = res2.getBlob(1);
+			System.out.println("hashcode: "+nucleotides.hashCode());
+			ResultSet res2 = statement2.executeQuery();
+			while(res2.next()){
+				Blob b2 = res2.getBlob(2);
 				ByteArrayInputStream bis2 = new ByteArrayInputStream(b2.getBytes(1, (int) b2.length()));
 				ObjectInputStream ois2 = new ObjectInputStream(bis2);
 				NucleotideString ns2= (NucleotideString) ois2.readObject();
+				System.out.println("someindex:"+ns2);
 				if(nucleotides.equals(ns2)){
-					System.out.println("nucleotide string is already in database, making shallow hequencehook");
+					
+					seqID = res2.getInt(1);
+					System.out.println("nucleotide string is already in database, making shallow hequencehook to id "+seqID);
+					
+					//TODO MAKE SURE THAT YOU BLOCK UNTIL THE SEQUENCE IS ACTUALLY INDEXED!!!
 				}
-				seqID = res2.getInt(1);
+				
 				
 			}
 			
 			if(seqID==-1){
 			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
-					" (data) values (?);", Statement.RETURN_GENERATED_KEYS);
+					" (data,indexDepth,hash) values (?,?,?);", Statement.RETURN_GENERATED_KEYS);
 	
-			statement.setObject(1, nucleotides);
+			Database.saveCompressedObject(statement,1, nucleotides);
+			statement.setInt(2,nucleotides.getIndexDepth());
+			statement.setInt(3,nucleotides.hashCode());
 			statement.executeUpdate();
 			
 			res = statement.getGeneratedKeys();
@@ -333,6 +341,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				throw new DataServiceException("Error saving sequence to database.");
 			}
 			seqID = res.getInt(1);
+			TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID), null);
 			
 		}
 			
@@ -354,6 +363,15 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			}
 			int dataID = res.getInt(1);
 			
+			
+			
+			//now index before the hook is returned.
+			
+			
+			
+			
+			
+			
 			return new SequenceHook(dataID, seqID, seqName);
 			
 		}catch (SQLException e){
@@ -370,6 +388,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
+		
+
 		
 	}
 
