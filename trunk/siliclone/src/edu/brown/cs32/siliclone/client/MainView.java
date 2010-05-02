@@ -1,6 +1,8 @@
 package edu.brown.cs32.siliclone.client;
 
-import com.smartgwt.client.util.SC;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -15,10 +17,12 @@ public class MainView extends Canvas {
 
 	private Siliclone _main;
 	private final TabSet _workspaceTabs;
+	private Map<Workspace, Tab> _tabMap;
 	
 	public MainView(Siliclone main){
 		_main = main;
 		_workspaceTabs = new TabSet();
+		_tabMap = new HashMap<Workspace,Tab>();
 		
 		this.setWidth100();
 		this.setHeight100();
@@ -30,10 +34,7 @@ public class MainView extends Canvas {
         //top menu
         mainLayout.addMember(new TopMenu(_main));  
         
-        Tab initialTab = new Tab("New Workspace");
-		initialTab.setCanClose(true);
-		_workspaceTabs.addTab(initialTab);
-		initialTab.setPane(new WorkspaceView(new BasicWorkspace("New Workspace")));
+        this.addWorkspace(new BasicWorkspace("New Workspace"));
   
         HLayout notMenuLayout = new HLayout();  
         notMenuLayout.setHeight("*");  
@@ -51,6 +52,7 @@ public class MainView extends Canvas {
 	
 	public void addWorkspace(Workspace w) {
 		Tab newTab = new Tab();
+		_tabMap.put(w, newTab);
 		newTab.setTitle(w.getName());
 		newTab.setCanClose(true);
 		newTab.setPane(new WorkspaceView(w));
@@ -61,6 +63,10 @@ public class MainView extends Canvas {
 	public Workspace getCurrentWorkspace() {
 		WorkspaceView w = (WorkspaceView) _workspaceTabs.getSelectedTab().getPane();
 		return w.getWorkspace();
+	}
+	
+	public void changeWorkspaceName(Workspace w, String newName) {
+		_workspaceTabs.setTabTitle(_tabMap.get(w), (newName));
 	}
 	
 }

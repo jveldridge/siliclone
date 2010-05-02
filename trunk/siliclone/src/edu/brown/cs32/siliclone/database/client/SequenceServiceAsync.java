@@ -29,10 +29,16 @@ public interface SequenceServiceAsync {
 
 	void length(SequenceHook seq, AsyncCallback<Integer> callback) throws DataServiceException;
 
-	void saveSequence(NucleotideString nucleotides,
-			Map<String, Collection<Feature>> features,
-			String seqName,
+	//removed b/c should just be called serverside
+//	void saveSequence(NucleotideString nucleotides,
+//			Map<String, Collection<Feature>> features,
+//			String seqName,
+//			Map<String, IsSerializable> properties,
+//			AsyncCallback<SequenceHook> callback) throws DataServiceException;
+
+	void saveSequence(String nucleotides,
+			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, IsSerializable> properties,
-			AsyncCallback<SequenceHook> callback) throws DataServiceException;
+			AsyncCallback<SequenceHook> callback);
 
 }
