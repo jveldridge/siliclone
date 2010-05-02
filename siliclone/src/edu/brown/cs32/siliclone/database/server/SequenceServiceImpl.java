@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import sun.misc.Cache;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -233,12 +235,16 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
+	public Cache nucleotideStringCache; //TODO make cache
+	
 	public NucleotideString getSequence(SequenceHook seq)
 			throws DataServiceException {
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getSequence");
 		}
 		//verifyAccess(seq);
+		
+		
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -293,8 +299,39 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				throw new DataServiceException("Sequence data with name " + seqName + " already exists");
 			}
 			
+			int seqID=-1;
+			
+			
+			//first check if a sequence with the same hash exists already. if so, check if its the same
+			
+			PreparedStatement statement2 = conn.prepareStatement("select * from " +
+					Database.SEQUENCES + " where hash = ?");
+			statement2.setInt(1, nucleotides.hashCode());
+			ResultSet res2 = statement.executeQuery();
+			while(res.next()){
+				Blob b2 = res2.getBlob(1);
+				ByteArrayInputStream bis2 = new ByteArrayInputStream(b2.getBytes(1, (int) b2.length()));
+				ObjectInputStream ois2 = new ObjectInputStream(bis2);
+				NucleotideString ns2= (NucleotideString) ois2.readObject();
+				if(nucleotides.equals(ns2)){
+					System.out.println("nucleotide string is already in database, making shallow hequencehook");
+				}
+				seqID = res2.getInt(1);
+				
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			if(seqID==-1){
+			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
 					" (data) values (?);", Statement.RETURN_GENERATED_KEYS);
+	
 			statement.setObject(1, nucleotides);
 			statement.executeUpdate();
 			
@@ -302,7 +339,13 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Error saving sequence to database.");
 			}
-			int seqID = res.getInt(1);
+			seqID = res.getInt(1);
+			
+		}
+			
+			
+			
+			//saving the sequence data
 			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_DATA + 
 					" (name, seq_id, features, properties) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
@@ -319,14 +362,27 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			int dataID = res.getInt(1);
 			
 			return new SequenceHook(dataID, seqID, seqName);
+			
+			
+			
+			
+			
+			
 		}catch (SQLException e){
 			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error connecting to database 2.");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Non-nucleotidestring data found in database ???");
 		}finally{
 			try {
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
+		
 	}
 
 }

@@ -8,5 +8,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Smart GWT"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jsch"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Mysqldriver"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JSCH"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mysql connector"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
