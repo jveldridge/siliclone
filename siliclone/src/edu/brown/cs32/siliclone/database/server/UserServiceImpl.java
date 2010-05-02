@@ -415,6 +415,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 	
+	
+	
 	public List<User> getAllUsers() throws DataServiceException{
 		ArrayList<User> users = new ArrayList<User>();
 		
