@@ -255,10 +255,13 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			statement.setInt(1, seq.getSeqID());
 			ResultSet res = statement.executeQuery();
 			if(!res.next()){
+				System.out.println("were here now "+statement.toString()+" e "+ res.toString());
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
 			Blob b = res.getBlob(1);
-			return (NucleotideString) Database.loadCompressedObject(b);
+			NucleotideString ns =(NucleotideString) Database.loadCompressedObject(b);
+			System.out.println("sequence:"+ns);
+			return ns;
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
@@ -275,6 +278,12 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
 	}
+	
+	public String getNucleotides(SequenceHook seq) throws DataServiceException {
+		NucleotideString nuc = this.getSequence(seq);
+		return nuc.toString();
+	}
+
 
 	public int length(SequenceHook seq) throws DataServiceException {
 		return getSequence(seq).getLength();
@@ -305,15 +314,15 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			//first check if a sequence with the same hash exists already. if so, check if its the same
 			
 			PreparedStatement statement2 = conn.prepareStatement("select * from " +
-					Database.SEQUENCES + " where hash = ?");
+					Database.SEQUENCES + " where hash = ?", Statement.RETURN_GENERATED_KEYS);
 			statement2.setInt(1, nucleotides.hashCode());
 			System.out.println("hashcode: "+nucleotides.hashCode());
 			ResultSet res2 = statement2.executeQuery();
+			
+			
 			while(res2.next()){
 				Blob b2 = res2.getBlob(2);
-				ByteArrayInputStream bis2 = new ByteArrayInputStream(b2.getBytes(1, (int) b2.length()));
-				ObjectInputStream ois2 = new ObjectInputStream(bis2);
-				NucleotideString ns2= (NucleotideString) ois2.readObject();
+				NucleotideString ns2= (NucleotideString) Database.loadCompressedObject(b2);
 				System.out.println("someindex:"+ns2);
 				if(nucleotides.equals(ns2)){
 					
@@ -353,8 +362,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 					" (name, seq_id, features, properties) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, seqName);
 			statement.setInt(2, seqID);
-			statement.setObject(3, features);
-			statement.setObject(4, properties);
+			Database.saveCompressedObject(statement, 3, features);
+			Database.saveCompressedObject(statement, 4, properties);
 			statement.executeUpdate();
 			
 			res = statement.getGeneratedKeys();

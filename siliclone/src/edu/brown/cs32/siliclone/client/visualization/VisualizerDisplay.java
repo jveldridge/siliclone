@@ -1,7 +1,7 @@
 package edu.brown.cs32.siliclone.client.visualization;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.PrintCanvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -9,7 +9,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
-import edu.brown.cs32.siliclone.dna.SequenceHook;
 import edu.brown.cs32.siliclone.operators.Operator;
 
 public class VisualizerDisplay extends TabSet {
@@ -33,8 +32,9 @@ public class VisualizerDisplay extends TabSet {
 					
 					win.setHeight100();
 					win.setWidth100();
+					Widget l = v.visualize(op.getOutputSequence());
 					
-					win.addItem(v.Visualize(op.getOutputSequence()));
+					win.addItem(l);
 					
 					win.show();
 					
@@ -48,8 +48,8 @@ public class VisualizerDisplay extends TabSet {
 			runButton.addClickHandler(new ClickHandler(){
 				public void onClick(ClickEvent event) {
 					runButton.hide();
-					content.addChild(v.Visualize(op.getOutputSequence()));
-					content.addChild(v.Visualize(new SequenceHook(123, 456, "Sequence 1")));
+					content.addChild(v.visualize(op.getOutputSequence()));
+					//content.addChild(v.Visualize(new SequenceHook(123, 456, "Sequence 1")));
 					content.addChild(printButton);
 				}
 			});

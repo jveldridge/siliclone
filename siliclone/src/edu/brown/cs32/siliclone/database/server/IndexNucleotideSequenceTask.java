@@ -21,7 +21,6 @@ public class IndexNucleotideSequenceTask implements Task {
 	public IndexNucleotideSequenceTask(int id) {
 		this.id = id;	}
 	
-	@Override
 	public void compute()  {
 		Connection conn;
 		try {

@@ -1,18 +1,25 @@
 package edu.brown.cs32.siliclone.client.visualization;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
-import org.vaadin.gwtgraphics.client.shape.Ellipse;
 import org.vaadin.gwtgraphics.client.shape.Text;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Button;
 
+import edu.brown.cs32.siliclone.database.client.SequenceService;
+import edu.brown.cs32.siliclone.database.client.SequenceServiceAsync;
 import edu.brown.cs32.siliclone.dna.SequenceHook;
 
 public class SequenceVisualizer implements Visualizer {
 
-	public Widget Visualize(SequenceHook seq) {
-		DrawingArea toReturn = new DrawingArea(600,600);
+	private SequenceServiceAsync _service = GWT.create(SequenceService.class);
+	
+	public Widget visualize(SequenceHook seq) {
+		final Button string = new Button("hi");
+		final DrawingArea toReturn = new DrawingArea(600,600);
 		if(seq == null){
 			toReturn.add(new Text(20,50, "Name: Sequence 0"));
 			Text text = new Text( 0, 100, "actg");
@@ -22,7 +29,24 @@ public class SequenceVisualizer implements Visualizer {
 			return toReturn;
 		
 		}
-		return new Label(seq.toString());
+		
+		AsyncCallback<String> callback = new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				SC.say(caught.getMessage());
+			}
+
+			public void onSuccess(String result) {
+				System.out.println(result);
+				string.setTooltip(result);
+				string.setContents(result);
+				string.setTitle(result);
+				toReturn.add(new Text(20,50,result));
+			}
+			
+		};
+		_service.getNucleotides(seq, callback);
+		
+		return toReturn;
 	}
 
 	public String getName() {
