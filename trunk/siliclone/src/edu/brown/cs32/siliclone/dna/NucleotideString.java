@@ -18,15 +18,50 @@ import com.sun.xml.internal.ws.api.addressing.AddressingVersion;
  * 
  * @author jeldridg
  */
-public class NucleotideString {
+public class NucleotideString implements Serializable{
 	
-	private int indexDepth;
+	
+	
+	private int hash=0;
+	
+	@Override
+	public int hashCode() {
+		return hash;
+	}
+	
+	private int indexDepth=-1;
+	
+	public int getIndexDepth(){
+		return indexDepth;
+	}
 	
 	private byte[] sequence;
 	
 	public int getLength(){
 		return sequence.length;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof NucleotideString){
+			NucleotideString ns2 = (NucleotideString) obj;
+			if(hash == ns2.hash){
+				return Arrays.equals(sequence,ns2.sequence);
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * Constructor for deserialization
+	 */
+	public NucleotideString(){
+		//do nothing
+	}
+	
 	
 	/**
 	 * copy constructor
@@ -35,6 +70,9 @@ public class NucleotideString {
 	public NucleotideString(NucleotideString ns){
 		this.sequence = ns.sequence;
 		this.searchTreeRoot = new SearchTreeNode(ns.searchTreeRoot);
+		this.hash = ns.hash;
+		this.indexDepth=ns.indexDepth;
+		
 	}
 	
 	public NucleotideString(String input) {
@@ -56,6 +94,7 @@ public class NucleotideString {
 			break;
 		}
 		}
+		hash= Arrays.hashCode(sequence);
 	}
 	
 	public String toString(){
@@ -97,6 +136,7 @@ public class NucleotideString {
 	}
 	
 	public Collection<Integer> getPositions(SimpleNucleotide[] searchString) {
+		if(indexDepth<0) throw new IllegalArgumentException("cannot index with negative depth");
 		if(indexDepth==0){
 			LinkedList<Integer> r = new LinkedList<Integer>();
 outerloop:	for (int i = 0; i<=sequence.length-searchString.length;i++){
