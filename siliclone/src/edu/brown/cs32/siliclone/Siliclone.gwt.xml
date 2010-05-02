@@ -12,10 +12,12 @@
 
   <!-- Other module inherits                                      -->
  <inherits name='com.smartgwt.SmartGwt'/>
- <inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
- <inherits name="gwtupload.GWTUpload"/>
- <stylesheet src="Upload.css"/>
- 
+   <!-- Include GWTUpload library -->
+  <inherits name="gwtupload.GWTUpload"/>
+  <!-- Load dinamically predefined styles in the library when the application starts -->
+  <stylesheet src="Upload.css"/>
+  
+
   <!-- Specify the app entry point class.                         -->
   <entry-point class='edu.brown.cs32.siliclone.client.Siliclone'/>
 
@@ -27,5 +29,10 @@
   <source path='operators'/>
   <source path='plugins'/>
   <source path='database/client'/>
+  
+  
+  
+
+  
 
 </module>
