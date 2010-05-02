@@ -115,7 +115,7 @@ public class OpView extends Canvas {//implements Connectable {
 		selector = op.getPropertiesSelector();
 		
 		initPropertiesSelector();
-		
+		/*
 		//add the run button
 		final Img run = new Img("runButton.png", 20, 20);
 		run.setVisible(false);
@@ -152,7 +152,7 @@ public class OpView extends Canvas {//implements Connectable {
 		});
 		
 		this.addChild(run);
-		
+		*/
 		 initPropertiesSelector();
          
          this.addClickHandler(new ClickHandler() {
@@ -186,8 +186,8 @@ public class OpView extends Canvas {//implements Connectable {
          progress.setLength(getWidth() - 20);
          addChild(progress);
          progress.setLeft(5);
-         progress.setTop(getWidth() / 2);
-         
+         progress.setTop(getHeight() - progress.getHeight());
+         progress.hide();
 	}
 	
 	public InputNode[] getInputs(){
