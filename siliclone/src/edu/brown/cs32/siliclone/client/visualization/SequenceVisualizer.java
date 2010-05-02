@@ -22,7 +22,7 @@ public class SequenceVisualizer implements Visualizer {
 			return toReturn;
 		
 		}
-		return new Label("Not yet implemented");
+		return new Label(seq.toString());
 	}
 
 	public String getName() {
