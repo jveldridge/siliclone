@@ -2,6 +2,12 @@ package edu.brown.cs32.siliclone.client.connectors2;
 
 import com.smartgwt.client.types.Positioning;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+
+import edu.brown.cs32.siliclone.client.forms.RegisterForm;
+import edu.brown.cs32.siliclone.client.visualization.VisualizerDisplay;
 
 public class ConnectingLine extends Canvas {
 	private final String LINE_COLOR = "#222222";
@@ -42,6 +48,29 @@ public class ConnectingLine extends Canvas {
 		bottomLine.setBackgroundColor(LINE_COLOR);
 		bottomLine.setWidth(LINE_WIDTH);
 		addChild(bottomLine);
+		
+		
+		middleLine.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				final Window w = new Window();
+				
+				w.setTitle("Visualization");
+				w.setIsModal(true);  
+				w.setShowModalMask(true);  
+				w.setShowCloseButton(true);
+				
+				w.setHeight(400);
+				w.setWidth(400);
+				
+				Canvas c = new VisualizerDisplay(out.getOwner());
+				w.addItem(c);
+				
+				w.setShowResizer(true);
+				w.setAutoCenter(true);
+				w.show();
+			}
+		});
+		
 	}
 	
 	public void reposition(){
