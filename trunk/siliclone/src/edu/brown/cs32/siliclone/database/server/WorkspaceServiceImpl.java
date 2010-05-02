@@ -156,7 +156,10 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			statement.setInt(1, u.getId());
 			ResultSet res = statement.executeQuery();
 			while(res.next()){
-				available.add(res.getString(1));
+				String r = res.getString(1);
+				if (r != null) {
+					available.add(r);
+				}
 			}
 			
 			//add those with group member access (not group owner)
