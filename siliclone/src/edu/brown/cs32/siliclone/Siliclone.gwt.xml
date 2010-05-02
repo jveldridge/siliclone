@@ -12,7 +12,10 @@
 
   <!-- Other module inherits                                      -->
  <inherits name='com.smartgwt.SmartGwt'/>
-
+ <inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
+ <inherits name="gwtupload.GWTUpload"/>
+ <stylesheet src="Upload.css"/>
+ 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='edu.brown.cs32.siliclone.client.Siliclone'/>
 
