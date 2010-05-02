@@ -6,6 +6,7 @@ import com.smartgwt.client.types.DragAppearance;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.Progressbar;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.DragRepositionMoveEvent;
@@ -39,6 +40,8 @@ public class OpView extends Canvas {//implements Connectable {
 	private Rectangle _beforeDrag;
 	private InputNode[] inputs;
 	private OutputDragger output;
+	
+	private Progressbar progress;
 	
 	/**
 	 * @param op An already initialized operator that this OpView described (not null)
@@ -176,6 +179,14 @@ public class OpView extends Canvas {//implements Connectable {
          output.setTop(getHeight());
          output.setLeft(getWidth() / 2 + output.getWidth() / 2);
          bringToFront();
+         
+         progress = new Progressbar();
+         progress.setBreadth(15);
+         progress.setLength(getWidth() - 20);
+         addChild(progress);
+         progress.setLeft(5);
+         progress.setTop(getWidth() / 2);
+         
 	}
 	
 	public InputNode[] getInputs(){
@@ -227,6 +238,23 @@ public class OpView extends Canvas {//implements Connectable {
 			op.setY(getTop());
 		}
 	}
+	
+	
+	public void showProgressBar(){
+		progress.show();
+	}
+	public void hideProgressBar(){
+		progress.hide();
+	}
+	public void setProgress(int percent){
+		if(percent >= 100){
+			hideProgressBar();
+		}else{
+			showProgressBar();
+			progress.setPercentDone(percent);
+		}
+	}
+	
 	/*
 	public void addConnection(Connectable toAdd, Direction dir) {		// TODO Auto-generated method stub
 		//Should not add connections to the OpView directly - the output and input lines
