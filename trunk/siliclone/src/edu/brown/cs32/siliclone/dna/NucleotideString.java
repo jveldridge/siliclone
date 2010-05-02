@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.google.gwt.dev.Link;
@@ -81,15 +82,19 @@ public class NucleotideString implements Serializable{
 		for (int i = 0; i<input.length();i++){
 		switch(input.charAt(i)){
 		case 'a':
+		case 'A':
 			sequence[i]=(byte) ComplexNucleotide.adenine.ordinal();
 			break;
 		case 't':
+		case 'T':
 			sequence[i]=(byte) ComplexNucleotide.thymine.ordinal();
 			break;
 		case 'c':
+		case 'C':
 			sequence[i]=(byte) ComplexNucleotide.cytosine.ordinal();
 			break;
 		case 'g':
+		case 'G':
 			sequence[i]=(byte) ComplexNucleotide.guanine.ordinal();
 			break;
 		}
@@ -121,7 +126,20 @@ public class NucleotideString implements Serializable{
 			nextcharacter = new EnumMap<SimpleNucleotide, SearchTreeNode>(stn.nextcharacter);
 		}
 		
-		private LinkedList<Integer> positions = new LinkedList<Integer>();
+		private Collection<Integer> getAllPositions(){
+			if(positions!=null){
+				return positions;
+			}
+			LinkedList<Integer> r = new LinkedList<Integer>();
+			for (SearchTreeNode stn : nextcharacter.values()) {
+				r.addAll(stn.getAllPositions());
+			}
+			return r;
+			
+			
+		}
+		
+		private LinkedList<Integer> positions = null;
 		private EnumMap<SimpleNucleotide, SearchTreeNode> nextcharacter = new EnumMap<SimpleNucleotide, SearchTreeNode>(SimpleNucleotide.class);
 	}
 	
@@ -134,6 +152,7 @@ public class NucleotideString implements Serializable{
 		}
 	return r;
 	}
+	
 	
 	public Collection<Integer> getPositions(SimpleNucleotide[] searchString) {
 		if(indexDepth<0) throw new IllegalArgumentException("cannot index with negative depth");
@@ -160,7 +179,7 @@ outerloop:	for (int i = 0; i<=sequence.length-searchString.length;i++){
 				 return new LinkedList<Integer>();
 			 }
 			 if(depth==searchString.length-1){
-				 return new LinkedList<Integer>(currentNode.positions);
+				 return currentNode.getAllPositions();
 			 }
 
 		 }
@@ -184,6 +203,7 @@ outerloop: for(Integer i:currentNode.positions){
 		this.indexDepth=indexDepth;
 		this.searchTreeRoot = new SearchTreeNode();
 		
+		if(indexDepth>0)
 		for(int i = 0;i<sequence.length;i++){
 			SearchTreeNode currentNode = searchTreeRoot;
 			for(int l = 0;l<indexDepth;l++){
@@ -195,8 +215,12 @@ outerloop: for(Integer i:currentNode.positions){
 					currentNode.nextcharacter.put(currentNucleotide, new SearchTreeNode());
 				}
 				currentNode =  currentNode.nextcharacter.get(currentNucleotide);
-				currentNode.positions.add(i);
+
 			}
+			if(currentNode.positions==null){
+				currentNode.positions = new LinkedList<Integer>();
+			}
+			currentNode.positions.add(i);
 		}
 		
 	}
