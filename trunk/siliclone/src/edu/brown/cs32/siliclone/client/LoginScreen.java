@@ -2,9 +2,9 @@ package edu.brown.cs32.siliclone.client;
 
 
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -49,11 +49,20 @@ public class LoginScreen extends HLayout {
 			dna.setWidth(250);
 			this.addMember(dna);
 			
-			Label silicloneLabel = new Label("<html><h1><b>siliclone</b></h1></html>" +
-					"text..text...text...text..text...text...text..text...text...text..text...text...\n" +
-					"text..text...text...text..text...text...text..text...text...text..text...text...");
-			silicloneLabel.setAlign(Alignment.CENTER);
-			this.addMember(silicloneLabel);
+			VLayout text = new VLayout();
+			text.setAlign(Alignment.CENTER);
+			Label titleLabel = new Label("<html><h1><b>siliclone</b></h1></html>");
+			Label textLabel = new Label("<html><h3>Siliclone is an in-silico molecular biology cloning simulator and productivity tool.  Using Siliclone, you can</h3></html>");
+			Label getStarted = new Label("<html><h2>To get started using Siliclone, login to the right or click below to register for an account!</h2></html>");
+			
+			Img register = new Img("register.jpg", 50, 50);
+			
+			text.addMember(titleLabel);
+			text.addMember(textLabel);
+			text.addMember(getStarted);
+			text.addMember(register);
+			
+			this.addMember(text);
 		}
 	}
 	
@@ -84,7 +93,6 @@ public class LoginScreen extends HLayout {
 				}
 			});
 
-			
 			
 			this.addMember(new LayoutSpacer());
 			this.addMember(new LoginForm(_main));
