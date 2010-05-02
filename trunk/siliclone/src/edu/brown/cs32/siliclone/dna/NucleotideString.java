@@ -29,7 +29,7 @@ public class NucleotideString implements Serializable{
 		return hash;
 	}
 	
-	private int indexDepth=-1;
+	private int indexDepth=0;
 	
 	public int getIndexDepth(){
 		return indexDepth;

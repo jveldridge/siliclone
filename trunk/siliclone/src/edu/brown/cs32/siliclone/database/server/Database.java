@@ -1,10 +1,22 @@
 package edu.brown.cs32.siliclone.database.server;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 
@@ -151,6 +163,41 @@ public class Database {
 		}catch(DataServiceException e){
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	
+	private static OutputStream getCompressedOutputStream(OutputStream os) throws IOException{
+		return new GZIPOutputStream(os);
+		//return os;
+	}
+	
+	private static InputStream getCompressedInputStream(InputStream is) throws IOException{
+		return new GZIPInputStream(is);
+		//return is;
+	}
+	
+	public static void saveCompressedObject(PreparedStatement statement, int columnindex, Object objectToWrite) throws IOException, SQLException{
+		ByteArrayOutputStream baout = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(getCompressedOutputStream(baout));
+		oos.writeObject(objectToWrite);
+		oos.close();
+		statement.setBinaryStream(columnindex,new ByteArrayInputStream(baout.toByteArray()));	
+		
+	}
+	
+	public static void saveCompressedObject(ResultSet resultset, int columnindex, Object objectToWrite) throws IOException, SQLException{
+		ByteArrayOutputStream baout = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(getCompressedOutputStream(baout));
+		oos.writeObject(objectToWrite);
+		oos.close();
+		resultset.updateBinaryStream(columnindex,new ByteArrayInputStream(baout.toByteArray()));	
+		
+	}
+	
+	public static Object loadCompressedObject(Blob b) throws IOException, SQLException, ClassNotFoundException{
+		ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
+		ObjectInputStream ois = new ObjectInputStream(getCompressedInputStream(bis));
+	return ois.readObject();
 	}
 	
 }
