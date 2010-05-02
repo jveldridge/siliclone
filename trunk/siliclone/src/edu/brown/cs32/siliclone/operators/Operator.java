@@ -39,6 +39,11 @@ public interface Operator extends Serializable {
 	
 	public void removeChild(Operator op);
 	
+	public void setProgress(int percent);
+	
+	public void setOpView(OpView view);
+	public OpView getOpView();
+	
 	/**
 	 * Method to be called upon construction of an Operator to initialize
 	 * its GUI components.  (This is necessary because these components do
