@@ -57,7 +57,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		this.initManualEntryTab();
 		this.initUploadTab();
 		this.initSavedSeqTab();
-		this.initNCBITab();
+		//this.initNCBITab();
 
 		this.addMember(_sourceTabs);
 	}
@@ -107,9 +107,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 							_operator.setSequence(result);
 						}
 					};
-					try {
-						_service.saveSequence(new NucleotideString(seq), new HashMap<String,Collection<Feature>>(), name, new HashMap<String,IsSerializable>(), callback);
-					} catch (DataServiceException e) {}
+					_service.saveSequence(seq, new HashMap<String,Collection<Feature>>(), name, new HashMap<String,IsSerializable>(), callback);
 				}
 				
 				DNAInputPropertiesSelector.this.hide();
@@ -134,76 +132,31 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	    SingleUploader single1 = new SingleUploader();
 	    uploadPane.addChild(single1);
 	    single1.addOnFinishUploadHandler(new IUploader.OnFinishUploaderHandler() {
-	     private SequenceUploadServiceAsync service = GWT.create(SequenceUploadService.class);
+	    	private SequenceUploadServiceAsync service = GWT.create(SequenceUploadService.class);
 	     
-	    	
 	    	public void onFinish(IUploader uploader) {
-	     
-	        	
-	        	if (uploader.getStatus() == Status.SUCCESS) {
+	    		if (uploader.getStatus() == Status.SUCCESS) {
 	        		SC.say(uploader.getInputName());
 	        		
 	        		AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
-
-						public void onFailure(Throwable caught) {
-							SC.say(caught.toString());
-							
+	        			public void onFailure(Throwable caught) {
+							SC.say(caught.toString());	
 						}
 
 						public void onSuccess(SequenceHook result) {
-							SC.say("somewhting here"+result.getSeqName());
-							
+							SC.say(result.getSeqName());
+							_operator.setSequence(result);
 						}
-	        			
 					};
-	        		
-	        		
+
 	        		service.getUploadedSequenceHook(uploader.getInputName(), callback);
-	        		
-	        		
 	        	}
 	        	else {
 	        		SC.say("Something bad happened");
 	        	}
-	        }});
-/*
-		final DataSource data = new DataSource();
-		DataSourceField key = new DataSourceField("key", FieldType.INTEGER);
-		key.setPrimaryKey(true);
-		DataSourceBinaryField dsbf = new DataSourceBinaryField("file");
-		data.setFields(key, dsbf);
-		data.setClientOnly(true);
-		
-		final DynamicForm uploadForm = new DynamicForm();
-		ButtonItem upload = new ButtonItem("Upload");
-		upload.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				DSCallback fetchCallback = new DSCallback() {
-					public void execute(DSResponse response, Object rawData, DSRequest request) {
-						System.out.println("fetch response: " + response);
-						System.out.println("fetch object: " + rawData);
-						System.out.println("fetch request: " + request.getDataAsString());
-					}
-				};
-				DSCallback saveCallback = new DSCallback() {	
-					public void execute(DSResponse response, Object rawData, DSRequest request) {
-						System.out.println("save response: " + response);
-						System.out.println("save object: " + rawData);
-						System.out.println("save request: " + request.getDataAsString());
-					}
-				};
-				
-				uploadForm.saveData(saveCallback);
-				data.fetchData(new Criteria("data", "*"), fetchCallback);
-			}
-		});
+	        }
+	    });
 
-		FileItem toUpload = new FileItem("File");
-		uploadForm.setFields(toUpload, upload);
-		uploadForm.setDataSource(data);
-		
-		uploadPane.addChild(uploadForm);
-		*/
 		uploadTab.setPane(uploadPane);
 		_sourceTabs.addTab(uploadTab);
 	}

@@ -3,7 +3,10 @@ package edu.brown.cs32.siliclone.operators.rd;
 import java.util.LinkedHashMap;
 
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
@@ -12,7 +15,7 @@ public class DigestPropertiesSelector extends PropertiesSelector {
 	public DigestPropertiesSelector(DigestOperator operator) {
 		super();
 		
-		SelectItem enzyme1 = new SelectItem();
+		final SelectItem enzyme1 = new SelectItem();
 		enzyme1.setTitle("Enzyme1");
 		SelectItem enzyme2 = new SelectItem();
 		enzyme2.setTitle("Enzyme2");
@@ -30,7 +33,6 @@ public class DigestPropertiesSelector extends PropertiesSelector {
 	@Override
 	protected void processInput() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

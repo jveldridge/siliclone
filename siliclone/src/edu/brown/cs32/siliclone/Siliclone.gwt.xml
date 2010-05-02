@@ -16,6 +16,7 @@
   <inherits name="gwtupload.GWTUpload"/>
   <!-- Load dinamically predefined styles in the library when the application starts -->
   <stylesheet src="Upload.css"/>
+  <inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
   
 
   <!-- Specify the app entry point class.                         -->

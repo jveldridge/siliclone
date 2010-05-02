@@ -193,6 +193,7 @@ public class TopMenu extends ToolStrip {
 						w.setName(value);
 						try{
 							_service.saveWorkspace(w, w.getName(), _callback);
+							_main.changeWorkspaceName(w, w.getName());
 						}catch (DataServiceException e) {
 							e.printStackTrace();
 							SC.say(e.getMessage());

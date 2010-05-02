@@ -85,7 +85,7 @@ public interface SequenceService extends RemoteService {
 	 * @param features
 	 * @return a SequenceHook that can be used to reference the newly added sequence
 	 */
-	public SequenceHook saveSequence(NucleotideString nucleotides, Map<String, Collection<Feature>> features, 
+	public SequenceHook saveSequence(String nucleotides, Map<String, Collection<Feature>> features, 
 									String seqName,  Map<String,IsSerializable> properties) throws DataServiceException;
 	
 }

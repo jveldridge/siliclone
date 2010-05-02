@@ -320,13 +320,6 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				
 			}
 			
-			
-			
-			
-			
-			
-			
-			
 			if(seqID==-1){
 			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
@@ -363,11 +356,6 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			
 			return new SequenceHook(dataID, seqID, seqName);
 			
-			
-			
-			
-			
-			
 		}catch (SQLException e){
 			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
@@ -383,6 +371,13 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
 		
+	}
+
+	public SequenceHook saveSequence(String nucleotides,
+			Map<String, Collection<Feature>> features, String seqName,
+			Map<String, IsSerializable> properties) throws DataServiceException {
+		NucleotideString seq = new NucleotideString(nucleotides);
+		return this.saveSequence(seq, features, seqName, properties);
 	}
 
 }

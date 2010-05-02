@@ -48,4 +48,8 @@ public class Siliclone implements EntryPoint {
 	public Workspace getCurrentWorkspace() {
 		return _mainView.getCurrentWorkspace();
 	}
+	
+	public void changeWorkspaceName(Workspace w, String newName) {
+		_mainView.changeWorkspaceName(w, newName);
+	}
 }
