@@ -15,6 +15,22 @@ public abstract class AbstractOperator implements Operator {
 	protected SequenceHook outputSequence; 
 	protected Collection<Operator> children = new ArrayList<Operator>();
 	
+	protected transient OpView view;
+	
+
+	public void setProgress(int percent){
+		if(view != null){
+			view.setProgress(percent);
+		}
+	}
+	
+	public void setOpView(OpView view){
+		this.view = view;
+	}
+	public OpView getOpView(){
+		return view;
+	}
+	
 	//TODO better algorithm? if this is used when there already was a loop, goes into infinite loop
 	//used to check if the operator is connected to itself through inputs
 	private boolean containsCycle(Operator op, Operator start){
