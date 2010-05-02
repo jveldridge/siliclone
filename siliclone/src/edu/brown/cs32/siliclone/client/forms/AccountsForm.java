@@ -12,13 +12,10 @@ import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.SectionItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
-
-
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
@@ -28,13 +25,20 @@ import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 public class AccountsForm extends DynamicForm {
 	//current groups + new group
-	private LinkedHashMap<String, String> ownedGroups;
-	private LinkedHashMap<String, String> availableGroups;
-	private LinkedHashMap<String, String> groupsUsers;
-	private LinkedHashMap<String, String> allUsers;
+	//private LinkedHashMap<String, String> ownedGroups;
+	//private LinkedHashMap<String, String> groupsUsers;
+	//private LinkedHashMap<String, String> allUsers;
+	
+	private final SelectItem groupPick = new SelectItem("selectGrp");
+	private final ButtonItem createGroup = new ButtonItem( "newGrp");
+	private final SelectItem addUser = new SelectItem("addUsr");
+	private final SelectItem removeUser = new SelectItem("rmUsr");
+	private final SectionItem memberGroupsSection = new SectionItem();
+	private final StaticTextItem availableGroupsList = new StaticTextItem("Available");
+	
 	public AccountsForm(){
-		loadOwnedGroups();
 		loadAllUsers();
+		loadOwnedGroups();
 		loadAllAvailableGroups();
 		
 		SectionItem ownedGroupsSection = new SectionItem();
@@ -43,44 +47,48 @@ public class AccountsForm extends DynamicForm {
 									"addUsr", "rmUsr");
 		
 		
-		final SelectItem groupPick = new SelectItem("selectGrp");
+		memberGroupsSection.setDefaultValue("Available Groups");
+		memberGroupsSection.setItemIds("Available");
+		
+
+		final StaticTextItem allGroups = new StaticTextItem("Available");
+		
+		
 		groupPick.setTitle("Select Group");
-		groupPick.setValueMap(ownedGroups);
-		
-		
-		//create group option
-		ButtonItem createGroup = new ButtonItem( "newGrp");
+
 		createGroup.setTitle("Create New Group");
-		
-		//add user to group
-		final SelectItem addUser = new SelectItem("addUsr");
+
 		addUser.setTitle("Add User to Group");
 		addUser.setDisabled(true);
 		
-		
-		//remove user from group
-		final SelectItem removeUser = new SelectItem("rmUsr");
 		removeUser.setTitle("Remove User from Group");
 		removeUser.setDisabled(true);
 		
+		
 		groupPick.addChangedHandler(new ChangedHandler(){
 			public void onChanged(ChangedEvent event) {
+				//AccountsForm.this.setDisabled(true);
 				loadGroupsUsers(groupPick.getDisplayValue());
 				addUser.setDisabled(false);
 				removeUser.setDisabled(false);
+				//AccountsForm.this.setDisabled(true);
 			}
 		});
 		
+		
 		addUser.addChangedHandler(new ChangedHandler(){
 			public void onChanged(ChangedEvent event) {
+				//AccountsForm.this.setDisabled(true);
 				final UserServiceAsync service = GWT.create(UserService.class); 
 				AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
+						//AccountsForm.this.setDisabled(true);
 					}
 					public void onSuccess(Void result) {
 						loadGroupsUsers(groupPick.getDisplayValue());
 						SC.say("User added successfully");
+						//AccountsForm.this.setDisabled(false);
 					}
 				};
 				try {
@@ -93,14 +101,17 @@ public class AccountsForm extends DynamicForm {
 		
 		removeUser.addChangedHandler(new ChangedHandler(){
 			public void onChanged(ChangedEvent event) {
-				final UserServiceAsync service = GWT.create(UserService.class); 
+				//AccountsForm.this.setDisabled(true);
+				final UserServiceAsync service = GWT.create(UserService.class);
 				AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
+						//ccountsForm.this.setDisabled(false);
 					}
 					public void onSuccess(Void result) {
 						loadGroupsUsers(groupPick.getDisplayValue());
 						SC.say("User removed successfully");
+						//AccountsForm.this.setDisabled(false);
 					}
 				};
 				try {
@@ -111,29 +122,29 @@ public class AccountsForm extends DynamicForm {
 			}
 		});
 		
-		final StaticTextItem allGroups = new StaticTextItem("Available");
-		
 		
 		createGroup.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event) {
+				//AccountsForm.this.setDisabled(true);
 				final UserServiceAsync service = GWT.create(UserService.class); 
 				final AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
+						//AccountsForm.this.setDisabled(false);
 					}
 					public void onSuccess(Void result) {
 						loadOwnedGroups();
 						loadAllAvailableGroups();
-						String contents = "";
-						for(String s : availableGroups.keySet()){
-							contents += s + "\n";
-						}
-						allGroups.setTitle(contents);
 						SC.say("Group created.");
+						//AccountsForm.this.setDisabled(false);
 					}
 				};
 				SC.askforValue("Create Group", "Enter Group Name:", new ValueCallback(){
 					public void execute(String value){
+						if(value == null){
+							AccountsForm.this.setDisabled(false);
+							return;
+						}
 						try {
 							service.createGroup(value, callback);
 						} catch (DataServiceException e) {
@@ -144,32 +155,24 @@ public class AccountsForm extends DynamicForm {
 			}
 			
 		});
-		
-		
-		SectionItem memberGroupsSection = new SectionItem();
-		memberGroupsSection.setDefaultValue("Available Groups");
-		memberGroupsSection.setItemIds("Available");
-		
-		String contents = "";
-		for(String s : availableGroups.keySet()){
-			contents += s + "\n";
-		}
-		allGroups.setTitle(contents);
-		
-		
 		setFields(ownedGroupsSection,
 				groupPick, 
 				createGroup, 
 				addUser, 
 				removeUser,
 				memberGroupsSection,
-				allGroups);
-		
+				availableGroupsList);
 	}
 	
 	
+	
+	
+	
+	
+	
+	
 	private void loadOwnedGroups(){
-		ownedGroups = new LinkedHashMap<String, String>();
+		final LinkedHashMap<String, String> ownedGroups = new LinkedHashMap<String, String>();
 		
 		final UserServiceAsync service = GWT.create(UserService.class); 
 		
@@ -182,6 +185,7 @@ public class AccountsForm extends DynamicForm {
 				for(String group : result){
 					ownedGroups.put(group, group);
 				}
+				groupPick.setValueMap(ownedGroups);
 			}
 		};
 		
@@ -196,7 +200,6 @@ public class AccountsForm extends DynamicForm {
 	
 	
 	private void loadAllAvailableGroups(){
-		availableGroups = new LinkedHashMap<String, String>();
 		final UserServiceAsync service = GWT.create(UserService.class); 
 		
 		AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
@@ -205,9 +208,11 @@ public class AccountsForm extends DynamicForm {
 			}
 			
 			public void onSuccess(List<String> result) {
+				String content = "Available groups: ";
 				for(String group : result){
-					availableGroups.put(group, group);
+					content += (group + "     \n");
 				}
+				availableGroupsList.setValue(content);
 			}
 		};
 		
@@ -221,7 +226,7 @@ public class AccountsForm extends DynamicForm {
 	
 	
 	private void loadAllUsers(){
-		allUsers = new LinkedHashMap<String, String>();
+		final LinkedHashMap<String, String> allUsers = new LinkedHashMap<String, String>();
 		final UserServiceAsync service = GWT.create(UserService.class); 
 		AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>() {
 			public void onFailure(Throwable caught) {
@@ -230,19 +235,21 @@ public class AccountsForm extends DynamicForm {
 			
 			public void onSuccess(List<User> result) {
 				for(User u : result){
-					allUsers.put(u.getName(), u.getEmail());
+					allUsers.put(u.getEmail(), u.getName());
 				}
+				addUser.setValueMap(allUsers);
 			}
 		};
-		
 		try {
 			service.getAllUsers(callback);
 		} catch (DataServiceException e) { e.printStackTrace(); }
-		
 	}
 	
+	
+	
+	
 	private void loadGroupsUsers(String group){
-		groupsUsers = new LinkedHashMap<String, String>();
+		final LinkedHashMap<String, String> groupsUsers = new LinkedHashMap<String, String>();
 		final UserServiceAsync service = GWT.create(UserService.class); 
 		AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>() {
 			public void onFailure(Throwable caught) {
@@ -251,11 +258,11 @@ public class AccountsForm extends DynamicForm {
 			
 			public void onSuccess(List<User> result) {
 				for(User u : result){
-					groupsUsers.put(u.getName(), u.getEmail());
+					groupsUsers.put(u.getEmail(), u.getName());
 				}
+				removeUser.setValueMap(groupsUsers);
 			}
 		};
-		
 		try {
 			service.getUsersWithAccessToGroup(group, callback);
 		} catch (DataServiceException e) { e.printStackTrace(); }

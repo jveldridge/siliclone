@@ -227,7 +227,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			int ownerId = u.getId();
 			
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;" );
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?" );
 			statement.setString(1, userToAdd);
 			ResultSet res = statement.executeQuery();
 			if(!res.next()){
@@ -236,7 +236,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			int newId = res.getInt(1);
 
 			statement = conn.prepareStatement("select id from " + Database.GROUPS +
-					" where group_name = ? and owner_id = ?;");
+					" where group_name = ? and owner_id = ?");
 			statement.setString(1, group);
 			statement.setInt(2, ownerId);
 			res = statement.executeQuery();
@@ -245,8 +245,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			}
 			int groupId = res.getInt(1);
 
-			statement = conn.prepareStatement("select id from " + Database.GROUP_PERMISSIONS +
-					" where group_id = ? and member_id = ?;");
+			statement = conn.prepareStatement("select * from " + Database.GROUP_PERMISSIONS +
+					" where group_id = ? and member_id = ?");
 			statement.setInt(1, groupId);
 			statement.setInt(2, newId);
 			res = statement.executeQuery();
@@ -255,14 +255,15 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			}
 			
 			statement = conn.prepareStatement("insert into " + Database.GROUP_PERMISSIONS
-					+ " (group_id, member_id) values (?, ?);");
+					+ "(group_id, member_id) values (?, ?)");
 			statement.setInt(1, groupId);
 			statement.setInt(2, newId);
 			if(0 >= statement.executeUpdate()){
 				throw new DataServiceException("Could not add user " + userToAdd + " to group " + group);
 			}
 		}catch (SQLException e){ 
-			throw new DataServiceException("Error calling database to add user to group.");
+			e.printStackTrace();
+			throw new DataServiceException("Error connecting  to database.");
 		}finally{
 			try{
 				conn.close();
@@ -284,7 +285,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			int id = u.getId();
 			
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS + "where group_name = ?");
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS + " where group_name = ?");
 			statement.setString(1, group);
 			ResultSet res = statement.executeQuery();
 			if(res.next()){
@@ -298,6 +299,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 				throw new DataServiceException("Group " + group + " could not be added");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try{
@@ -396,7 +398,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			
 			statement = conn.prepareStatement("select t2.name, t2.email from " + Database.GROUP_PERMISSIONS + 
 					" as t1 left join " + Database.USERS + 
-					" as t1 on t1.member_id = t2.id where t1.group_id = ?");
+					" as t2 on t1.member_id = t2.id where t1.group_id = ?");
 			statement.setInt(1, groupId);
 			res = statement.executeQuery();
 			while(res.next()){
@@ -455,7 +457,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			throw new DataServiceException("Null value given to UserService.removeFromGroup");
 		}
 
-		if(u.getName() == userToRemove){
+		if(u.getName().equals(userToRemove)){
 			throw new DataServiceException("Cannot remove owner without deleting group");
 		}
 		

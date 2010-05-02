@@ -227,6 +227,7 @@ public class TopMenu extends ToolStrip {
 	private class SettingsClickHandler implements ClickHandler{
 		public void onClick(ClickEvent e){
 			final Window w = new Window();
+			w.setSize("400px", "300px");
 			VLayout v = new VLayout();
 			v.addChild(new Label("Groups"));
 			
@@ -239,7 +240,7 @@ public class TopMenu extends ToolStrip {
 			
 			w.addItem(v);
 			
-			w.setAutoSize(true);
+			//w.setAutoSize(true);
 			w.setAutoCenter(true);
 			w.show();
 		}
