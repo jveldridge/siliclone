@@ -134,9 +134,33 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	    SingleUploader single1 = new SingleUploader();
 	    uploadPane.addChild(single1);
 	    single1.addOnFinishUploadHandler(new IUploader.OnFinishUploaderHandler() {
-	        public void onFinish(IUploader uploader) {
+	     private SequenceUploadServiceAsync service = GWT.create(SequenceUploadService.class);
+	     
+	    	
+	    	public void onFinish(IUploader uploader) {
+	     
+	        	
 	        	if (uploader.getStatus() == Status.SUCCESS) {
-	        		SC.say(uploader.fileUrl());
+	        		SC.say(uploader.getInputName());
+	        		
+	        		AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
+
+						public void onFailure(Throwable caught) {
+							SC.say(caught.toString());
+							
+						}
+
+						public void onSuccess(SequenceHook result) {
+							SC.say("somewhting here"+result.getSeqName());
+							
+						}
+	        			
+					};
+	        		
+	        		
+	        		service.getUploadedSequenceHook(uploader.getInputName(), callback);
+	        		
+	        		
 	        	}
 	        	else {
 	        		SC.say("Something bad happened");
