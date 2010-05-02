@@ -414,7 +414,35 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			} catch (SQLException e1) { e1.printStackTrace(); }
 		}
 	}
+	
+	public List<User> getAllUsers() throws DataServiceException{
+		ArrayList<User> users = new ArrayList<User>();
+		
+		Connection conn = Database.getConnection();
+		
+		try{
+			PreparedStatement statement = conn.prepareStatement("select * from " + 
+					Database.USERS + ";");
+			ResultSet res = statement.executeQuery();
+			while(res.next()){
+				users.add(new User(res.getString("name"), null, res.getString("email")));
+			}
+			return users;
+			
+		}catch(SQLException e){
+			e.printStackTrace();
+			throw new DataServiceException("Error connecting to the database.");
+		}finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
+	
+	
 
 
 

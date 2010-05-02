@@ -31,5 +31,7 @@ public interface UserServiceAsync {
 
 	void removeFromGroup(String group, String userToRemove,
 			AsyncCallback<Void> callback) throws DataServiceException;
+
+	void getAllUsers(AsyncCallback<List<User>> callback) throws DataServiceException;
 	
 }
