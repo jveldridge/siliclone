@@ -47,10 +47,6 @@ public class AnotherTestOp extends AbstractOperator {
 		return _widget;
 	}
 
-	public void setInput(int slotNum, Collection<DNASequence> input) {
-		// TODO Auto-generated method stub
-
-	}
 
 	public void connect(Operator adjacent) {
 		// TODO Auto-generated method stub

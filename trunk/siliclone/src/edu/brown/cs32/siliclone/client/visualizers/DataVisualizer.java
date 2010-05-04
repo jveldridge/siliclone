@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client.visualization;
+package edu.brown.cs32.siliclone.client.visualizers;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Circle;
@@ -7,7 +7,7 @@ import org.vaadin.gwtgraphics.client.shape.Text;
 
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.brown.cs32.siliclone.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 
 public class DataVisualizer implements Visualizer {
 

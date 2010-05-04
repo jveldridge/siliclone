@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.dna;
+package edu.brown.cs32.siliclone.client.dna;
 
 import java.io.Serializable;
 

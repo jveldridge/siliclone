@@ -1,6 +1,6 @@
 package edu.brown.cs32.siliclone.servlets;
 
-import edu.brown.cs32.siliclone.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.server.FastaParser;
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;

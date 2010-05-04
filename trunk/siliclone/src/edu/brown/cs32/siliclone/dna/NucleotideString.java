@@ -1,14 +1,10 @@
 package edu.brown.cs32.siliclone.dna;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
-import com.google.gwt.dev.Link;
-import com.sun.xml.internal.ws.api.addressing.AddressingVersion;
 
 /**
  * Represents the actual string of nucleotides that make

@@ -3,7 +3,7 @@ package edu.brown.cs32.siliclone.dna;
 import java.io.Serializable;
 import java.util.Collection;
 
-import edu.brown.cs32.siliclone.dna.features.Feature;
+import edu.brown.cs32.siliclone.client.dna.features.Feature;
 
 /**
  * Specifies the methods of a DNA sequence.

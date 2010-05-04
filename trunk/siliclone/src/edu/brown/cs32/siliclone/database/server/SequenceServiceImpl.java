@@ -19,13 +19,13 @@ import sun.misc.Cache;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import edu.brown.cs32.siliclone.TasksDelegation;
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
-import edu.brown.cs32.siliclone.dna.SequenceHook;
-import edu.brown.cs32.siliclone.dna.features.Feature;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.features.Feature;
+import edu.brown.cs32.siliclone.server.TasksDelegation;
 
 @SuppressWarnings("serial")
 public class SequenceServiceImpl extends RemoteServiceServlet implements SequenceService{
