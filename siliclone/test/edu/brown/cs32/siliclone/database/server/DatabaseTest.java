@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import edu.brown.cs32.siliclone.client.dna.features.Feature;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
-import edu.brown.cs32.siliclone.dna.features.Feature;
 
 import java.sql.Connection;
 import java.sql.SQLException;

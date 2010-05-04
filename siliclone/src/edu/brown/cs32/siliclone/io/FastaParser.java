@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.dna.input;
+package edu.brown.cs32.siliclone.io;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

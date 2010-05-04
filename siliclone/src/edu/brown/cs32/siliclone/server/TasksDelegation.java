@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone;
+package edu.brown.cs32.siliclone.server;
 
 import edu.brown.cs32.siliclone.database.server.IndexNucleotideSequenceTask;
 import edu.brown.cs32.siliclone.tasks.client.TaskClient;

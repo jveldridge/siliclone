@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.dna.features;
+package edu.brown.cs32.siliclone.client.dna.features;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

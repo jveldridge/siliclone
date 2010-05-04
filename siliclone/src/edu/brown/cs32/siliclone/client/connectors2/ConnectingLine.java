@@ -7,7 +7,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 
 import edu.brown.cs32.siliclone.client.forms.RegisterForm;
-import edu.brown.cs32.siliclone.client.visualization.VisualizerDisplay;
+import edu.brown.cs32.siliclone.client.visualizers.VisualizerDisplay;
 
 public class ConnectingLine extends Canvas {
 	private final String LINE_COLOR = "#222222";
@@ -62,7 +62,7 @@ public class ConnectingLine extends Canvas {
 				w.setHeight(400);
 				w.setWidth(400);
 				
-				Canvas c = new VisualizerDisplay(out.getOwner());
+				Canvas c = out.getOwner().getVisualizerDisplay();
 				w.addItem(c);
 				
 				w.setShowResizer(true);

@@ -241,10 +241,10 @@ public class OpView extends Canvas {//implements Connectable {
 	}
 	
 	
-	public void showProgressBar(){
+	private void showProgressBar(){
 		progress.show();
 	}
-	public void hideProgressBar(){
+	private void hideProgressBar(){
 		progress.hide();
 	}
 	public void setProgress(int percent){

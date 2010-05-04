@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import edu.brown.cs32.siliclone.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.visualizers.VisualizerDisplay;
 
 @SuppressWarnings("serial")
 public abstract class AbstractOperator implements Operator {
@@ -107,6 +108,12 @@ public abstract class AbstractOperator implements Operator {
 
 	public SequenceHook getOutputSequence() {
 		return outputSequence;
+	}
+	
+	private transient VisualizerDisplay visualizerDisplay = new VisualizerDisplay(this);
+	
+	public VisualizerDisplay getVisualizerDisplay(){
+		return visualizerDisplay;
 	}
 	
 	

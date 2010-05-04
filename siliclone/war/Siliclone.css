@@ -1,5 +1,13 @@
 /** Add css rules here for your application. */
 
+#loading {
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          text-align: center;
+          margin-left: -100px;
+}
 
 /** Example rules used by the template application (remove for your app) */
 h1 {

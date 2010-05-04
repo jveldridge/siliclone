@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import edu.brown.cs32.siliclone.dna.features.Feature;
+import edu.brown.cs32.siliclone.client.dna.features.Feature;
 
 
 public class BasicDNASequence implements edu.brown.cs32.siliclone.dna.DNASequence {

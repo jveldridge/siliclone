@@ -2,7 +2,9 @@ package edu.brown.cs32.siliclone.client;
 
 
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
@@ -24,17 +26,18 @@ public class LoginScreen extends HLayout {
 	public LoginScreen(Siliclone main) {
 		_main = main;
 		
+		this.setOverflow(Overflow.HIDDEN);
 		this.setHeight100();
 		this.setWidth100();
-		this.setMembersMargin(20);
+		//this.setMembersMargin(20);
 		
 		InfoPanel iP = new InfoPanel();
 		iP.setHeight100();
-		iP.setWidth("65%");
+		iP.setWidth("70%");
 		
 		LoginPanel lP = new LoginPanel();
 		lP.setHeight100();
-		lP.setWidth("35%");
+		lP.setWidth("30%");
 		
 		
 		this.addMember(iP);
@@ -44,25 +47,27 @@ public class LoginScreen extends HLayout {
 	private class InfoPanel extends HLayout {
 		// TODO Auto-generated method stub
 		public InfoPanel() {
-			Img dna = new Img("dna.gif");
-			dna.setHeight100();
-			dna.setWidth(250);
-			this.addMember(dna);
+			this.setOverflow(Overflow.HIDDEN);
+			this.setBackgroundImage("T7RNAP.png");
+			this.setBackgroundPosition("center");
 			
-			VLayout text = new VLayout();
-			text.setAlign(Alignment.CENTER);
-			Label titleLabel = new Label("<html><h1><b>siliclone</b></h1></html>");
-			Label textLabel = new Label("<html><h3>Siliclone is an in-silico molecular biology cloning simulator and productivity tool.  Using Siliclone, you can</h3></html>");
-			Label getStarted = new Label("<html><h2>To get started using Siliclone, login to the right or click below to register for an account!</h2></html>");
+			Window introduction = new Window();
+			introduction.setTitle("Welcome to Siliclone");
+			introduction.setCanDragReposition(true);
+		//	introduction.setCanDragResize(true);
+			introduction.setWidth(400);
+			introduction.setHeight(150);
+			introduction.moveTo(300, 150);
+			Label titleLabel = new Label("<h3>Siliclone is an in-silico molecular biology cloning simulator and productivity tool.  Using Siliclone, you can...</h3>" +
+					"<h2>To get started using Siliclone, login to the right or click below to register for an account!</h2>");
+			titleLabel.setBackgroundColor("white");
+			titleLabel.setAlign(Alignment.CENTER);
+			introduction.addItem(titleLabel);
+			introduction.setShowHeader(true);
+			this.addChild(introduction);
 			
-			Img register = new Img("register.jpg", 50, 50);
 			
-			text.addMember(titleLabel);
-			text.addMember(textLabel);
-			text.addMember(getStarted);
-			text.addMember(register);
 			
-			this.addMember(text);
 		}
 	}
 	

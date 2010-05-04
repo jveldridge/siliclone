@@ -8,8 +8,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import edu.brown.cs32.siliclone.dna.NucleotideString;
-import edu.brown.cs32.siliclone.dna.SequenceHook;
-import edu.brown.cs32.siliclone.dna.features.Feature;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.features.Feature;
 
 public interface SequenceServiceAsync {
 

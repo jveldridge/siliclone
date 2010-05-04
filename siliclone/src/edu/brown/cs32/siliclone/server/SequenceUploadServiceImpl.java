@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
-import edu.brown.cs32.siliclone.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.operators.anothertestop.SquareService;
 import edu.brown.cs32.siliclone.operators.dnaInput.SequenceUploadService;
 import edu.brown.cs32.siliclone.operators.dnaInput.UploadedFileNotFoundException;

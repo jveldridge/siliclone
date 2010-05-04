@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.smartgwt.client.widgets.Canvas;
 
+import edu.brown.cs32.siliclone.client.visualizers.VisualizerDisplay;
 import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
-import edu.brown.cs32.siliclone.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 
 /**
  * Specifies the methods of an Operator object that will be used
@@ -108,5 +110,11 @@ public interface Operator extends Serializable {
 	void setX(int x); 
 	
 	void setY(int y);
+/**
+ * Returns the graphical representation of the set of visualizers associated with this
+ * operator
+ * @return
+ */
+	public VisualizerDisplay getVisualizerDisplay();
 	
 }

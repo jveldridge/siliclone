@@ -8,8 +8,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import edu.brown.cs32.siliclone.dna.NucleotideString;
-import edu.brown.cs32.siliclone.dna.SequenceHook;
-import edu.brown.cs32.siliclone.dna.features.Feature;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.features.Feature;
 
 @RemoteServiceRelativePath("sequence")
 public interface SequenceService extends RemoteService {

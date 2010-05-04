@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.client.visualization;
+package edu.brown.cs32.siliclone.client.visualizers;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Text;
@@ -11,7 +11,7 @@ import com.smartgwt.client.widgets.Button;
 
 import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.database.client.SequenceServiceAsync;
-import edu.brown.cs32.siliclone.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 
 public class SequenceVisualizer implements Visualizer {
 
