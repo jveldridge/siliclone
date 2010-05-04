@@ -52,22 +52,7 @@ public class ConnectingLine extends Canvas {
 		
 		middleLine.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event) {
-				final Window w = new Window();
-				
-				w.setTitle("Visualization");
-				w.setIsModal(true);  
-				w.setShowModalMask(true);  
-				w.setShowCloseButton(true);
-				
-				w.setHeight(400);
-				w.setWidth(400);
-				
-				Canvas c = out.getOwner().getVisualizerDisplay();
-				w.addItem(c);
-				
-				w.setShowResizer(true);
-				w.setAutoCenter(true);
-				w.show();
+				out.getOwner().showVisualizerDisplay();
 			}
 		});
 		

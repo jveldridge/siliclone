@@ -115,6 +115,6 @@ public interface Operator extends Serializable {
  * operator
  * @return
  */
-	public VisualizerDisplay getVisualizerDisplay();
+	public void showVisualizerDisplay();
 	
 }

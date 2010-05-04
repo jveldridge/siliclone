@@ -3,7 +3,6 @@ package edu.brown.cs32.siliclone.operators;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.core.Rectangle;
 import com.smartgwt.client.types.DragAppearance;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Progressbar;
@@ -11,19 +10,13 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.DragRepositionMoveEvent;
 import com.smartgwt.client.widgets.events.DragRepositionMoveHandler;
-import com.smartgwt.client.widgets.events.DragRepositionStartEvent;
-import com.smartgwt.client.widgets.events.DragRepositionStartHandler;
 import com.smartgwt.client.widgets.events.DragRepositionStopEvent;
 import com.smartgwt.client.widgets.events.DragRepositionStopHandler;
-import com.smartgwt.client.widgets.events.DropOverEvent;
-import com.smartgwt.client.widgets.events.DropOverHandler;
 import com.smartgwt.client.widgets.events.MouseOutEvent;
 import com.smartgwt.client.widgets.events.MouseOutHandler;
 import com.smartgwt.client.widgets.events.MouseOverEvent;
 import com.smartgwt.client.widgets.events.MouseOverHandler;
 import edu.brown.cs32.siliclone.client.WorkspaceView;
-import edu.brown.cs32.siliclone.client.connectors.Connectable;
-import edu.brown.cs32.siliclone.client.connectors.Direction;
 import edu.brown.cs32.siliclone.client.connectors2.InputNode;
 import edu.brown.cs32.siliclone.client.connectors2.OutputDragger;
 
@@ -56,8 +49,9 @@ public class OpView extends Canvas {//implements Connectable {
 		setLeft(op.getX());
 		
 		//add the graphical representation of the operator
-		Widget opWidget = op.getWidget();
-		this.addChild(opWidget);
+		Canvas opWidgetC = new Canvas();
+		opWidgetC.addChild(op.getWidget());
+		this.addChild(opWidgetC);
 		
 		//add close button
 		final Img close = new Img("close.png", 20, 20);
@@ -155,7 +149,7 @@ public class OpView extends Canvas {//implements Connectable {
 		*/
 		 initPropertiesSelector();
          
-         this.addClickHandler(new ClickHandler() {
+         opWidgetC.addClickHandler(new ClickHandler() {
                  public void onClick(ClickEvent event) {
                 	 	bringToFront();
                          if (selector.isVisible()) {
