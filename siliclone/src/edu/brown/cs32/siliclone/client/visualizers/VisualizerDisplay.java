@@ -1,28 +1,18 @@
 package edu.brown.cs32.siliclone.client.visualizers;
 
-import java.util.LinkedHashMap;
-
-
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
-
-import edu.brown.cs32.siliclone.client.OpTemplateView;
 import edu.brown.cs32.siliclone.operators.Operator;
-import edu.brown.cs32.siliclone.operators.OperatorAdder;
-import edu.brown.cs32.siliclone.operators.OperatorTemplate;
 import edu.brown.cs32.siliclone.plugins.Plugins;
-import edu.brown.cs32.siliclone.client.dna.SequenceHook;
+
 
 public class VisualizerDisplay extends TabSet {
 	
@@ -41,7 +31,6 @@ public class VisualizerDisplay extends TabSet {
 		final VLayout content = new VLayout();
 		final SelectItem visualizers = new SelectItem();
 		visualizers.setTitle("Select a visualizer");
-		LinkedHashMap availableVisualizers = new LinkedHashMap();
 		Plugins.defineVisualizers(new VisualizerAdderImpl(content));
 
 		t.setPane(content);

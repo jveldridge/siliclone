@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.CloseClickHandler;
+import com.smartgwt.client.widgets.events.CloseClientEvent;
+
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.client.visualizers.VisualizerDisplay;
 
@@ -111,9 +115,33 @@ public abstract class AbstractOperator implements Operator {
 	}
 	
 	private transient VisualizerDisplay visualizerDisplay = new VisualizerDisplay(this);
+	private transient Window visualizerDisplayWindow;
 	
-	public VisualizerDisplay getVisualizerDisplay(){
-		return visualizerDisplay;
+	public void showVisualizerDisplay(){
+		if(visualizerDisplayWindow==null){
+			visualizerDisplayWindow = new Window();
+			
+			visualizerDisplayWindow.setTitle("Visualizations");
+			visualizerDisplayWindow.setShowCloseButton(true);
+			visualizerDisplayWindow.setHeight(400);
+			visualizerDisplayWindow.setWidth(400);
+			
+			visualizerDisplayWindow.addItem(visualizerDisplay);
+			
+			visualizerDisplayWindow.setCanDragReposition(true);
+			visualizerDisplayWindow.setCanDragResize(true);
+			
+			visualizerDisplayWindow.addCloseClickHandler(new CloseClickHandler() {
+				
+				public void onCloseClick(CloseClientEvent event) {
+					visualizerDisplayWindow.hide();
+					
+				}
+			});
+			
+		}
+		visualizerDisplayWindow.show();
+		
 	}
 	
 	
