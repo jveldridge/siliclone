@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -34,9 +35,29 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		return u;
 	}
 	
+	private int getWorkspaceId(Connection conn, String name) throws DataServiceException{
+		
+		try {
+			PreparedStatement statement = conn.prepareStatement("Select id from " + Database.WORKSPACES + 
+					" where name = ?");
+			statement.setString(1, name);
+			ResultSet res = statement.executeQuery();
+			if(res.next()){
+				return res.getInt(1);
+			}else{
+				throw new DataServiceException("Workspace with given name not found.");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error communicating with database.");
+		}
+	}
 	
 	
 	//TODO compression?
+	/**
+	 * saves workspace with given data, name does not overwrite
+	 */
 	public void saveWorkspace(Workspace w, String name) throws DataServiceException {
 		if(w == null || name == null){
 			throw new DataServiceException("null value given to WorkspaceService.saveWorkspace");
@@ -55,23 +76,15 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			
 			statement = conn.prepareStatement("insert into "+ Database.WORKSPACES + "(name, data) values (?,?)");
 			statement.setString(1, name);
-			ByteArrayOutputStream baout = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(baout));
-			oos.writeObject(w);
-			oos.close();
-			statement.setBinaryStream(2,new ByteArrayInputStream(baout.toByteArray()));
-
-			//statement.setObject(2, w);
+			Database.saveCompressedObject(statement, 2, w);
 			statement.executeUpdate();
 			
-			statement = conn.prepareStatement("select id from " + Database.WORKSPACES +
-					" where name = ?");
-			statement.setString(1, name);
-			res = statement.executeQuery();
-			if(!res.next()){
-				throw new DataServiceException("Workspace with name " + name + " could not be written.");
+			int workspaceId = -1;
+			try{
+				workspaceId = getWorkspaceId(conn, name);
+			}catch(DataServiceException e){
+				throw new DataServiceException("Workspace data could not be written.");
 			}
-			int workspaceId = res.getInt(1);
 			
 			statement = conn.prepareStatement("insert into " + Database.WORKSPACE_USER_PERMISSIONS + 
 					"(workspace_id, user_id) values (?, ?)");
@@ -83,8 +96,8 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DataServiceException("Error writing workspace data.");
 		}finally{
 			try {
 				conn.close();
@@ -92,6 +105,9 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 	
+	/**
+	 * returns workspace with given name if user has permission
+	 */
 	public Workspace findWorkspace(String name) throws DataServiceException {
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
@@ -106,10 +122,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			ResultSet res = statement.executeQuery();
 
 			if(res.next()){
-				Blob b = res.getBlob("data");
-				ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
-				ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(bis));
-				return (Workspace) ois.readObject();
+				return (Workspace) Database.loadCompressedObject(res.getBlob("data"));
 			}
 			
 			statement = conn.prepareStatement("select t2.data from " + 
@@ -120,10 +133,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			statement.setString(2, name);
 			res = statement.executeQuery();
 			if(res.next()){
-				Blob b = res.getBlob("data");
-				ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
-				ObjectInputStream ois = new ObjectInputStream(bis);
-				return (Workspace) ois.readObject();
+				return (Workspace) Database.loadCompressedObject(res.getBlob("data"));
 			}else{
 				throw new DataServiceException("No workspace with name " + name + 
 						" was found with permissions granted to user " + u.getName());
@@ -145,6 +155,9 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
+	/**
+	 * Lists workspaces that user has access to.
+	 */
 	public List<String> getAvailableWorkspaces() throws DataServiceException {
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
@@ -171,7 +184,10 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			statement.setInt(1, u.getId());
 			res = statement.executeQuery();
 			while(res.next()){
-				available.add(res.getString(1));
+				String r = res.getString(1);
+				if(r != null){
+					available.add(r);
+				}
 			}
 			return available;
 		}
@@ -184,8 +200,9 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
-
-	@Override
+	/**
+	 * saves workspace over existing data - or makes new entry if no workspace has given name
+	 */
 	public void overwriteWorkspace(Workspace w, String name)
 			throws DataServiceException {
 		if(w == null || name == null){
@@ -204,8 +221,6 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 				saveWorkspace(w, name);
 			}
 			int id = res.getInt(1);
-			
-			boolean hasAccess = false;
 			
 			statement = conn.prepareStatement("select * from " + Database.WORKSPACE_USER_PERMISSIONS
 					+ " where workspace_id = ? and user_id = ?");

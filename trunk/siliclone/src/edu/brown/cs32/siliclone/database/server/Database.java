@@ -22,14 +22,10 @@ import edu.brown.cs32.siliclone.database.client.DataServiceException;
 
 
 /**
- * note - source http://www.java2s.com/Code/Java/Database-SQL-JDBC/HowtoserializedeserializeaJavaobjecttotheMySQLdatabase.htm
- * maybe later incorporate tomcat connectors.
+ * The Database class is responsible for defining how the application server connects to the database server.
+ *  It produces a connection which is handled using java.sql statements for mysql.
  */
 public class Database {
-	/**
-	 * Prepared statements use generic strings:
-	 * http://java.sun.com/j2se/1.4.2/docs/api/java/sql/PreparedStatement.html
-	 */
 	
 	// TODO - load these strings from a .config?
 	private static final String DRIVER = "org.gjt.mm.mysql.Driver"; //must be in class path
@@ -63,7 +59,9 @@ public class Database {
 	 * connection should be closed when it is not in use. 
 	 * The database used and its location are specified in the Database class' class fields.
 	 * 
-	 * @return The server's database connection, null if there was an error when connecting. (prints errors to stdio)
+	 * @return The server's database connection 
+	 * @throws DataServiceException If there was an error when connecting.(prints errors to stdio)
+	 * 
 	 */
 	public static Connection getConnection() throws DataServiceException{
 		try {
@@ -76,7 +74,6 @@ public class Database {
 	    }
 	}
 	  
-	
 	
 	
 	
@@ -157,6 +154,7 @@ public class Database {
 		}
 	}
 	
+	
 	public static void main(String[] argv) {
 		try{
 			Database.initializeDB(getConnection());
@@ -165,17 +163,36 @@ public class Database {
 		}
 	}
 	
-	
+	/**
+	 * Wraps the given output stream in a compression stream
+	 * @param os
+	 * @return
+	 * @throws IOException
+	 */
 	private static OutputStream getCompressedOutputStream(OutputStream os) throws IOException{
 		//return new GZIPOutputStream(os);
 		return os;
 	}
 	
+	/**
+	 * Wraps input stream in compression stream
+	 * @param is
+	 * @return
+	 * @throws IOException
+	 */
 	private static InputStream getCompressedInputStream(InputStream is) throws IOException{
 		//return new GZIPInputStream(is);
 		return is;
 	}
 	
+	/**
+	 * Given prepared statement for insertion, sets object data to compressed value at given index
+	 * @param statement
+	 * @param columnindex
+	 * @param objectToWrite
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public static void saveCompressedObject(PreparedStatement statement, int columnindex, Object objectToWrite) throws IOException, SQLException{
 		ByteArrayOutputStream baout = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(getCompressedOutputStream(baout));
@@ -185,6 +202,14 @@ public class Database {
 		
 	}
 	
+	/**
+	 * Given resultset from prepared statement for insertion/updating object data, inserts compressed object data.
+	 * @param resultset
+	 * @param columnindex
+	 * @param objectToWrite
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public static void saveCompressedObject(ResultSet resultset, int columnindex, Object objectToWrite) throws IOException, SQLException{
 		ByteArrayOutputStream baout = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(getCompressedOutputStream(baout));
@@ -194,6 +219,14 @@ public class Database {
 		
 	}
 	
+	/**
+	 * Reads compressed data from a blob object retrieved from the database.
+	 * @param b
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 */
 	public static Object loadCompressedObject(Blob b) throws IOException, SQLException, ClassNotFoundException{
 		ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
 		ObjectInputStream ois = new ObjectInputStream(getCompressedInputStream(bis));
