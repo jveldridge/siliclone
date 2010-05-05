@@ -33,5 +33,7 @@ public interface UserServiceAsync {
 			AsyncCallback<Void> callback) throws DataServiceException;
 
 	void getAllUsers(AsyncCallback<List<User>> callback) throws DataServiceException;
+
+	void getLoggedIn(AsyncCallback<User> callback);
 	
 }

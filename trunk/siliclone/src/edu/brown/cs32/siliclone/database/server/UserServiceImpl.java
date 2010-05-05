@@ -42,7 +42,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	//throws error if user not logged in.
-	private User getLoggedIn() throws DataServiceException{
+	public User getLoggedIn() throws DataServiceException{
 		User u = (User) this.getThreadLocalRequest().getSession().getAttribute("user");
 		if(u == null){
 			throw new DataServiceException("User is no longer logged in.");
