@@ -2,25 +2,19 @@ package edu.brown.cs32.siliclone.operators.dnaInput;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.fields.DataSourceBinaryField;
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
-import com.smartgwt.client.widgets.form.fields.FileItem;
+import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
@@ -29,16 +23,15 @@ import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
-import edu.brown.cs32.siliclone.database.client.DataServiceException;
-import edu.brown.cs32.siliclone.database.client.SequenceService;
-import edu.brown.cs32.siliclone.database.client.SequenceServiceAsync;
-import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.client.dna.features.Feature;
+import edu.brown.cs32.siliclone.database.client.SequenceService;
+import edu.brown.cs32.siliclone.database.client.SequenceServiceAsync;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
+import gwtupload.client.BaseUploadStatus;
 import gwtupload.client.IUploader;
-import gwtupload.client.PreloadedImage;
 import gwtupload.client.SingleUploader;
+import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 
 public class DNAInputPropertiesSelector extends PropertiesSelector {
@@ -125,14 +118,34 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	 * to allow users to upload a supported file format
 	 */
 	private void initUploadTab() {
+		final SequenceUploadServiceAsync service = GWT.create(SequenceUploadService.class);
+		
 		Tab uploadTab = new Tab();
 		uploadTab.setTitle("Upload");
 		Canvas uploadPane = new Canvas();
 		
-	    SingleUploader single1 = new SingleUploader();
-	    uploadPane.addChild(single1);
+		//TODO need to store file format in a session value to be accessed by the server
+		final RadioGroupItem formats = new RadioGroupItem("Format");
+		LinkedHashMap<String, String> formatsMap = new LinkedHashMap<String, String>();
+		formatsMap.put("FASTA", "FASTA");
+		formats.setValueMap(formatsMap);
+		DynamicForm uploadForm = new DynamicForm();
+		final TextItem seqName = new TextItem("Name");
+		uploadForm.setFields(seqName, formats);
+		uploadPane.addChild(uploadForm);
+		
+		Canvas uploaderPane = new Canvas();
+		
+		//button to be used by the SingleUploader class
+		final com.google.gwt.user.client.ui.Button hidden = new com.google.gwt.user.client.ui.Button();
+		
+		//this button is invisible so that the uploadButton is clicked instead,
+		//which stores information about the file format and sequence name in a
+		//session variable to be accessed by the server when parsing
+		hidden.setVisible(false);
+	    final SingleUploader single1 = new SingleUploader(FileInputType.BROWSER_INPUT, new BaseUploadStatus(), hidden);
+	    uploaderPane.addChild(single1);
 	    single1.addOnFinishUploadHandler(new IUploader.OnFinishUploaderHandler() {
-	    	private SequenceUploadServiceAsync service = GWT.create(SequenceUploadService.class);
 	     
 	    	public void onFinish(IUploader uploader) {
 	    		if (uploader.getStatus() == Status.SUCCESS) {
@@ -152,11 +165,44 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	        		service.getUploadedSequenceHook(uploader.getInputName(), callback);
 	        	}
 	        	else {
-	        		SC.say("Something bad happened");
+	        		SC.say("Something bad happened; status code = " + uploader.getStatus());
 	        	}
 	        }
 	    });
+	    
+	    uploadPane.addChild(uploaderPane);
+	    uploaderPane.setTop(seqName.getTop() + seqName.getHeight() + formats.getHeight() + 20);	    
+	    
+	    Button submit = new Button("Upload");
+	    submit.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
+				String name = seqName.getDisplayValue();
+				String format = formats.getDisplayValue();
+				
+				if (!name.equals("")) {
+					AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+						public void onFailure(Throwable caught) {
+							SC.say(caught.getMessage());
+						}
 
+						public void onSuccess(Void result) {
+							//"click" the upload button
+							hidden.click();
+						}
+						
+					};
+					
+					service.setUploadedFileAttributes(single1.getInputName(), name, format, callback);
+				}
+				
+			}
+		});
+	    
+	    uploadPane.addChild(submit);
+	    submit.setTop(uploaderPane.getBottom() - 60);
+	    
+	    uploadPane.addChild(submit);
+	    
 		uploadTab.setPane(uploadPane);
 		_sourceTabs.addTab(uploadTab);
 	}

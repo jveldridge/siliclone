@@ -82,8 +82,6 @@ public class OutputDragger extends Canvas {
 		addMouseOutHandler(new HoverStop());
 		addDragStopHandler(new DragStop());
 		addClickHandler(new ClickHandler() {
-			
-			@Override
 			public void onClick(ClickEvent event) {
 				owner.showVisualizerDisplay();
 				

@@ -16,4 +16,7 @@ public interface SequenceUploadServiceAsync {
 	void getUploadedSequenceHook(String fieldName,
 			AsyncCallback<SequenceHook> callback) ;
 
+	void setUploadedFileAttributes(String filePath, String name, String format,
+			AsyncCallback<Void> callback);
+
 }
