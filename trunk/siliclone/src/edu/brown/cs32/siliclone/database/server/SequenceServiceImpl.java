@@ -38,7 +38,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		return u;
 	}
 
-	private void verifyAccess(SequenceHook seq) throws DataServiceException{
+	private void verifyAccess(SequenceHook seq) throws DataServiceException {
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
 		try{
@@ -50,7 +50,6 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			statement.setInt(2, seq.getDataID());
 			ResultSet res = statement.executeQuery();
 			if(!res.next()){
-			
 				statement = conn.prepareStatement("select * from " + 
 						Database.SEQUENCE_USER_PERMISSIONS + " where data_id = ? and user_id = ? ");
 				statement.setInt(1, seq.getDataID());
@@ -67,9 +66,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addFeature(SequenceHook seq, Feature toAdd)
 			throws DataServiceException {
 		//verifyAccess(seq);
@@ -86,7 +85,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			Map<String, Collection<Feature>> features = (Map<String, Collection<Feature>>) res.getObject(1);
+			Map<String, Collection<Feature>> features = 
+				(Map<String, Collection<Feature>>) Database.loadCompressedObject(res.getBlob(1));
 			if(features.containsKey(toAdd.getType())){
 				features.get(toAdd.getType()).add(toAdd);
 			}else{
@@ -96,20 +96,26 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			}
 			statement = conn.prepareStatement("update " + Database.SEQUENCE_DATA + 
 					" set data = ? where id = ?");
-			statement.setObject(1, features);
 			statement.setInt(2, seq.getDataID());
+			Database.saveCompressedObject(statement, 1, features);
 			if (0 >= statement.executeUpdate()){
 				throw new DataServiceException("Sequence features could not be saved.");
 			}
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
+		}catch (IOException e){
+			throw new DataServiceException("Error reading data.");
+		}catch (ClassNotFoundException e){
+			throw new DataServiceException("Error reading data.");
 		}finally{
 			try {
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
 	}
-
+	
+	
+	@SuppressWarnings("unchecked")
 	public void addProperty(SequenceHook seq, String key, IsSerializable value)
 			throws DataServiceException {
 		if(seq == null || key == null || value == null){
@@ -126,7 +132,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			Map<String, IsSerializable> properties = (Map<String, IsSerializable>) res.getObject(1);
+			Map<String, IsSerializable> properties = (Map<String, IsSerializable>)
+							Database.loadCompressedObject(res.getBlob(1));
 			if(properties.containsKey(key)){
 				throw new DataServiceException("Sequence already contains property with given key.");
 			}
@@ -135,13 +142,17 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 
 			statement = conn.prepareStatement("update " + Database.SEQUENCE_DATA + 
 					" set properties = ? where id = ?");
-			statement.setObject(1, properties);
 			statement.setInt(2, seq.getDataID());
+			Database.saveCompressedObject(statement, 1, properties);
 			if (0 >= statement.executeUpdate()){
 				throw new DataServiceException("Sequence properties could not be saved.");
 			}
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
+		}catch (IOException e){
+			throw new DataServiceException("Error reading data.");
+		}catch (ClassNotFoundException e){
+			throw new DataServiceException("Error reading data.");
 		}finally{
 			try {
 				conn.close();
@@ -149,6 +160,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	public Collection<Feature> getFeaturesOfType(SequenceHook seq,
 			String featureType) throws DataServiceException {
@@ -167,24 +181,14 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
 			
-			Blob b = res.getBlob(1);
-			ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
-			ObjectInputStream ois = null;
-			try {
-				ois = new ObjectInputStream(bis);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return ((Map<String, Collection<Feature>>) ois.readObject()).get(featureType);
+			return ((Map<String, Collection<Feature>>) 
+					Database.loadCompressedObject(res.getBlob(1))).get(featureType);
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new DataServiceException("Error reading data.");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new DataServiceException("Error reading data.");
 		}finally{
@@ -194,6 +198,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	public IsSerializable getProperty(SequenceHook seq, String key)
 			throws DataServiceException {
@@ -211,11 +218,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			
-			Blob b = res.getBlob(1);
-			ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
-			ObjectInputStream ois = new ObjectInputStream(bis);
-			IsSerializable property = ((Map<String, IsSerializable>) ois.readObject()).get(key);
+			IsSerializable property = 
+				((Map<String, IsSerializable>) Database.loadCompressedObject(res.getBlob(1))).get(key);
 			if(property == null){
 				throw new DataServiceException("Sequence property not found with key " + key);
 			}
@@ -223,11 +227,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new DataServiceException("Error reading data.");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new DataServiceException("Error reading data.");
 		}finally{
@@ -246,8 +248,6 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 		//verifyAccess(seq);
 		
-		
-		
 		Connection conn = Database.getConnection();
 		try{
 			PreparedStatement statement = conn.prepareStatement("select data from " +
@@ -265,11 +265,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new DataServiceException("Error reading data.");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new DataServiceException("Error reading data.");
 		}finally{
