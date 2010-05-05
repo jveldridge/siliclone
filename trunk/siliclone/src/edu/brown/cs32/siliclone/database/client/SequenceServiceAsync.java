@@ -17,14 +17,8 @@ public interface SequenceServiceAsync {
 	void addFeature(SequenceHook seq, Feature toAdd,
 			AsyncCallback<Void> callback) throws DataServiceException;
 
-	void addProperty(SequenceHook seq, String key, IsSerializable value,
-			AsyncCallback<Void> callback) throws DataServiceException;
-
 	void getFeaturesOfType(SequenceHook seq, String featureType,
 			AsyncCallback<Collection<Feature>> callback) throws DataServiceException;
-
-	void getProperty(SequenceHook seq, String key,
-			AsyncCallback<IsSerializable> callback) throws DataServiceException;
 
 	//void getSequence(SequenceHook seq, AsyncCallback<NucleotideString> callback) throws DataServiceException;
 
@@ -50,5 +44,29 @@ public interface SequenceServiceAsync {
 	void findSequence(String name, AsyncCallback<SequenceHook> callback);
 
 	void listAvailableSequences(AsyncCallback<List<String>> callback);
+
+	void addProperty(SequenceHook seq, String key, IsSerializable value,
+			AsyncCallback<Void> callback) throws DataServiceException;
+	
+	void addProperty(SequenceHook seq, String key, String value,
+			AsyncCallback<Void> callback);
+
+	void addProperty(SequenceHook seq, String key, boolean value,
+			AsyncCallback<Void> callback);
+
+	void addProperty(SequenceHook seq, String key, int value,
+			AsyncCallback<Void> callback);
+
+	void getIsSerializableProperty(SequenceHook seq, String key,
+			AsyncCallback<IsSerializable> callback);
+
+	void getStringProperty(SequenceHook seq, String key,
+			AsyncCallback<String> callback);
+
+	void getBooleanProperty(SequenceHook seq, String key,
+			AsyncCallback<Boolean> callback);
+
+	void getIntegerProperty(SequenceHook seq, String key,
+			AsyncCallback<Integer> callback);
 
 }

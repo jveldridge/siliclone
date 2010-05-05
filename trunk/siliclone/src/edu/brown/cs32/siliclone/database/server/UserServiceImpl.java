@@ -275,7 +275,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			statement.setInt(1, groupId);
 			statement.setInt(2, newId);
 			res = statement.executeQuery();
-			if(!res.next()){
+			if(res.next()){
 				throw new DataServiceException("User " + userToAdd + " is already a member of group " + group);
 			}
 			

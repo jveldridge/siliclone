@@ -84,9 +84,11 @@ public class GroupsForm extends DynamicForm {
 				AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
+						addUser.clearValue();
 						//AccountsForm.this.setDisabled(true);
 					}
 					public void onSuccess(Void result) {
+						addUser.clearValue();
 						loadGroupsUsers(groupPick.getDisplayValue());
 						SC.say("User added successfully");
 						//AccountsForm.this.setDisabled(false);
@@ -106,9 +108,11 @@ public class GroupsForm extends DynamicForm {
 				AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
+						removeUser.clearValue();
 						//ccountsForm.this.setDisabled(false);
 					}
 					public void onSuccess(Void result) {
+						removeUser.clearValue();
 						loadGroupsUsers(groupPick.getDisplayValue());
 						SC.say("User removed successfully");
 						//AccountsForm.this.setDisabled(false);

@@ -112,6 +112,18 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 						}
 
 						public void onSuccess(SequenceHook result) {
+							//add circularity property to the newly added sequence
+							_service.addProperty(result, "isCircular", (Boolean) circular.getValue(), new AsyncCallback<Void>() {
+								public void onFailure(Throwable caught) {
+									SC.say(caught.getMessage());
+								}
+
+								public void onSuccess(Void result) {
+
+								}
+							});
+							
+							//set the newly added sequence as the output of the operator
 							Collection<SequenceHook> r =  new LinkedList<SequenceHook>();
 							r.add(result);
 							_operator.setSequence(r);
@@ -119,7 +131,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 					};
 					
 					_service.saveSequence(seq, name, callback);
-					//_service.addProperty(seq, "isCircular", (Boolean) circular.getValue(), callback);
+
 				
 					DNAInputPropertiesSelector.this.hide();
 				}
@@ -141,7 +153,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		final SequenceUploadServiceAsync service = GWT.create(SequenceUploadService.class);
 		Tab uploadTab = new Tab();
 		uploadTab.setTitle("Upload");
-		Canvas uploadPane = new Canvas();
+		final Canvas uploadPane = new Canvas();
 		
 		//TODO need to store file format in a session value to be accessed by the server
 		final RadioGroupItem formats = new RadioGroupItem("Format");
@@ -175,8 +187,8 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 						}
 
 						public void onSuccess(Collection<SequenceHook> result) {
-							//SC.say(result.getSeqName());
 							_operator.setSequence(result);
+							DNAInputPropertiesSelector.this.hide();
 						}
 					};
 
