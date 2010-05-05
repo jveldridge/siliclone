@@ -28,11 +28,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		WorkspaceService {
 
 	private User getLoggedIn() throws DataServiceException{
-		User u = (User) this.getThreadLocalRequest().getSession().getAttribute("user");
-		if(u == null){
-			throw new DataServiceException("User is no longer logged in.");
-		}
-		return u;
+		return UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
 	}
 	
 	private int getWorkspaceId(Connection conn, String name) throws DataServiceException{
