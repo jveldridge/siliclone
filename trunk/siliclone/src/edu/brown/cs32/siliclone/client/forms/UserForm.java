@@ -6,22 +6,20 @@ import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
-import com.smartgwt.client.widgets.form.fields.PasswordItem;
-import com.smartgwt.client.widgets.form.fields.RowSpacerItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.Siliclone;
-import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 public class UserForm extends DynamicForm {
 	private final StaticTextItem name = new StaticTextItem();
-	private final PasswordItem changePassword = new PasswordItem();
-	private final PasswordItem changePassword2 = new PasswordItem();
+	private final TextItem changePassword = new TextItem();
+	private final TextItem changePassword2 = new TextItem();
 	private final ButtonItem submitChange = new ButtonItem();
 	private final ButtonItem deleteAccount = new ButtonItem();
 	
@@ -38,12 +36,9 @@ public class UserForm extends DynamicForm {
 		loadDelete();
 		
 		setFields(	name,
-					new RowSpacerItem(),
 					changePassword,
 					changePassword2,
 					submitChange,
-					new RowSpacerItem(),
-					new RowSpacerItem(),
 					deleteAccount);
 		
 	}
@@ -57,7 +52,7 @@ public class UserForm extends DynamicForm {
 			public void onSuccess(User result) {
 				loggedInUser = result;
 				name.setTitle("User name : " + result.getName() + 
-								"    \nEmail : " + result.getEmail());
+								"Email : " + result.getEmail());
 			}
 		};
 		service.getLoggedIn(callback);
@@ -70,11 +65,15 @@ public class UserForm extends DynamicForm {
 	private void loadChangePassword(){
 		final AsyncCallback<User> callback = new AsyncCallback<User>(){
 			public void onFailure(Throwable caught) {
-				SC.say(caught.getMessage());
+				// TODO Auto-generated method stub
+				
 			}
+
 			public void onSuccess(User result) {
-				SC.say("Password changed");
+				// TODO Auto-generated method stub
+				
 			}
+			
 		};
 		
 		changePassword.setTitle("Change password");
@@ -83,13 +82,11 @@ public class UserForm extends DynamicForm {
 		submitChange.addClickHandler(new ClickHandler(){
 			
 			public void onClick(ClickEvent event) {
-				if(changePassword.getDisplayValue() == null ||
-						!changePassword.getDisplayValue().equals(changePassword2.getDisplayValue())){
+				if(changePassword.getValue() == null ||
+						!changePassword.getValue().equals(changePassword2.getValue())){
 					SC.say("Please re-enter the same password twice.");
 				}else {
-					try {
-						service.changePassword(changePassword.getDisplayValue(), callback);
-					} catch (DataServiceException e) { e.printStackTrace();}
+					
 				}
 			}
 		});

@@ -45,7 +45,7 @@ public class SequenceUploadServiceImpl extends RemoteServiceServlet implements
 			thisSession.setAttribute("sequenceFormats", new HashMap<String, String>());
 		}
 		((HashMap<String, String>)thisSession.getAttribute("sequenceFormats")).put(key, format);
-		System.out.println("finished setting attributes");
 	}
+
 
 }
