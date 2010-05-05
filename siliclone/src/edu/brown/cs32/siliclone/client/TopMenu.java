@@ -30,6 +30,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 import edu.brown.cs32.siliclone.client.forms.GroupsForm;
 import edu.brown.cs32.siliclone.client.forms.UserForm;
+import edu.brown.cs32.siliclone.client.forms.WorkspaceForm;
 import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
@@ -254,8 +255,13 @@ public class TopMenu extends ToolStrip {
 			t2.setTitle("User Settings");
 			t2.setPane(new UserForm(_main));
 			
+			Tab t3 = new Tab();
+			t3.setTitle("Workspace Permissions");
+			t3.setPane(new WorkspaceForm());
+			
 			t.addTab(t1);
 			t.addTab(t2);
+			t.addTab(t3);
 			
 			w.setTitle("Settings");
 			w.setIsModal(true);  
