@@ -24,44 +24,47 @@ import org.apache.commons.fileupload.FileItem;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class UploadSequenceFileServlet extends UploadAction {
-	private static final long serialVersionUID = 2L;
-
+	private static final long serialVersionUID = 3L;
+	
 	HashMap<String, SequenceHook> receivedFiles = new HashMap<String, SequenceHook>();
 	
-	  public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
-		  System.out.println("executing upload action");  
-		  for (FileItem item : sessionFiles) {
-		      if (false == item.isFormField()) {
-		    	  try {
-		    		  InputStream stream = item.getInputStream();
-		    		  FastaParser parser = new FastaParser();
-		    		  String sequence = parser.parseFastaFile(stream);
-		    		  System.out.println(sequence);
-		    		  receivedFiles.put(item.getFieldName(), new SequenceHook(2, 6, item.getName()));
-		    		  HttpSession thissession = getThreadLocalRequest().getSession();
-		    		  System.out.println("names: " + thissession.getAttribute("sequenceNames"));
-		    		  System.out.println("formats: " + thissession.getAttribute("sequenceFormats"));
-		    		  if(thissession.getAttribute("uploadedSequences")==null) {
-		    			  thissession.setAttribute("uploadedSequences", new HashMap<String, SequenceHook>() );
-		    		  }
+	@SuppressWarnings("unchecked")
+	public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
+		System.out.println("executing upload action");  
+			for (FileItem item : sessionFiles) {
+				if (false == item.isFormField()) {
+					try {
+						HttpSession thisSession = getThreadLocalRequest().getSession();
+						String seqName = ((Map<String,String>) thisSession.getAttribute("sequenceNames")).get(item.getFieldName());
+						String seqFormat = ((Map<String,String>) thisSession.getAttribute("sequenceFormats")).get(item.getFieldName());
+		    		  
+						InputStream stream = item.getInputStream();
+						String sequence = null;
+		    		  
+						if (seqFormat.equalsIgnoreCase("FASTA")) {
+							sequence = new FastaParser().parseFastaFile(stream);
+						}
+		    		  
+						SequenceHook hook = SequenceServiceImpl.saveSequence(sequence, seqName, thisSession);
+						if (thisSession.getAttribute("uploadedSequences") == null) {
+							thisSession.setAttribute("uploadedSequences", new HashMap<String,SequenceHook>());
+						}
 
-					String seqName = ((Map<String,String>) thissession.getAttribute("sequenceNames")).get(item.getFieldName());
-					
-					SequenceHook hook = new SequenceServiceImpl().saveSequence(sequence, new HashMap<String, Collection<Feature>>(), seqName, new HashMap<String, IsSerializable>());
-		    		  //SequenceHook hook = new SequenceHook(2, 6, item.getName());
-		    		  ((HashMap<String, SequenceHook>)thissession.getAttribute("uploadedSequences")).put(item.getFieldName(), hook);
-		    		  System.out.println("BOOHAAAA"+item.getName());
-		        } catch (Exception e) {
-		          throw new UploadActionException(e.getMessage());
-		        }
-		      }
-		      removeSessionFileItems(request);
-		    }
-		    return null;
+						((HashMap<String, SequenceHook>)thisSession.getAttribute("uploadedSequences")).put(item.getFieldName(), hook);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new UploadActionException(e.getMessage());
+					}
+				}
+				
+				removeSessionFileItems(request);
 		  }
+		  
+			return null;
+	  }
 
 	  public void getUploadedFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		  System.out.println("get uploaded file called");
+		  System.out.println(">>> get uploaded file called");
 		  ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
 		  oos.writeObject(receivedFiles.get(request.getParameter(PARAM_SHOW)));
 		  oos.close();
