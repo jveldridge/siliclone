@@ -12,9 +12,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.brown.cs32.siliclone.accounts.User;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 
@@ -43,7 +46,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	
 	//throws error if user not logged in.
 	public User getLoggedIn() throws DataServiceException{
-		User u = (User) this.getThreadLocalRequest().getSession().getAttribute("user");
+		User u = (User) this.getThreadLocalRequest().getSession(true).getAttribute("user");
 		if(u == null){
 			throw new DataServiceException("User is no longer logged in.");
 		}
@@ -57,6 +60,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	//updates session to save current user.
 	private void setLoggedIn(User u){
 		this.getThreadLocalRequest().getSession().setAttribute("user", u);
+		System.out.println("GOOOOOOOO"+this.getThreadLocalRequest());
 	}
 	
 	private int findUserId(Connection conn, String name) throws DataServiceException{
@@ -540,6 +544,44 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
 		}
+	}
+	
+	public static void verifyAccess(HttpSession session, SequenceHook seq) throws DataServiceException {
+		User u = UserServiceImpl.getLoggedIn(session);
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select * from " +
+					Database.SEQUENCE_GROUP_PERMISSIONS + " as t1 left join " + 
+					Database.GROUP_PERMISSIONS + " as t2 on t1.group_id = t2.group_id " +
+					"where t2.member_id = ? and t1.data_id = ?;");
+			statement.setInt(1, u.getId());
+			statement.setInt(2, seq.getDataID());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				statement = conn.prepareStatement("select * from " + 
+						Database.SEQUENCE_USER_PERMISSIONS + " where data_id = ? and user_id = ? ");
+				statement.setInt(1, seq.getDataID());
+				statement.setInt(2, u.getId());
+				res = statement.executeQuery();
+				if(!res.next()){
+					throw new DataServiceException("User does not have permission to use requested sequence.");
+				}
+			}
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
+	}
+	
+	public static User getLoggedIn(HttpSession session) throws DataServiceException{
+		User u = (User) session.getAttribute("user");
+		if(u == null){
+			throw new DataServiceException("User is no longer logged in.");
+		}
+		return u;
 	}
 
 }

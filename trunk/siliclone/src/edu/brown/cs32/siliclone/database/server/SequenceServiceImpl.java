@@ -1,8 +1,6 @@
 package edu.brown.cs32.siliclone.database.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,69 +8,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import sun.misc.Cache;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import edu.brown.cs32.siliclone.accounts.User;
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.dna.features.Feature;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
-import edu.brown.cs32.siliclone.client.dna.SequenceHook;
-import edu.brown.cs32.siliclone.client.dna.features.Feature;
 import edu.brown.cs32.siliclone.server.TasksDelegation;
 
 @SuppressWarnings("serial")
 public class SequenceServiceImpl extends RemoteServiceServlet implements SequenceService{
-
-	private User getLoggedIn() throws DataServiceException{
-		User u = (User) this.getThreadLocalRequest().getSession().getAttribute("user");
-		if(u == null){
-			throw new DataServiceException("User is no longer logged in.");
-		}
-		return u;
-	}
-
-	private void verifyAccess(SequenceHook seq) throws DataServiceException {
-		User u = getLoggedIn();
-		Connection conn = Database.getConnection();
-		try{
-			PreparedStatement statement = conn.prepareStatement("select * from " +
-					Database.SEQUENCE_GROUP_PERMISSIONS + " as t1 left join " + 
-					Database.GROUP_PERMISSIONS + " as t2 on t1.group_id = t2.group_id " +
-					"where t2.member_id = ? and t1.data_id = ?;");
-			statement.setInt(1, u.getId());
-			statement.setInt(2, seq.getDataID());
-			ResultSet res = statement.executeQuery();
-			if(!res.next()){
-				statement = conn.prepareStatement("select * from " + 
-						Database.SEQUENCE_USER_PERMISSIONS + " where data_id = ? and user_id = ? ");
-				statement.setInt(1, seq.getDataID());
-				statement.setInt(2, u.getId());
-				res = statement.executeQuery();
-				if(!res.next()){
-					throw new DataServiceException("User does not have permission to use requested sequence.");
-				}
-			}
-		}catch (SQLException e){
-			throw new DataServiceException("Error connecting to database.");
-		}finally{
-			try {
-				conn.close();
-			} catch (SQLException e) { e.printStackTrace(); }
-		}
-	}
 	
 	@SuppressWarnings("unchecked")
 	public void addFeature(SequenceHook seq, Feature toAdd)
 			throws DataServiceException {
-		verifyAccess(seq);
+		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
 		if(seq == null || toAdd == null){
 			throw new DataServiceException("Null value passed to SequenceService.addFeature");
 		}
@@ -122,7 +82,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(seq == null || key == null || value == null){
 			throw new DataServiceException("Null value passed to SequenceService.addProperty");
 		}
-		verifyAccess(seq);
+		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -162,15 +122,13 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	}
 
 	
-	
-	
 	@SuppressWarnings("unchecked")
 	public Collection<Feature> getFeaturesOfType(SequenceHook seq,
 			String featureType) throws DataServiceException {
 		if(seq == null || featureType == null){
 			throw new DataServiceException("Null value passed to SequenceService.getFeaturesOfType");
 		}
-		verifyAccess(seq);
+		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -199,16 +157,14 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
-	
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public IsSerializable getProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		if(seq == null || key == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperty");
 		}
-		verifyAccess(seq);
+		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -247,7 +203,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getSequence");
 		}
-		verifyAccess(seq);
+		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -287,10 +243,16 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	public int length(SequenceHook seq) throws DataServiceException {
 		return getSequence(seq).getLength();
 	}
-
+	
 	public SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, IsSerializable> properties) throws DataServiceException {
+		return saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
+	}
+
+	public static SequenceHook saveSequence(NucleotideString nucleotides,
+			Map<String, Collection<Feature>> features, String seqName,
+			Map<String, IsSerializable> properties, HttpSession session) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}
@@ -379,7 +341,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_USER_PERMISSIONS +
 					"(data_id, user_id) values (?, ?)");
 			statement.setInt(1, dataID);
-			statement.setInt(2, getLoggedIn().getId());
+			statement.setInt(2, UserServiceImpl.getLoggedIn(session).getId());
 			if (0 >= statement.executeUpdate()){
 				throw new DataServiceException("Error granting user permission to saved sequence.");
 			}
@@ -404,18 +366,29 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 
 		
 	}
-
+	
 	public SequenceHook saveSequence(String nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, IsSerializable> properties) throws DataServiceException {
+		return SequenceServiceImpl.saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
+	}
+
+	public static SequenceHook saveSequence(String nucleotides,
+			Map<String, Collection<Feature>> features, String seqName,
+			Map<String, IsSerializable> properties, HttpSession session) throws DataServiceException {
 		NucleotideString seq = new NucleotideString(nucleotides);
-		return this.saveSequence(seq, features, seqName, properties);
+		return SequenceServiceImpl.saveSequence(seq, features, seqName, properties, session);
 	}
 
 	public SequenceHook saveSequence(String nucleotides, String seqName)
 			throws DataServiceException {
-		return saveSequence(nucleotides, new HashMap<String, Collection<Feature>>(), 
-				seqName, new HashMap<String, IsSerializable>());
+		return SequenceServiceImpl.saveSequence(nucleotides, seqName, this.getThreadLocalRequest().getSession());
 	}
+	
+	public static SequenceHook saveSequence(String nucleotides, String seqName, HttpSession session)
+	throws DataServiceException {
+		return SequenceServiceImpl.saveSequence(nucleotides, new HashMap<String, Collection<Feature>>(), 
+		seqName, new HashMap<String, IsSerializable>(), session);
+}
 
 }
