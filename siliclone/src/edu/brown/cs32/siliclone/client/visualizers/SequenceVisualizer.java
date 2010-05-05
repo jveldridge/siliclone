@@ -1,5 +1,7 @@
 package edu.brown.cs32.siliclone.client.visualizers;
 
+import java.util.Collection;
+
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Text;
 
@@ -17,7 +19,7 @@ public class SequenceVisualizer implements Visualizer {
 
 	private SequenceServiceAsync _service = GWT.create(SequenceService.class);
 	
-	public Widget visualize(SequenceHook seq) {
+	public Widget visualize(Collection<SequenceHook> seq) {
 		final Button string = new Button("hi");
 		final DrawingArea toReturn = new DrawingArea(600,600);
 		if(seq == null){
@@ -44,7 +46,7 @@ public class SequenceVisualizer implements Visualizer {
 			}
 			
 		};
-		_service.getNucleotides(seq, callback);
+		_service.getNucleotides(seq.iterator().next(), callback);
 		
 		return toReturn;
 	}

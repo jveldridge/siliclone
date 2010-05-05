@@ -64,7 +64,7 @@ public interface Operator extends Serializable {
 	 * @return the SequenceHook representing the DNA sequence that results
 	 * from running this operation with its current input
 	 */
-	public SequenceHook getOutputSequence();
+	public Collection<SequenceHook> getOutputSequence();
 	
 	
 	//NOTE Operator is serializable! these need to be transient or (even better) not fields

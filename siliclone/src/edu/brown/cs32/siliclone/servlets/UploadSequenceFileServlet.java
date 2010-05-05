@@ -9,7 +9,9 @@ import gwtupload.server.exceptions.UploadActionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,10 +45,11 @@ public class UploadSequenceFileServlet extends UploadAction {
 		    		  
 						SequenceHook hook = SequenceServiceImpl.saveSequence(sequence, seqName, thisSession);
 						if (thisSession.getAttribute("uploadedSequences") == null) {
-							thisSession.setAttribute("uploadedSequences", new HashMap<String,SequenceHook>());
+							thisSession.setAttribute("uploadedSequences", new HashMap<String,Collection<SequenceHook>>());
 						}
-
-						((HashMap<String, SequenceHook>)thisSession.getAttribute("uploadedSequences")).put(item.getFieldName(), hook);
+						Collection<SequenceHook> hookcollection = new LinkedList<SequenceHook>();
+						hookcollection.add(hook);
+						((HashMap<String, Collection<SequenceHook>>)thisSession.getAttribute("uploadedSequences")).put(item.getFieldName(), hookcollection);
 					} catch (Exception e) {
 						e.printStackTrace();
 						throw new UploadActionException(e.getMessage());

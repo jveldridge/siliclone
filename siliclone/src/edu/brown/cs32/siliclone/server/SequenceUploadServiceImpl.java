@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.server;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
@@ -18,14 +19,14 @@ public class SequenceUploadServiceImpl extends RemoteServiceServlet implements
 		SequenceUploadService {
 
 	@SuppressWarnings("unchecked")
-	public SequenceHook getUploadedSequenceHook(String fieldName) throws UploadedFileNotFoundException {
+	public Collection<SequenceHook> getUploadedSequenceHook(String fieldName) throws UploadedFileNotFoundException {
         HttpSession thissession = this.getThreadLocalRequest().getSession();
         Object uploadedSequences = thissession.getAttribute("uploadedSequences");
         if(uploadedSequences==null||!(uploadedSequences instanceof HashMap)){
         	throw new UploadedFileNotFoundException();
         }
-        HashMap<String, SequenceHook> castedUploadedSequences = ((HashMap<String, SequenceHook>)uploadedSequences);
-        SequenceHook sh = castedUploadedSequences.get(fieldName);
+        HashMap<String, Collection<SequenceHook>> castedUploadedSequences = ((HashMap<String, Collection<SequenceHook>>)uploadedSequences);
+        Collection<SequenceHook> sh = castedUploadedSequences.get(fieldName);
         if(sh== null){
         	throw new UploadedFileNotFoundException();
         }

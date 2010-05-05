@@ -17,7 +17,7 @@ public abstract class AbstractOperator implements Operator {
 	
 	protected int x, y;
 	protected Operator[] inputs = new Operator[getNumInputs()];
-	protected SequenceHook outputSequence; 
+	protected Collection<SequenceHook> outputSequence; 
 	protected Collection<Operator> children = new ArrayList<Operator>();
 	
 	protected transient OpView view;
@@ -110,7 +110,7 @@ public abstract class AbstractOperator implements Operator {
 		this.y = y;
 	}
 
-	public SequenceHook getOutputSequence() {
+	public Collection<SequenceHook> getOutputSequence() {
 		return outputSequence;
 	}
 	

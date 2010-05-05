@@ -1,5 +1,7 @@
 package edu.brown.cs32.siliclone.operators.client.dnaInput;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Img;
 
@@ -18,7 +20,7 @@ public class DNAInputOp extends AbstractOperator {
 		
 	}
 	
-	public void setSequence(SequenceHook seq) {
+	public void setSequence(Collection<SequenceHook> seq) {
 		outputSequence = seq;
 	}
 	
