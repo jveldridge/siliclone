@@ -1,16 +1,13 @@
 package edu.brown.cs32.siliclone.client.workspace;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import edu.brown.cs32.siliclone.operators.Operator;
 
-
+@SuppressWarnings("serial")
 public class BasicWorkspace implements Workspace {
-	
-	private static final long serialVersionUID = 1L;
 	
 	private HashMap <String, Object> properties;
 	private List<Operator> operators;

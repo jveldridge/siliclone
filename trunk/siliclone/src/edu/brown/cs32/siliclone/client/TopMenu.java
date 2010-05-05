@@ -196,7 +196,7 @@ public class TopMenu extends ToolStrip {
 			_service = GWT.create(WorkspaceService.class);
 			_callback = new AsyncCallback<Void>() {
 				public void onFailure(Throwable caught) {
-					SC.say("failure");
+					SC.say(caught.getMessage());
 					caught.printStackTrace();
 				}
 
