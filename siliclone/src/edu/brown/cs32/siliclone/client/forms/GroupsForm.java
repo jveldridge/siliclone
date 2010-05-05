@@ -23,7 +23,7 @@ import edu.brown.cs32.siliclone.database.client.UserService;
 import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 
-public class AccountsForm extends DynamicForm {
+public class GroupsForm extends DynamicForm {
 	//current groups + new group
 	//private LinkedHashMap<String, String> ownedGroups;
 	//private LinkedHashMap<String, String> groupsUsers;
@@ -36,7 +36,9 @@ public class AccountsForm extends DynamicForm {
 	private final SectionItem memberGroupsSection = new SectionItem();
 	private final StaticTextItem availableGroupsList = new StaticTextItem("Available");
 	
-	public AccountsForm(){
+	private final UserServiceAsync service = GWT.create(UserService.class); 
+	
+	public GroupsForm(){
 		loadAllUsers();
 		loadOwnedGroups();
 		loadAllAvailableGroups();
@@ -79,7 +81,6 @@ public class AccountsForm extends DynamicForm {
 		addUser.addChangedHandler(new ChangedHandler(){
 			public void onChanged(ChangedEvent event) {
 				//AccountsForm.this.setDisabled(true);
-				final UserServiceAsync service = GWT.create(UserService.class); 
 				AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
@@ -102,7 +103,6 @@ public class AccountsForm extends DynamicForm {
 		removeUser.addChangedHandler(new ChangedHandler(){
 			public void onChanged(ChangedEvent event) {
 				//AccountsForm.this.setDisabled(true);
-				final UserServiceAsync service = GWT.create(UserService.class);
 				AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
@@ -126,7 +126,6 @@ public class AccountsForm extends DynamicForm {
 		createGroup.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event) {
 				//AccountsForm.this.setDisabled(true);
-				final UserServiceAsync service = GWT.create(UserService.class); 
 				final AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
@@ -142,7 +141,7 @@ public class AccountsForm extends DynamicForm {
 				SC.askforValue("Create Group", "Enter Group Name:", new ValueCallback(){
 					public void execute(String value){
 						if(value == null){
-							AccountsForm.this.setDisabled(false);
+							GroupsForm.this.setDisabled(false);
 							return;
 						}
 						try {
@@ -227,7 +226,6 @@ public class AccountsForm extends DynamicForm {
 	
 	private void loadAllUsers(){
 		final LinkedHashMap<String, String> allUsers = new LinkedHashMap<String, String>();
-		final UserServiceAsync service = GWT.create(UserService.class); 
 		AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>() {
 			public void onFailure(Throwable caught) {
 				SC.say(caught.getMessage());
@@ -250,7 +248,6 @@ public class AccountsForm extends DynamicForm {
 	
 	private void loadGroupsUsers(String group){
 		final LinkedHashMap<String, String> groupsUsers = new LinkedHashMap<String, String>();
-		final UserServiceAsync service = GWT.create(UserService.class); 
 		AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>() {
 			public void onFailure(Throwable caught) {
 				SC.say(caught.getMessage());
