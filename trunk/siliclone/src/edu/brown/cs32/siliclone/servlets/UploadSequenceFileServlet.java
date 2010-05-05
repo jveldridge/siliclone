@@ -1,7 +1,6 @@
 package edu.brown.cs32.siliclone.servlets;
 
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
-import edu.brown.cs32.siliclone.client.dna.features.Feature;
 import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.server.FastaParser;
 import gwtupload.server.UploadAction;
@@ -10,7 +9,6 @@ import gwtupload.server.exceptions.UploadActionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class UploadSequenceFileServlet extends UploadAction {
 	private static final long serialVersionUID = 3L;
