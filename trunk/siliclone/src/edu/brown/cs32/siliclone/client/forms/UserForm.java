@@ -6,6 +6,7 @@ import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.PasswordItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
@@ -19,8 +20,8 @@ import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 public class UserForm extends DynamicForm {
 	private final StaticTextItem name = new StaticTextItem();
-	private final TextItem changePassword = new TextItem();
-	private final TextItem changePassword2 = new TextItem();
+	private final PasswordItem changePassword = new PasswordItem();
+	private final PasswordItem changePassword2 = new PasswordItem();
 	private final ButtonItem submitChange = new ButtonItem();
 	private final ButtonItem deleteAccount = new ButtonItem();
 	
@@ -66,13 +67,10 @@ public class UserForm extends DynamicForm {
 	private void loadChangePassword(){
 		final AsyncCallback<User> callback = new AsyncCallback<User>(){
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				SC.say(caught.getMessage());
 			}
-
 			public void onSuccess(User result) {
-				// TODO Auto-generated method stub
-				
+				SC.say("Password changed.");
 			}
 			
 		};
@@ -83,11 +81,15 @@ public class UserForm extends DynamicForm {
 		submitChange.addClickHandler(new ClickHandler(){
 			
 			public void onClick(ClickEvent event) {
-				if(changePassword.getValue() == null ||
-						!changePassword.getValue().equals(changePassword2.getValue())){
+				if(changePassword.getDisplayValue() == null ||
+						!changePassword.getDisplayValue().equals(changePassword2.getDisplayValue())){
 					SC.say("Please re-enter the same password twice.");
 				}else {
-					
+					try {
+						service.changePassword(changePassword.getDisplayValue(), callback);
+					} catch (DataServiceException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
