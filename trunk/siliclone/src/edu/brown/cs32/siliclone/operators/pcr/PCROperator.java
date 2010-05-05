@@ -8,6 +8,7 @@ import edu.brown.cs32.siliclone.operators.AbstractOperator;
 import edu.brown.cs32.siliclone.operators.Operator;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
+@SuppressWarnings("serial")
 public class PCROperator extends AbstractOperator {
 	
 	transient private Widget image;
@@ -18,6 +19,7 @@ public class PCROperator extends AbstractOperator {
 	}
 	
 	public void init() {
+		super.init();
 		image = new Img("pcr.gif");
 		propertiesSelector = new PCRPropertiesSelector(this);
 	}
