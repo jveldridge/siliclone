@@ -87,9 +87,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		if(u == null || u.getName() == null || u.getPassword() == null){
 			throw new DataServiceException("Null value passed to UserService.login");
 		}
-		if(!getLoggedIn().getName().equals(u.getName())){
-			throw new DataServiceException("Error - the account to delete is different from the current user's account.");
-		}
 		String password = encrypt(u.getPassword(), 50);
 		Connection conn = Database.getConnection();
 		try{
@@ -215,6 +212,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			throw new DataServiceException("Null value was passed to UserService.remove");
 		}
 
+		if(!getLoggedIn().getName().equals(u.getName())){
+			throw new DataServiceException("Error - the account to delete is different from the current user's account.");
+		}
 		Connection conn = Database.getConnection();
 
 		try{ //delete group memberships, then delete user, leave groups/data that others might need.

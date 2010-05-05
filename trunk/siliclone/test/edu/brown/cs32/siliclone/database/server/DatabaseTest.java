@@ -19,14 +19,19 @@ public class DatabaseTest {
 
 	@Test
 	public void testGetConnection() {
-//		Connection conn = Database.getConnection();
-//		assertNotNull(conn); //connection created
-//		
-//		try {
-//			conn.close();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
+		Connection conn = null;
+		try {
+			conn = Database.getConnection();
+		} catch (DataServiceException e1) {
+			fail("Could not create Database connection.");
+		}
+		assertNotNull(conn); //connection created
+		
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
