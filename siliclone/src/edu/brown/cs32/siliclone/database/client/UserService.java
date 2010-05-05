@@ -12,6 +12,8 @@ import edu.brown.cs32.siliclone.accounts.User;
  */
 @RemoteServiceRelativePath("user")
 public interface UserService extends RemoteService {
+	User getLoggedIn() throws DataServiceException;
+	
 	/**
 	 * Given a user object (username and password are set)
 	 * determines whether that user exists in the server's user database.
