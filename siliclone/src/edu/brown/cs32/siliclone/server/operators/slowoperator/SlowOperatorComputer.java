@@ -16,7 +16,7 @@ public class SlowOperatorComputer implements OperatorComputer {
 		progress = 0;
 		for(int i = 0;i<=100;i++){
 			try {
-				Thread.sleep(70);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
