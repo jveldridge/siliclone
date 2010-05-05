@@ -2,6 +2,7 @@ package edu.brown.cs32.siliclone.database.client;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -45,5 +46,9 @@ public interface SequenceServiceAsync {
 
 	void saveSequence(String nucleotides, String seqName,
 			AsyncCallback<SequenceHook> callback);
+
+	void findSequence(String name, AsyncCallback<SequenceHook> callback);
+
+	void listAvailableSequences(AsyncCallback<List<String>> callback);
 
 }

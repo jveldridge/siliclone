@@ -1,6 +1,7 @@
 package edu.brown.cs32.siliclone.database.client;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -91,4 +92,8 @@ public interface SequenceService extends RemoteService {
 									String seqName,  Map<String,IsSerializable> properties) throws DataServiceException;
 
 	public SequenceHook saveSequence (String nucleotides, String seqName) throws DataServiceException;
+	
+	public List<String> listAvailableSequences() throws DataServiceException;
+	
+	public SequenceHook findSequence(String name) throws DataServiceException;
 }

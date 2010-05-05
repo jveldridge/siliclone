@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,7 @@ import sun.misc.Cache;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.client.dna.features.Feature;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
@@ -390,5 +392,70 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		return SequenceServiceImpl.saveSequence(nucleotides, new HashMap<String, Collection<Feature>>(), 
 		seqName, new HashMap<String, IsSerializable>(), session);
 }
+
+
+	public SequenceHook findSequence(String name) throws DataServiceException {
+		if(name == null){
+			throw new DataServiceException("null value was passed to SequenceService.findSequence");
+		}
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id, seq_id from " + Database.SEQUENCE_DATA + 
+					" where name = ?");
+			statement.setString(1, name);
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Sequence data with name " + name + " not found.");
+			}
+			int dataID = res.getInt(1);
+			int seqID = res.getInt(2);
+			SequenceHook seq = new SequenceHook(dataID, seqID, name);
+			conn.close();
+			UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
+			return seq;
+		}catch(SQLException e){
+			e.printStackTrace();
+			throw new DataServiceException("Error communicating with database.");
+		}
+	}
+
+	public List<String> listAvailableSequences() throws DataServiceException {
+		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
+		Connection conn = Database.getConnection();
+		ArrayList<String> available = new ArrayList<String>();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select t2.name from " +
+					Database.SEQUENCE_USER_PERMISSIONS + " as t1 left join " + 
+					Database.SEQUENCE_DATA + " as t2 on t1.data_id = t2.id where t1.user_id = ?;");
+			statement.setInt(1, u.getId());
+			ResultSet res = statement.executeQuery();
+			while(res.next()){
+				String r = res.getString(1);
+				if (r != null) {
+					available.add(r);
+				}
+			}
+			
+			statement = conn.prepareStatement("select t2.name from " +
+					Database.SEQUENCE_GROUP_PERMISSIONS + " as t1 inner join (" + Database.SEQUENCE_DATA + 
+					" as t2, " + Database.GROUP_PERMISSIONS + " as t3) on (t1.group_id = t3.group_id and " +
+					"t1.data_id = t2.id) where t3.member_id = ?;");
+			statement.setInt(1, u.getId());
+			res= statement.executeQuery();
+			while(res.next()){
+				String r = res.getString(1);
+				if(r != null){
+					available.add(r);
+				}
+			}
+			return available;
+		}catch(SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try{
+				conn.close();
+			}catch (SQLException e1){e1.printStackTrace();}
+		}
+	}
 
 }
