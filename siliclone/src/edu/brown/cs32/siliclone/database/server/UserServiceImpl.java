@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,19 +50,34 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		return u;
 	}
 	
+	//updates session to save current user.
 	private void setLoggedIn(User u){
 		this.getThreadLocalRequest().getSession().setAttribute("user", u);
 	}
+	
+	private int findUserId(Connection conn, String name) throws DataServiceException{
+		try {
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + 
+					" where name = ?");
+			statement.setString(1, name);
+			ResultSet res = statement.executeQuery();
+			if(res.next()){
+				return res.getInt(1);
+			}else{
+				throw new DataServiceException("User with name " + name + " not found in database.");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error communicating with database.");
+		}
+		
+	}
 
 	/**
-	 * Logs in the user passed as a parameter.  If the login was successful,
-	 * the same user object will be returned.  If the login was unsuccessful,
-	 * this method returns null.
-	 * 
-	 * @param u User to be logged in
-	 * @return an object representing the User now logged in
-	 * @throws FailedConnectionException if connecting to the 
-	 * 		   database was unsuccessful
+	 * Logs in the user passed as a parameter. 
+	 * user must have initialized name and password.
+	 * Returns user with password set to null, email initialized
+	 * throws exception if login unsuccessful 
 	 */
 	public User login(User u) throws DataServiceException {
 		if(u == null || u.getName() == null || u.getPassword() == null){
@@ -69,7 +85,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		}
 		
 		String password = encrypt(u.getPassword(), 50);
-		
 		Connection conn = Database.getConnection();
 		try{
 			PreparedStatement statement = conn.prepareStatement("select id, email from " + Database.USERS + 
@@ -98,7 +113,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	
-	
+	/**
+	 * Changes the current user's password to the given string
+	 * returns the user with password and email initialized.
+	 */
 	public User changePassword(String newPassword) throws DataServiceException {
 		User u = getLoggedIn();
 		if(newPassword == null){
@@ -106,7 +124,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		}
 		
 		Connection conn = Database.getConnection();
-		
 		String password = encrypt(newPassword, 50);
 		
 		try{
@@ -133,6 +150,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		
 
 	//TODO javax.mail 
+	/**
+	 * adds user and logs in
+	 */
 	public User register(User u) throws DataServiceException {
 		if(u == null || u.getEmail() == null || u.getName() == null || u.getPassword() == null){
 			throw new DataServiceException("Null value passed to UserService.register");
@@ -181,6 +201,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 
 	
 	//TODO email notification?
+	/**
+	 * removes user from database.
+	 */
 	public void remove(User u)  throws DataServiceException {
 		if(u== null || u.getName() == null){
 			throw new DataServiceException("Null value was passed to UserService.remove");
@@ -189,14 +212,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		Connection conn = Database.getConnection();
 
 		try{ //delete group memberships, then delete user, leave groups/data that others might need.
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;" );
-			statement.setString(1, u.getName());
-			ResultSet res = statement.executeQuery();
-			if(!res.next()){
-				throw new DataServiceException("User not found with name " + u.getName());
-			}
-			int id = res.getInt(1);
-			
+			int id = findUserId(conn, u.getName());
+			Statement statement = conn.createStatement();
 			if(0 < statement.executeUpdate("delete from " + Database.USERS + " where id = " + id + ";")){
 				throw new DataServiceException("User " + u.getName() + " could not be removed from database.");
 			}
@@ -227,19 +244,13 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			int ownerId = u.getId();
 			
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?" );
-			statement.setString(1, userToAdd);
-			ResultSet res = statement.executeQuery();
-			if(!res.next()){
-				throw new DataServiceException("could not find user "+userToAdd+ " to add in database.");
-			}
-			int newId = res.getInt(1);
+			int newId = findUserId(conn, userToAdd);
 
-			statement = conn.prepareStatement("select id from " + Database.GROUPS +
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS +
 					" where group_name = ? and owner_id = ?");
 			statement.setString(1, group);
 			statement.setInt(2, ownerId);
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			if(!res.next()){
 				throw new DataServiceException("could not find group " + group + " with requesting owner " + u.getName());
 			}
@@ -464,18 +475,12 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		Connection conn = Database.getConnection();
 
 		try{
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?");
-			statement.setString(1, userToRemove);
-			ResultSet res = statement.executeQuery();
-			if(!res.next()){
-				throw new DataServiceException("User to remove " + userToRemove + " not found in database.");
-			}
-			int toRemoveId = res.getInt(1);
+			int toRemoveId = findUserId(conn, userToRemove);
 			
-			statement = conn.prepareStatement("select id from " + Database.GROUPS + " where group_name = ? and owner_id = ?");
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS + " where group_name = ? and owner_id = ?");
 			statement.setString(1, group);
 			statement.setInt(2, u.getId());
-			res = statement.executeQuery();
+			ResultSet res = statement.executeQuery();
 			if(!res.next()){
 				throw new DataServiceException("Group " + group + " not found with owner " + u.getName());
 			}
@@ -529,32 +534,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
 		}
-	}
-	
-	
-	public static void main(String[] args){
-		/**
-		UserServiceImpl i = new UserServiceImpl();
-		User u = new User();
-		u.setName("user2");
-		u.setEmail("email@site.com");
-		u.setPassword("password");
-		u = i.register(u);
-		if(u.isValid()){
-			System.out.println("successfully registered new user!");
-		}
-		
-		u.setValid(false);
-		u = i.login(u);
-		if(u.isValid()){
-			System.out.println("successfully logged in!");
-		}
-		
-		u = i.changePassword(u, "password");
-		if(u.getPassword().equals("password")){
-			System.out.println("And change the password!");
-		}
-		**/
 	}
 
 }
