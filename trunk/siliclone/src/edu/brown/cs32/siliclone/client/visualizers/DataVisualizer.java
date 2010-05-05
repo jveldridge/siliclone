@@ -1,5 +1,7 @@
 package edu.brown.cs32.siliclone.client.visualizers;
 
+import java.util.Collection;
+
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Circle;
 import org.vaadin.gwtgraphics.client.shape.Ellipse;
@@ -11,7 +13,8 @@ import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 
 public class DataVisualizer implements Visualizer {
 
-	public Widget visualize(SequenceHook seq) {
+	public Widget visualize(Collection<SequenceHook> seqs) {
+		SequenceHook seq = seqs.iterator().next();
 		DrawingArea toReturn = new DrawingArea(600,600);
 		if(seq == null){
 			toReturn.add(new Ellipse(50 , 50, 45, 20));

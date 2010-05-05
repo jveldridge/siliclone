@@ -53,11 +53,12 @@ public class LoginScreen extends HLayout {
 			
 			Window introduction = new Window();
 			introduction.setTitle("Welcome to Siliclone");
-			introduction.setCanDragReposition(true);
+			introduction.setShowHeader(false);
+		//	introduction.setCanDragReposition(true);
 		//	introduction.setCanDragResize(true);
 			introduction.setWidth(400);
 			introduction.setHeight(150);
-			introduction.moveTo(300, 150);
+			introduction.setAutoCenter(true);
 			Label titleLabel = new Label("<h3>Siliclone is an in-silico molecular biology cloning simulator and productivity tool.  Using Siliclone, you can...</h3>" +
 					"<h2>To get started using Siliclone, login to the right or click below to register for an account!</h2>");
 			titleLabel.setBackgroundColor("white");

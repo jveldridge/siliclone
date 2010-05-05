@@ -3,6 +3,7 @@ package edu.brown.cs32.siliclone.operators.client.dnaInput;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -97,7 +98,9 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 
 						public void onSuccess(SequenceHook result) {
 							SC.say("Sequence saved successfully.");
-							_operator.setSequence(result);
+							Collection<SequenceHook> r =  new LinkedList<SequenceHook>();
+							r.add(result);
+							_operator.setSequence(r);
 						}
 					};
 					_service.saveSequence(seq, new HashMap<String,Collection<Feature>>(), name, new HashMap<String,IsSerializable>(), callback);
@@ -149,12 +152,12 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	    	public void onFinish(IUploader uploader) {
 	    		if (uploader.getStatus() == Status.SUCCESS) {
 	    			
-	        		AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
+	        		AsyncCallback<Collection<SequenceHook>> callback = new AsyncCallback<Collection<SequenceHook>>() {
 	        			public void onFailure(Throwable caught) {
 							SC.say(caught.toString());	
 						}
 
-						public void onSuccess(SequenceHook result) {
+						public void onSuccess(Collection<SequenceHook> result) {
 							//SC.say(result.getSeqName());
 							_operator.setSequence(result);
 						}

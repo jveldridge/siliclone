@@ -67,6 +67,18 @@
     <url-pattern>/siliclone/sequenceupload</url-pattern>
   </servlet-mapping>
   
+  
+  
+    <servlet>
+        <servlet-name>slowOperatorService</servlet-name>
+        <servlet-class>edu.brown.cs32.siliclone.server.operators.slowoperator.SlowOperatorServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>slowOperatorService</servlet-name>
+    <url-pattern>/siliclone/slowOperatorService</url-pattern>
+  </servlet-mapping>
+  
 
   <!-- Default page to serve -->
   <welcome-file-list>
