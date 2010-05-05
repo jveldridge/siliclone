@@ -32,6 +32,7 @@ public class UploadSequenceFileServlet extends UploadAction {
 		    		  System.out.println(sequence);
 		    		  receivedFiles.put(item.getFieldName(), new SequenceHook(2, 6, item.getName()));
 		    		  HttpSession thissession = getThreadLocalRequest().getSession();
+		    		  System.out.println(thissession.getAttribute("sequenceNames"));
 		    		  if(thissession.getAttribute("uploadedSequences")==null) {
 		    			  thissession.setAttribute("uploadedSequences", new HashMap<String, SequenceHook>() );
 		    		  }
