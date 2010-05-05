@@ -13,6 +13,7 @@ import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
 import edu.brown.cs32.siliclone.accounts.User;
 import edu.brown.cs32.siliclone.client.Siliclone;
+import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.client.UserService;
 import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
@@ -110,7 +111,11 @@ public class UserForm extends DynamicForm {
 		final BooleanCallback boolCallback = new BooleanCallback(){
 			public void execute(Boolean value) {
 				if(value){
-					service.logout(callback);
+					try {
+						service.remove(loggedInUser, callback);
+					} catch (DataServiceException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		};
