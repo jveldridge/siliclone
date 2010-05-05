@@ -42,13 +42,13 @@ public class SlowOperator extends AbstractRemoteOperator {
 	public Widget getWidget() {
 		Canvas w = new Canvas();
 		w.setBackgroundColor("blue");
-		w.addDoubleClickHandler(new DoubleClickHandler() {
-			
-			public void onDoubleClick(DoubleClickEvent event) {
-				calculate();
-				
-			}
-		});
+//		w.addDoubleClickHandler(new DoubleClickHandler() {
+//			
+//			public void onDoubleClick(DoubleClickEvent event) {
+//				calculate();
+//				
+//			}
+//		});
 		return w;
 	}
 

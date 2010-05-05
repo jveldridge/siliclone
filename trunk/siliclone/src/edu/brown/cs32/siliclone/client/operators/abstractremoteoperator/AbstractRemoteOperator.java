@@ -10,9 +10,9 @@ import com.smartgwt.client.util.SC;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.operators.Operator;
 
+@SuppressWarnings("serial")
 public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.operators.AbstractOperator {
 
-	
 	transient private static final int CHECK_DELAY=300;
 	transient Timer checkProgressTimer;
 	
