@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.operators.dnaInput;
+package edu.brown.cs32.siliclone.operators.client.dnaInput;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

@@ -7,8 +7,8 @@ import javax.servlet.http.HttpSession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
-import edu.brown.cs32.siliclone.operators.dnaInput.SequenceUploadService;
-import edu.brown.cs32.siliclone.operators.dnaInput.UploadedFileNotFoundException;
+import edu.brown.cs32.siliclone.operators.client.dnaInput.SequenceUploadService;
+import edu.brown.cs32.siliclone.operators.client.dnaInput.UploadedFileNotFoundException;
 
 /**
  * The server side implementation of the RPC service.
@@ -45,6 +45,7 @@ public class SequenceUploadServiceImpl extends RemoteServiceServlet implements
 			thisSession.setAttribute("sequenceFormats", new HashMap<String, String>());
 		}
 		((HashMap<String, String>)thisSession.getAttribute("sequenceFormats")).put(key, format);
+		System.out.println("finished setting attributes");
 	}
 
 }
