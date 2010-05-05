@@ -56,12 +56,24 @@ public abstract class AbstractOperator implements Operator {
 	}
 	
 	public void setInput(int slotNum, Operator input) throws OperatorCycleException {
-		if(slotNum > inputs.length) {
+		if(slotNum > inputs.length || slotNum < 0) {
 			return;
 		}
-		input.addChild(this);
 		
+		input.addChild(this);
 		inputs[slotNum] = input;
+		
+		//if all inputs have been connected, calculate
+		for (int i = 0; i < inputs.length; i++) {
+			if (inputs[i] == null) {
+				break;
+			}
+			
+			if (i == inputs.length - 1) {
+				this.calculate();
+			}
+		}
+
 	}
 
 	public Operator[] getInputs(){

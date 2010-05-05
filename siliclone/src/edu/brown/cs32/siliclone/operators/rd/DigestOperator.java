@@ -1,6 +1,7 @@
 package edu.brown.cs32.siliclone.operators.rd;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Img;
 
 import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
@@ -30,8 +31,7 @@ public class DigestOperator extends AbstractOperator {
 	}
 
 	public void calculate() {
-		// TODO Auto-generated method stub
-		
+		SC.say("Restriction digest calculate method called");
 	}
 
 	public void connect(Operator adjacent) {
