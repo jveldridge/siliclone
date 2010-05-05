@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.operators.dnaInput;
+package edu.brown.cs32.siliclone.operators.client.dnaInput;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;

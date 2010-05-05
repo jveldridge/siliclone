@@ -23,7 +23,8 @@ public class UploadSequenceFileServlet extends UploadAction {
 	HashMap<String, SequenceHook> receivedFiles = new HashMap<String, SequenceHook>();
 	
 	  public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
-		    for (FileItem item : sessionFiles) {
+		  System.out.println("executing upload action");  
+		  for (FileItem item : sessionFiles) {
 		      if (false == item.isFormField()) {
 		    	  try {
 		    		  InputStream stream = item.getInputStream();

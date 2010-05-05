@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.operators.dnaInput;
+package edu.brown.cs32.siliclone.operators.client.dnaInput;
 
 import java.util.Collection;
 import java.util.HashMap;
