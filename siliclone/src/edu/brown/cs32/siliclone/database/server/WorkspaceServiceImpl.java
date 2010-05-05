@@ -290,10 +290,10 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			int workID = res.getInt(1);
 			
 			statement = conn.prepareStatement("select t2.group_name from " + Database.WORKSPACE_GROUP_PERMISSIONS + 
-					" as t1 left join " + Database.GROUPS + " as t2 on t1.group_id = t2.id where t1.data_id = ?;"); 
+					" as t1 left join " + Database.GROUPS + " as t2 on t1.group_id = t2.id where t1.workspace_id = ?;"); 
 			statement.setInt(1, workID);
 			res = statement.executeQuery();
-			while(!res.next()){
+			while(res.next()){
 				String r = res.getString(1);
 				if(r != null){
 					groups.add(r);
@@ -301,6 +301,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			}
 			return groups;
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try {
@@ -327,13 +328,13 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			if(!res.next()){
 				throw new DataServiceException("Workspace with name " + workspace + " not found in database.");
 			}
-			int dataID = res.getInt(1);
+			int workID = res.getInt(1);
 			
 			statement = conn.prepareStatement("select t2.name, t2.email from " + Database.WORKSPACE_USER_PERMISSIONS + 
-					" as t1 left join " + Database.USERS + " as t2 on t1.user_id = t2.id where t1.data_id = ?;"); 
-			statement.setInt(1, dataID);
+					" as t1 left join " + Database.USERS + " as t2 on t1.user_id = t2.id where t1.workspace_id = ?;"); 
+			statement.setInt(1, workID);
 			res = statement.executeQuery();
-			while(!res.next()){
+			while(res.next()){
 				String r = res.getString(1);
 				if(r != null){
 					users.add(new User(res.getString(1), null, res.getString(2)));
@@ -341,6 +342,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			}
 			return users;
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try {
@@ -373,7 +375,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			
 			statement = conn.prepareStatement("select id from " + Database.GROUPS +
 					" where group_name = ? ");
-			statement.setString(1, workspace);
+			statement.setString(1, group);
 			res = statement.executeQuery();
 			if(!res.next()){
 				throw new DataServiceException("Group with name " + group + " not found in database.");
@@ -388,6 +390,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 				throw new DataServiceException("Group permission to workspace could not be added.");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try {
@@ -419,7 +422,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			
 			statement = conn.prepareStatement("select id from " + Database.USERS +
 					" where name = ? ");
-			statement.setString(1, workspace);
+			statement.setString(1, user);
 			res = statement.executeQuery();
 			if(!res.next()){
 				throw new DataServiceException("User with name " + user + " not found in database.");
@@ -434,6 +437,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 				throw new DataServiceException("Group permission to workspace could not be added.");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try {
@@ -463,7 +467,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 
 			
 			statement = conn.prepareStatement("select id from " + Database.GROUPS +
-					" where name = ? ");
+					" where group_name = ? ");
 			statement.setString(1, group);
 			res = statement.executeQuery();
 			if(!res.next()){
@@ -476,18 +480,19 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			statement.setInt(1, workspaceID);
 			statement.setInt(2, groupID);
 			res = statement.executeQuery();
-			if(res.next()){
+			if(!res.next()){
 				throw new DataServiceException("Group already does not have permission to access workspace.");
 			}
 			
 			statement = conn.prepareStatement("delete from " + Database.WORKSPACE_GROUP_PERMISSIONS +
-					" where group_id = ? and group_id = ?");
+					" where workspace_id = ? and group_id = ?");
 			statement.setInt(1, workspaceID);
 			statement.setInt(2, groupID);
 			if(0 >= statement.executeUpdate()){
 				throw new DataServiceException("Error removing group permission.");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try {
@@ -531,18 +536,19 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			statement.setInt(1, workspaceID);
 			statement.setInt(2, userID);
 			res = statement.executeQuery();
-			if(res.next()){
+			if(!res.next()){
 				throw new DataServiceException("User already does not have permission to access workspace.");
 			}
 			
 			statement = conn.prepareStatement("delete from " + Database.WORKSPACE_USER_PERMISSIONS +
-					" where group_id = ? and user_id = ?");
+					" where workspace_id = ? and user_id = ?");
 			statement.setInt(1, workspaceID);
 			statement.setInt(2, userID);
 			if(0 >= statement.executeUpdate()){
 				throw new DataServiceException("Error removing user permission.");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try {

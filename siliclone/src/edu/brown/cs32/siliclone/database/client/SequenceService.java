@@ -70,6 +70,12 @@ public interface SequenceService extends RemoteService {
 	 */
 	public void addProperty(SequenceHook seq, String key, IsSerializable value) throws DataServiceException;
 	
+	public void addProperty(SequenceHook seq, String key, String value) throws DataServiceException;
+	
+	public void addProperty(SequenceHook seq, String key, boolean value) throws DataServiceException;
+	
+	public void addProperty(SequenceHook seq, String key, int value) throws DataServiceException;
+	
 	/**
 	 * Returns information about a particular property of this sequence.
 	 * If this property has not previously been set, for example, by using
@@ -78,7 +84,14 @@ public interface SequenceService extends RemoteService {
 	 * @param key a String representing the name of the property requested
 	 * @return information about a particular property of this sequence.
 	 */
-	public IsSerializable getProperty(SequenceHook seq, String key) throws DataServiceException;
+	public IsSerializable getIsSerializableProperty(SequenceHook seq, String key) throws DataServiceException;
+	
+	public String getStringProperty(SequenceHook seq, String key) throws DataServiceException;
+	
+	public boolean getBooleanProperty(SequenceHook seq, String key) throws DataServiceException;
+	
+	public int getIntegerProperty(SequenceHook seq, String key) throws DataServiceException;
+	
 	
 	/**
 	 * Adds the nucleotide sequence to the database.

@@ -79,12 +79,12 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	
 	@SuppressWarnings("unchecked")
-	public void addProperty(SequenceHook seq, String key, IsSerializable value)
+	public static void addProperty(SequenceHook seq, String key, Object value, HttpSession session)
 			throws DataServiceException {
 		if(seq == null || key == null || value == null){
 			throw new DataServiceException("Null value passed to SequenceService.addProperty");
 		}
-		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
+		UserServiceImpl.verifyAccess(session, seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -95,7 +95,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if(!res.next()){
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
-			Map<String, IsSerializable> properties = (Map<String, IsSerializable>)
+			Map<String, Object> properties = (Map<String, Object>)
 							Database.loadCompressedObject(res.getBlob(1));
 			if(properties.containsKey(key)){
 				throw new DataServiceException("Sequence already contains property with given key.");
@@ -161,12 +161,12 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 
 
 	@SuppressWarnings("unchecked")
-	public IsSerializable getProperty(SequenceHook seq, String key)
+	public static Object getProperty(SequenceHook seq, String key, HttpSession session)
 			throws DataServiceException {
 		if(seq == null || key == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperty");
 		}
-		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
+		UserServiceImpl.verifyAccess(session, seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -456,6 +456,86 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
 		}
+	}
+
+
+	public void addProperty(SequenceHook seq, String key, IsSerializable value)
+			throws DataServiceException {
+		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
+	}
+
+
+	public void addProperty(SequenceHook seq, String key, String value)
+			throws DataServiceException {
+		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
+	}
+
+
+	public void addProperty(SequenceHook seq, String key, boolean value)
+			throws DataServiceException {
+		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
+	}
+
+
+	public void addProperty(SequenceHook seq, String key, int value)
+			throws DataServiceException {
+		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
+	}
+
+
+	public boolean getBooleanProperty(SequenceHook seq, String key)
+			throws DataServiceException {
+		boolean result;
+		try {
+			result = (Boolean) SequenceServiceImpl.getProperty(seq, key, this.getThreadLocalRequest().getSession());
+		}
+		catch (ClassCastException e) {
+			throw new DataServiceException("Property '" + key + "' is not of type boolean");
+		}
+		
+		return result;
+	}
+
+
+	public int getIntegerProperty(SequenceHook seq, String key)
+			throws DataServiceException {
+		int result;
+		try {
+			result = (Integer) SequenceServiceImpl.getProperty(seq, key, this.getThreadLocalRequest().getSession());
+		}
+		catch (ClassCastException e) {
+			throw new DataServiceException("Property '" + key + "' is not of type integer");
+		}
+		
+		return result;
+	}
+
+
+	public IsSerializable getIsSerializableProperty(SequenceHook seq, String key)
+			throws DataServiceException {
+		IsSerializable result;
+		try {
+			result = (IsSerializable) SequenceServiceImpl.getProperty(seq, key, this.getThreadLocalRequest().getSession());
+		}
+		catch (ClassCastException e) {
+			throw new DataServiceException("Property '" + key + "' is not of type IsSerializable");
+		}
+		
+		return result;
+	}
+
+
+	public String getStringProperty(SequenceHook seq, String key)
+			throws DataServiceException {
+		String result;
+		try {
+			result = (String) SequenceServiceImpl.getProperty(seq, key, this.getThreadLocalRequest().getSession());
+		}
+		catch (ClassCastException e) {
+			throw new DataServiceException("Property '" + key + "' is not of type String");
+		}
+		
+		return result;
 	}
 
 }

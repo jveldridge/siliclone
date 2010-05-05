@@ -48,9 +48,9 @@ public class WorkspaceForm extends DynamicForm{
 		addGroup.setDisabled(true);
 		removeGroup.setDisabled(true);
 		
-		ownedSection.setTitle("Owned workspaces:");
+		ownedSection.setValue("Owned workspaces:");
 		ownedSection.setItemIds("select", "addU", "removeU", "addG", "removeG");
-		availableSection.setTitle("Available workspaces:");
+		availableSection.setValue("Available workspaces:");
 		availableSection.setItemIds("available");
 	
 		
@@ -69,6 +69,8 @@ public class WorkspaceForm extends DynamicForm{
 			public void onChanged(ChangedEvent event) {
 				loadRemoveU(workspacePick.getDisplayValue());
 				loadRemoveG(workspacePick.getDisplayValue());
+				addUser.clearValue();
+				addGroup.clearValue();
 				addUser.setDisabled(false);
 				removeUser.setDisabled(false);
 				addGroup.setDisabled(false);
@@ -82,6 +84,8 @@ public class WorkspaceForm extends DynamicForm{
 					SC.say(caught.getMessage());
 				}
 				public void onSuccess(Void result) {
+					loadRemoveU(workspacePick.getDisplayValue());
+					addUser.clearValue();
 					SC.say("Added user permission to group.");
 				}
 			};
@@ -97,6 +101,7 @@ public class WorkspaceForm extends DynamicForm{
 					SC.say(caught.getMessage());
 				}
 				public void onSuccess(Void result) {
+					loadRemoveU(workspacePick.getDisplayValue());
 					SC.say("Removed user permission to group.");
 				}
 			};
@@ -111,6 +116,8 @@ public class WorkspaceForm extends DynamicForm{
 					SC.say(caught.getMessage());
 				}
 				public void onSuccess(Void result) {
+					loadRemoveG(workspacePick.getDisplayValue());
+					addGroup.clearValue();
 					SC.say("Added group permission to group.");
 				}
 			};
@@ -126,6 +133,7 @@ public class WorkspaceForm extends DynamicForm{
 					SC.say(caught.getMessage());
 				}
 				public void onSuccess(Void result) {
+					loadRemoveG(workspacePick.getDisplayValue());
 					SC.say("Removed group permission to group.");
 				}
 			};
@@ -151,7 +159,7 @@ public class WorkspaceForm extends DynamicForm{
 						names.add(name);
 					}
 				}
-				workspacePick.setValueMap((String[]) names.toArray());
+				workspacePick.setValueMap(names.toArray(new String[0]));
 			}
 		};
 		workspaceService.getOwnedWorkspaces(callback);
@@ -168,7 +176,7 @@ public class WorkspaceForm extends DynamicForm{
 				for(User u : result){
 					users.add(u.getName());
 				}
-				addUser.setValueMap((String[]) users.toArray());
+				addUser.setValueMap(users.toArray(new String[0]));
 			}
 		};
 		try {
@@ -180,6 +188,7 @@ public class WorkspaceForm extends DynamicForm{
 	
 	private void loadRemoveU(String workspace){
 		removeUser.setTitle("Remove user permission.");
+		removeUser.clearValue();
 		AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>() {
 			public void onFailure(Throwable caught) {
 				SC.say(caught.getMessage());
@@ -189,7 +198,7 @@ public class WorkspaceForm extends DynamicForm{
 				for(User u : result){
 					users.add(u.getName());
 				}
-				removeUser.setValueMap((String[]) users.toArray());
+				removeUser.setValueMap(users.toArray(new String[0]));
 			}
 		};
 		workspaceService.getPermittedUsers(workspace, callback);
@@ -212,7 +221,7 @@ public class WorkspaceForm extends DynamicForm{
 				for(String g : result){
 					groups.add(g);
 				}
-				addGroup.setValueMap((String[]) groups.toArray());
+				addGroup.setValueMap(groups.toArray(new String[0]));
 			}
 		};
 		try {
@@ -225,6 +234,7 @@ public class WorkspaceForm extends DynamicForm{
 	
 	
 	private void loadRemoveG(String workspace){
+		removeGroup.clearValue();
 		removeGroup.setTitle("Remove group permission:");
 		AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 			public void onFailure(Throwable caught) {
@@ -235,7 +245,7 @@ public class WorkspaceForm extends DynamicForm{
 				for(String g : result){
 					groups.add(g);
 				}
-				removeGroup.setValueMap((String[]) groups.toArray());
+				removeGroup.setValueMap(groups.toArray(new String[0]));
 			}
 		};
 		workspaceService.getPermittedGroups(workspace, callback);
@@ -254,6 +264,7 @@ public class WorkspaceForm extends DynamicForm{
 				String title = " Available Workspaces : ";
 				for(String w : result){
 					title += " \n    " + w;
+					System.out.println(w);
 				}
 				availableWorkspacesList.setTitle(title);
 			}
