@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import sun.misc.Cache;
@@ -409,6 +410,12 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			Map<String, IsSerializable> properties) throws DataServiceException {
 		NucleotideString seq = new NucleotideString(nucleotides);
 		return this.saveSequence(seq, features, seqName, properties);
+	}
+
+	public SequenceHook saveSequence(String nucleotides, String seqName)
+			throws DataServiceException {
+		return saveSequence(nucleotides, new HashMap<String, Collection<Feature>>(), 
+				seqName, new HashMap<String, IsSerializable>());
 	}
 
 }

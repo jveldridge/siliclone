@@ -89,5 +89,6 @@ public interface SequenceService extends RemoteService {
 	 */
 	public SequenceHook saveSequence(String nucleotides, Map<String, Collection<Feature>> features, 
 									String seqName,  Map<String,IsSerializable> properties) throws DataServiceException;
-	
+
+	public SequenceHook saveSequence (String nucleotides, String seqName) throws DataServiceException;
 }
