@@ -26,11 +26,12 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
-import edu.brown.cs32.siliclone.client.forms.AccountsForm;
+import edu.brown.cs32.siliclone.client.forms.GroupsForm;
 import edu.brown.cs32.siliclone.client.forms.RegisterForm;
 import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
+import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 import edu.brown.cs32.siliclone.database.client.WorkspaceService;
 import edu.brown.cs32.siliclone.database.client.WorkspaceServiceAsync;
 
@@ -73,8 +74,19 @@ public class TopMenu extends ToolStrip {
         ToolStripButton logoutButton = new ToolStripButton();
         logoutButton.setTitle("Logout");
         logoutButton.addClickHandler(new ClickHandler() {	
+        	private UserServiceAsync service = GWT.create(UserServiceAsync.class);
+        	private AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+				public void onFailure(Throwable caught) {
+					SC.say(caught.getMessage());
+					main.showLoginScreen();
+				}
+				public void onSuccess(Void result) {
+					main.showLoginScreen();
+				}
+        		
+        	};
 			public void onClick(ClickEvent event) {
-				main.showLoginScreen();
+				service.logout(callback);
 			}
 		});
         
@@ -231,7 +243,7 @@ public class TopMenu extends ToolStrip {
 			VLayout v = new VLayout();
 			v.addChild(new Label("Groups"));
 			
-			v.addChild(new AccountsForm());
+			v.addChild(new GroupsForm());
 			
 			w.setTitle("Settings");
 			w.setIsModal(true);  
