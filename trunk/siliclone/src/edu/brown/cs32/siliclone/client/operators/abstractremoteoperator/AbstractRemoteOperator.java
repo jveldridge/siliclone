@@ -1,19 +1,14 @@
 package edu.brown.cs32.siliclone.client.operators.abstractremoteoperator;
 
 import java.util.Collection;
-import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.operators.Operator;
-import edu.brown.cs32.siliclone.operators.anothertestop.SquareService;
-import edu.brown.cs32.siliclone.operators.anothertestop.SquareServiceAsync;
 
 public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.operators.AbstractOperator {
 
@@ -31,12 +26,24 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 		}
 	}
 	
+	private void startTimer(){
+		if(checkProgressTimer==null){
+			checkProgressTimer=new Timer() {
+				
+				public void run() {
+					updateProgress();
+					
+				}
+			};
+		}
+		checkProgressTimer.schedule(CHECK_DELAY);
+	}
+	
 	private void updateProgress(){
 		
 		abstractRemoteOperatorServiceAsync.getProgress(computationHook, new AsyncCallback<Integer>() {
 
 			public void onSuccess(Integer result) {
-				// TODO set the progress bar
 				setProgress(result);
 				if(result>=100){
 					abstractRemoteOperatorServiceAsync.getResult(computationHook, new AsyncCallback<Collection<SequenceHook>>() {
@@ -54,16 +61,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 						}
 					});
 				}else{
-					if(checkProgressTimer!=null){
-						checkProgressTimer=new Timer() {
-							
-							public void run() {
-								updateProgress();
-								
-							}
-						};
-					}
-					checkProgressTimer.schedule(CHECK_DELAY);
+					startTimer();
 				}
 				
 			}
@@ -116,8 +114,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 			
 			public void onSuccess(ComputationHook result) {
 				computationHook=result;
-				checkProgressTimer.schedule(CHECK_DELAY);
-				
+				startTimer();
 			}
 		});
 		

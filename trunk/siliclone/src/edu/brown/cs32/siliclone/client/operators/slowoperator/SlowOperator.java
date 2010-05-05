@@ -53,8 +53,7 @@ public class SlowOperator extends AbstractRemoteOperator {
 	}
 
 	public void init() {
-		// TODO Auto-generated method stub
-
+		super.init();
 	}
 
 }

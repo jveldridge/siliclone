@@ -1,14 +1,17 @@
 package edu.brown.cs32.siliclone.operators.client.dnaInput;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Button;
@@ -21,6 +24,11 @@ import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.form.validator.RegExpValidator;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
@@ -39,6 +47,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	
 	private TabSet _sourceTabs;
 	private DNAInputOp _operator;
+	private String _nameToLoad; //used in saved sequence tab
 	
 	public DNAInputPropertiesSelector(DNAInputOp op) {
 		_operator = op;
@@ -229,6 +238,66 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		Tab ssTab = new Tab();
 		ssTab.setTitle("Saved Sequence");
 		ssTab.setPane(ssPane);
+		
+		final SequenceServiceAsync service = GWT.create(SequenceService.class);
+		SequenceHook seqToLoad;
+		final ListGrid sequenceGrid = new ListGrid();
+		sequenceGrid.setWidth100();
+		sequenceGrid.setSelectionType(SelectionStyle.SINGLE);
+		sequenceGrid.setShowAllRecords(true);
+		sequenceGrid.addSelectionChangedHandler(new SelectionChangedHandler() {			
+			public void onSelectionChanged(SelectionEvent event) {
+				if (sequenceGrid.getSelection().length > 0) {
+					_nameToLoad = sequenceGrid.getSelection()[0].getAttribute("name");
+				}
+			}
+		});
+		
+		ListGridField name = new ListGridField("name", "Select sequence to load...");
+		sequenceGrid.setFields(name);
+		AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
+			public void onFailure(Throwable caught) {
+				SC.say(caught.getMessage());
+				caught.printStackTrace();
+			}
+
+			public void onSuccess(List<String> results) {
+				ListGridRecord[] data = new ListGridRecord[results.size()];
+				for (int i = 0; i < results.size(); i++) {
+					data[i] = new ListGridRecord();
+					data[i].setAttribute("name", results.get(i));
+				}
+				
+				sequenceGrid.setData(data);
+			}
+		};
+		
+		service.listAvailableSequences(callback);
+		
+		Button okButton = new Button("Load");
+		okButton.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
+				AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
+					public void onFailure(Throwable caught) {
+						SC.say(caught.getMessage());
+					}
+
+					public void onSuccess(SequenceHook result) {
+						Collection<SequenceHook> outputCollection = new ArrayList<SequenceHook>();
+						outputCollection.add(result);
+						_operator.setSequence(outputCollection);
+						DNAInputPropertiesSelector.this.hide();
+					}
+				};
+				service.findSequence(_nameToLoad, callback);
+			}
+		});
+		
+		ssPane.addChild(sequenceGrid);
+		ssPane.addChild(okButton);
+		
+		okButton.setTop(sequenceGrid.getBottom());
+		
 		_sourceTabs.addTab(ssTab);
 	}
 
