@@ -35,6 +35,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	
+	
 	//TODO compression?
 	public void saveWorkspace(Workspace w, String name) throws DataServiceException {
 		if(w == null || name == null){
@@ -181,6 +182,65 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 				conn.close();
 			}catch (SQLException e1){e1.printStackTrace();}
 		}
+	}
+
+
+	@Override
+	public void overwriteWorkspace(Workspace w, String name)
+			throws DataServiceException {
+		if(w == null || name == null){
+			throw new DataServiceException("null value given to WorkspaceService.saveWorkspace");
+		}
+		User u = getLoggedIn();
+		Connection conn = Database.getConnection();
+		
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.WORKSPACES +
+					" where name = ?");
+			statement.setString(1, name);
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				conn.close();
+				saveWorkspace(w, name);
+			}
+			int id = res.getInt(1);
+			
+			boolean hasAccess = false;
+			
+			statement = conn.prepareStatement("select * from " + Database.WORKSPACE_USER_PERMISSIONS
+					+ " where workspace_id = ? and user_id = ?");
+			statement.setInt(1, id);
+			statement.setInt(2, u.getId());
+			res = statement.executeQuery();
+			if(!res.next()){
+				statement = conn.prepareStatement("select * from " + Database.WORKSPACE_GROUP_PERMISSIONS +
+					" as t1 left join " + Database.GROUP_PERMISSIONS + " as t2 on t1.group_id = t2.group_id " +
+					" where t1.workspace_id = ? and t2.member_id = ?");
+				statement.setInt(1, id);
+				statement.setInt(2, u.getId());
+				res = statement.executeQuery();
+				if(!res.next()){
+					throw new DataServiceException("User does not have access to the group, so cannot overwrite it.");
+				}
+			}
+			
+			statement = conn.prepareStatement("update " + Database.WORKSPACES + " set data = ? where id = ?");
+			statement.setInt(2, id);
+			Database.saveCompressedObject(statement, 1, w);
+			if( 0 < statement.executeUpdate()){
+				throw new DataServiceException("Workspace could not be updated.");
+			}
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error writing workspace.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+		}
+		
 	}
 
 }
