@@ -54,4 +54,16 @@ public interface WorkspaceService extends RemoteService {
 	
 	List<String> getOwnedWorkspaces() throws DataServiceException;
 	
+
+	public List<String> getPermittedGroups(String workspace) throws DataServiceException;
+
+	public List<User> getPermittedUsers(String workspace) throws DataServiceException;
+
+	public void permitGroup(String workspace, String group) throws DataServiceException ;
+
+	public void permitUser(String workspace, String user) throws DataServiceException;
+
+	public void disallowGroup(String workspace, String group) throws DataServiceException ;
+	public void disallowUser(String workspace, String user) throws DataServiceException ;
+	
 }

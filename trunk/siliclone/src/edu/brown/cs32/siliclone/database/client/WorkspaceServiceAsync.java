@@ -21,4 +21,21 @@ public interface WorkspaceServiceAsync {
 			AsyncCallback<Void> callback);
 
 	void getOwnedWorkspaces(AsyncCallback<List<String>> callback);
+
+	void getPermittedGroups(String workspace,
+			AsyncCallback<List<String>> callback);
+
+	void permitUser(String workspace, String user, AsyncCallback<Void> callback);
+
+	void getPermittedUsers(String workspace, AsyncCallback<List<User>> callback);
+
+	void permitGroup(String workspace, String group,
+			AsyncCallback<Void> callback);
+
+	void disallowGroup(String workspace, String group,
+			AsyncCallback<Void> callback);
+
+	void disallowUser(String workspace, String user,
+			AsyncCallback<Void> callback);
+
 }

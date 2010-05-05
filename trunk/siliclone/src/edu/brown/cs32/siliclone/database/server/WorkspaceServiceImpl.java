@@ -273,4 +273,281 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		
 	}
 
+	public List<String> getPermittedGroups(String workspace) throws DataServiceException {
+		if(workspace == null){
+			throw new DataServiceException("Null value passed to WorkspaceService");
+		}
+		ArrayList<String> groups = new ArrayList<String>();
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id from " + 
+					Database.WORKSPACES + " where name = ?");
+			statement.setString(1, workspace);
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Workspace with name " + workspace + " not found in database.");
+			}
+			int workID = res.getInt(1);
+			
+			statement = conn.prepareStatement("select t2.group_name from " + Database.WORKSPACE_GROUP_PERMISSIONS + 
+					" as t1 left join " + Database.GROUPS + " as t2 on t1.group_id = t2.id where t1.data_id = ?;"); 
+			statement.setInt(1, workID);
+			res = statement.executeQuery();
+			while(!res.next()){
+				String r = res.getString(1);
+				if(r != null){
+					groups.add(r);
+				}
+			}
+			return groups;
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+		}
+		
+	}
+	
+	
+	
+
+	public List<User> getPermittedUsers(String workspace) throws DataServiceException {
+		if(workspace == null){
+			throw new DataServiceException("Null value passed to WorkspaceService");
+		}
+		ArrayList<User> users = new ArrayList<User>();
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id from " + 
+					Database.WORKSPACES + " where name = ?");
+			statement.setString(1, workspace);
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Workspace with name " + workspace + " not found in database.");
+			}
+			int dataID = res.getInt(1);
+			
+			statement = conn.prepareStatement("select t2.name, t2.email from " + Database.WORKSPACE_USER_PERMISSIONS + 
+					" as t1 left join " + Database.USERS + " as t2 on t1.user_id = t2.id where t1.data_id = ?;"); 
+			statement.setInt(1, dataID);
+			res = statement.executeQuery();
+			while(!res.next()){
+				String r = res.getString(1);
+				if(r != null){
+					users.add(new User(res.getString(1), null, res.getString(2)));
+				}
+			}
+			return users;
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+		}
+	}
+	
+	
+	
+	
+
+	public void permitGroup(String workspace, String group) throws DataServiceException {
+		if(workspace == null || group == null){
+			throw new DataServiceException("Null value passed to WorkspaceService");
+		}
+		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id from " + 
+					Database.WORKSPACES + " where name = ? and owner = ?");
+			statement.setString(1, workspace);
+			statement.setInt(2, u.getId());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Workspace with name " + workspace +
+						" not found with current user as owner.");
+			}
+			int workspaceID = res.getInt(1);
+			
+			statement = conn.prepareStatement("select id from " + Database.GROUPS +
+					" where group_name = ? ");
+			statement.setString(1, workspace);
+			res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Group with name " + group + " not found in database.");
+			}
+			int groupID = res.getInt(1);
+			
+			statement = conn.prepareStatement("insert into " + Database.WORKSPACE_GROUP_PERMISSIONS + 
+					"(workspace_id, group_id) values (?, ?)");
+			statement.setInt(1, workspaceID);
+			statement.setInt(2, groupID);
+			if(0 >= statement.executeUpdate()){
+				throw new DataServiceException("Group permission to workspace could not be added.");
+			}
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+		}
+	}
+	
+	
+	
+
+	public void permitUser(String workspace, String user) throws DataServiceException {
+		if(workspace == null || user == null){
+			throw new DataServiceException("Null value passed to WorkspaceService");
+		}
+		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id from " + 
+					Database.WORKSPACES + " where name = ? and owner = ?");
+			statement.setString(1, workspace);
+			statement.setInt(2, u.getId());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Workspace with name " + workspace +
+						" not found with current user as owner.");
+			}
+			int workspaceID = res.getInt(1);
+			
+			statement = conn.prepareStatement("select id from " + Database.USERS +
+					" where name = ? ");
+			statement.setString(1, workspace);
+			res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("User with name " + user + " not found in database.");
+			}
+			int userID = res.getInt(1);
+			
+			statement = conn.prepareStatement("insert into " + Database.WORKSPACE_USER_PERMISSIONS + 
+					"(workspace_id, user_id) values (?, ?)");
+			statement.setInt(1, workspaceID);
+			statement.setInt(2, userID);
+			if(0 >= statement.executeUpdate()){
+				throw new DataServiceException("Group permission to workspace could not be added.");
+			}
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+		}
+	}
+
+	public void disallowGroup(String workspace, String group)
+			throws DataServiceException {
+		if(workspace == null || group == null){
+			throw new DataServiceException("Null value passed to WorkspaceService");
+		}
+		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id from " + 
+					Database.WORKSPACES + " where name = ? and owner = ?");
+			statement.setString(1, workspace);
+			statement.setInt(2, u.getId());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Workspace with name " + workspace +
+						" not found with current user as owner.");
+			}
+			int workspaceID = res.getInt(1);
+
+			
+			statement = conn.prepareStatement("select id from " + Database.GROUPS +
+					" where name = ? ");
+			statement.setString(1, group);
+			res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Group with name " + group + " not found in database.");
+			}
+			int groupID = res.getInt(1);
+			
+			statement = conn.prepareStatement("select * from " + Database.WORKSPACE_GROUP_PERMISSIONS + 
+					" where workspace_id = ? and group_id = ?");
+			statement.setInt(1, workspaceID);
+			statement.setInt(2, groupID);
+			res = statement.executeQuery();
+			if(res.next()){
+				throw new DataServiceException("Group already does not have permission to access workspace.");
+			}
+			
+			statement = conn.prepareStatement("delete from " + Database.WORKSPACE_GROUP_PERMISSIONS +
+					" where group_id = ? and group_id = ?");
+			statement.setInt(1, workspaceID);
+			statement.setInt(2, groupID);
+			if(0 >= statement.executeUpdate()){
+				throw new DataServiceException("Error removing group permission.");
+			}
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+		}
+		
+	}
+
+	public void disallowUser(String workspace, String user)
+			throws DataServiceException {
+		if(workspace == null || user == null){
+			throw new DataServiceException("Null value passed to WorkspaceService");
+		}
+		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id from " + 
+					Database.WORKSPACES + " where name = ? and owner = ?");
+			statement.setString(1, workspace);
+			statement.setInt(2, u.getId());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Workspace with name " + workspace +
+						" not found with current user as owner.");
+			}
+			int workspaceID = res.getInt(1);
+
+			
+			statement = conn.prepareStatement("select id from " + Database.USERS +
+					" where name = ? ");
+			statement.setString(1, user);
+			res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("User with name " + user + " not found in database.");
+			}
+			int userID = res.getInt(1);
+			
+			statement = conn.prepareStatement("select * from " + Database.WORKSPACE_USER_PERMISSIONS + 
+					" where workspace_id = ? and user_id = ?");
+			statement.setInt(1, workspaceID);
+			statement.setInt(2, userID);
+			res = statement.executeQuery();
+			if(res.next()){
+				throw new DataServiceException("User already does not have permission to access workspace.");
+			}
+			
+			statement = conn.prepareStatement("delete from " + Database.WORKSPACE_USER_PERMISSIONS +
+					" where group_id = ? and user_id = ?");
+			statement.setInt(1, workspaceID);
+			statement.setInt(2, userID);
+			if(0 >= statement.executeUpdate()){
+				throw new DataServiceException("Error removing user permission.");
+			}
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e1) { e1.printStackTrace(); }
+		}
+	}
 }
