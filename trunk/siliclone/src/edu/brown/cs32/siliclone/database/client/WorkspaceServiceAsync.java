@@ -16,4 +16,7 @@ public interface WorkspaceServiceAsync {
 	void findWorkspace(String name, AsyncCallback<Workspace> callback) throws DataServiceException;
 
 	void getAvailableWorkspaces(AsyncCallback<List<String>> callback) throws DataServiceException;
+
+	void overwriteWorkspace(Workspace w, String name,
+			AsyncCallback<Void> callback);
 }

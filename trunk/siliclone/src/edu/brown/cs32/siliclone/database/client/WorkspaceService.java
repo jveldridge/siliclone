@@ -31,6 +31,9 @@ public interface WorkspaceService extends RemoteService {
 	 */
 	void saveWorkspace(Workspace w, String name) throws DataServiceException;
 	
+	void overwriteWorkspace(Workspace w, String name) throws DataServiceException;
+	
+	
 	/**
 	 * Retrieves the requested workspace, if the workspace exists and the user 
 	 * has permission. 
@@ -47,5 +50,7 @@ public interface WorkspaceService extends RemoteService {
 	 * @return A list of workspace names that the user can retrieve, not null
 	 */
 	List<String> getAvailableWorkspaces() throws DataServiceException;
+	
+	
 
 }
