@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -18,6 +19,7 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -82,7 +84,11 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		final TextItem seqName = new TextItem("Name");
 		seqName.setEndRow(true);
 		
+		final CheckboxItem circular = new CheckboxItem("Circular?");
+		circular.setEndRow(true);
+		
 		final TextAreaItem manualSequence = new TextAreaItem("Sequence");
+		manualSequence.setEndRow(true);
 		RegExpValidator manualEntryVal = new RegExpValidator();
 		manualEntryVal.setErrorMessage("Invalid sequence: only A,C,G,T are permitted.");
 		manualEntryVal.setExpression("^(A|C|G|T|a|t|g|c)+$");
@@ -106,20 +112,22 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 						}
 
 						public void onSuccess(SequenceHook result) {
-							SC.say("Sequence saved successfully.");
 							Collection<SequenceHook> r =  new LinkedList<SequenceHook>();
 							r.add(result);
 							_operator.setSequence(r);
 						}
 					};
-					_service.saveSequence(seq, new HashMap<String,Collection<Feature>>(), name, new HashMap<String,IsSerializable>(), callback);
+					
+					_service.saveSequence(seq, name, callback);
+					//_service.addProperty(seq, "isCircular", (Boolean) circular.getValue(), callback);
+				
+					DNAInputPropertiesSelector.this.hide();
 				}
 				
-				DNAInputPropertiesSelector.this.hide();
 			}
 		});
 		
-		manualForm.setFields(seqName, manualSequence, manualEntrySubmit);
+		manualForm.setFields(seqName, manualSequence, circular, manualEntrySubmit);
 		manualEntryTab.setPane(manualEntryPane);
 		_sourceTabs.addTab(manualEntryTab);
 		_sourceTabs.selectTab(manualEntryTab);
