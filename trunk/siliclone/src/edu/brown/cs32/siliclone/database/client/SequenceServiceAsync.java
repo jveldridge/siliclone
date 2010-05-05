@@ -43,4 +43,7 @@ public interface SequenceServiceAsync {
 
 	void getNucleotides(SequenceHook seq, AsyncCallback<String> callback);
 
+	void saveSequence(String nucleotides, String seqName,
+			AsyncCallback<SequenceHook> callback);
+
 }
