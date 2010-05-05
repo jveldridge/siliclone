@@ -5,12 +5,14 @@ import java.util.Collection;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Img;
 
-import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
+import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 import edu.brown.cs32.siliclone.operators.AbstractOperator;
 import edu.brown.cs32.siliclone.operators.Operator;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
+import edu.brown.cs32.siliclone.operators.client.dnaInput.DNAInputPropertiesSelector;
 
+@SuppressWarnings("serial")
 public class DNAInputOp extends AbstractOperator {
 	
 	transient private Widget image;
@@ -25,6 +27,7 @@ public class DNAInputOp extends AbstractOperator {
 	}
 	
 	public void init() {
+		super.init();
 		this.image = new Img("dnaInput.gif");
 		this.properties = new DNAInputPropertiesSelector(this);
 	}

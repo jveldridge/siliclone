@@ -19,10 +19,15 @@ public abstract class AbstractOperator implements Operator {
 	protected Operator[] inputs = new Operator[getNumInputs()];
 	protected Collection<SequenceHook> outputSequence; 
 	protected Collection<Operator> children = new ArrayList<Operator>();
+	private transient VisualizerDisplay visualizerDisplay;
+	private transient Window visualizerDisplayWindow;
 	
 	protected transient OpView view;
 	
-
+	public void init() {
+		visualizerDisplay = new VisualizerDisplay(this);
+	}
+	
 	public void setProgress(int percent){
 		if(view != null){
 			view.setProgress(percent);
@@ -113,9 +118,6 @@ public abstract class AbstractOperator implements Operator {
 	public Collection<SequenceHook> getOutputSequence() {
 		return outputSequence;
 	}
-	
-	private transient VisualizerDisplay visualizerDisplay = new VisualizerDisplay(this);
-	private transient Window visualizerDisplayWindow;
 	
 	public void showVisualizerDisplay(){
 		if(visualizerDisplayWindow==null){
