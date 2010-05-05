@@ -23,10 +23,13 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 import edu.brown.cs32.siliclone.client.forms.GroupsForm;
+import edu.brown.cs32.siliclone.client.forms.UserForm;
 import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
@@ -239,18 +242,27 @@ public class TopMenu extends ToolStrip {
 	private class SettingsClickHandler implements ClickHandler{
 		public void onClick(ClickEvent e){
 			final Window w = new Window();
+			TabSet t = new TabSet();
 			w.setSize("400px", "300px");
-			VLayout v = new VLayout();
-			v.addChild(new Label("Groups"));
 			
-			v.addChild(new GroupsForm());
+			
+			Tab t1 = new Tab();
+			t1.setTitle("Group Settings");
+			t1.setPane(new GroupsForm());
+			
+			Tab t2 = new Tab();
+			t2.setTitle("User Settings");
+			t2.setPane(new UserForm(_main));
+			
+			t.addTab(t1);
+			t.addTab(t2);
 			
 			w.setTitle("Settings");
 			w.setIsModal(true);  
 			w.setShowModalMask(true);  
 			w.setShowCloseButton(true);
 			
-			w.addItem(v);
+			w.addItem(t);
 			
 			//w.setAutoSize(true);
 			w.setAutoCenter(true);
