@@ -50,6 +50,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		return u;
 	}
 	
+	public void logout(){
+		this.getThreadLocalRequest().getSession().removeAttribute("user");
+	}
+	
 	//updates session to save current user.
 	private void setLoggedIn(User u){
 		this.getThreadLocalRequest().getSession().setAttribute("user", u);

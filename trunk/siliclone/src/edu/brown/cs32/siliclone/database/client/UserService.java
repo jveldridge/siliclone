@@ -21,6 +21,8 @@ public interface UserService extends RemoteService {
 	 * @return True if the user was validated, false otherwise.
 	 */
 	User login(User u) throws DataServiceException;
+	
+	void logout();
 	/**
 	 * Given a user that was already validated, changes their password in the 
 	 * database. Note that the user object needs to be updated with the password after.
