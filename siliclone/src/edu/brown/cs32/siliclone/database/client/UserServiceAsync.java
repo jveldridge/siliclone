@@ -12,7 +12,8 @@ public interface UserServiceAsync {
 			AsyncCallback<User> callback) throws DataServiceException;
 
 	void login(User u, AsyncCallback<User> callback) throws DataServiceException;
-
+;
+	
 	void register(User u, AsyncCallback<User> callback) throws DataServiceException;
 
 	void remove(User u, AsyncCallback<Void> callback) throws DataServiceException;
@@ -35,5 +36,7 @@ public interface UserServiceAsync {
 	void getAllUsers(AsyncCallback<List<User>> callback) throws DataServiceException;
 
 	void getLoggedIn(AsyncCallback<User> callback);
+
+	void logout(AsyncCallback<Void> callback);
 	
 }
