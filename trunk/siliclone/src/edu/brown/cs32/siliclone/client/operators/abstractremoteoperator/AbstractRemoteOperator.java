@@ -19,15 +19,9 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 
 	
 	transient private static final int CHECK_DELAY=300;
-	transient Timer checkProgressTimer = new Timer() {
-		
-		public void run() {
-			updateProgress();
-			
-		}
-	};
+	transient Timer checkProgressTimer;
 	
-	protected abstract AbstractRemoteOperatorServiceAsync getNewAsync();
+	protected abstract Class getServiceClass();
 	
 	transient private ComputationHook computationHook;
 	
@@ -60,6 +54,15 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 						}
 					});
 				}else{
+					if(checkProgressTimer!=null){
+						checkProgressTimer=new Timer() {
+							
+							public void run() {
+								updateProgress();
+								
+							}
+						};
+					}
 					checkProgressTimer.schedule(CHECK_DELAY);
 				}
 				
@@ -72,10 +75,10 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 		});
 	}
 	
-	transient final AbstractRemoteOperatorServiceAsync abstractRemoteOperatorServiceAsync = getNewAsync();
+	private transient AbstractRemoteOperatorServiceAsync abstractRemoteOperatorServiceAsync;
 	
 	public void calculate() {
-		
+		abstractRemoteOperatorServiceAsync = GWT.create(getServiceClass());
 
 		
 		if(computationHook!=null){

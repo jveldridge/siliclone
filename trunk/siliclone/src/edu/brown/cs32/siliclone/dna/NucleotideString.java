@@ -221,7 +221,7 @@ outerloop: for(Integer i:currentNode.positions){
 		
 	}
 	
-	private static final String[] debugRepresentation= {"a","t","c","g","n4mC","5mC","6mA"};
+	private static final String[] debugRepresentation= {"a","T","C","G","n4mC","5mC","6mA"};
 	
 	public SimpleNucleotide getSimpleNucleotideAt(int position){
 		switch(getComplexNucleotideAt(position)){
