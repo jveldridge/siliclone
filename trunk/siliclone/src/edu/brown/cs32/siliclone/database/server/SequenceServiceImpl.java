@@ -71,7 +71,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	@SuppressWarnings("unchecked")
 	public void addFeature(SequenceHook seq, Feature toAdd)
 			throws DataServiceException {
-		//verifyAccess(seq);
+		verifyAccess(seq);
 		if(seq == null || toAdd == null){
 			throw new DataServiceException("Null value passed to SequenceService.addFeature");
 		}
@@ -121,7 +121,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(seq == null || key == null || value == null){
 			throw new DataServiceException("Null value passed to SequenceService.addProperty");
 		}
-		//verifyAccess(seq);
+		verifyAccess(seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -169,7 +169,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(seq == null || featureType == null){
 			throw new DataServiceException("Null value passed to SequenceService.getFeaturesOfType");
 		}
-		//verifyAccess(seq);
+		verifyAccess(seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -207,7 +207,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(seq == null || key == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperty");
 		}
-		//verifyAccess(seq);
+		verifyAccess(seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -246,7 +246,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getSequence");
 		}
-		//verifyAccess(seq);
+		verifyAccess(seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -293,7 +293,6 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}
-		//verifyAccess(seq);
 		
 		Connection conn = Database.getConnection();
 		
@@ -375,9 +374,14 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			//now index before the hook is returned.
 			
 			
-			
-			
-			
+			//now give current user permissions
+			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_USER_PERMISSIONS +
+					"(data_id, user_id) values (?, ?)");
+			statement.setInt(1, dataID);
+			statement.setInt(2, getLoggedIn().getId());
+			if (0 >= statement.executeUpdate()){
+				throw new DataServiceException("Error granting user permission to saved sequence.");
+			}
 			
 			return new SequenceHook(dataID, seqID, seqName);
 			

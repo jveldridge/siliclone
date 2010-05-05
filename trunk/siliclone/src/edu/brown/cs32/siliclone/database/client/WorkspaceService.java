@@ -52,5 +52,6 @@ public interface WorkspaceService extends RemoteService {
 	List<String> getAvailableWorkspaces() throws DataServiceException;
 	
 	
-
+	List<String> getOwnedWorkspaces() throws DataServiceException;
+	
 }

@@ -19,4 +19,6 @@ public interface WorkspaceServiceAsync {
 
 	void overwriteWorkspace(Workspace w, String name,
 			AsyncCallback<Void> callback);
+
+	void getOwnedWorkspaces(AsyncCallback<List<String>> callback);
 }
