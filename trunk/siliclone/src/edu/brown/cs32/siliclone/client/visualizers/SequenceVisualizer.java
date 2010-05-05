@@ -11,9 +11,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Button;
 
+import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.database.client.SequenceServiceAsync;
-import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 
 public class SequenceVisualizer implements Visualizer {
 
@@ -23,10 +23,10 @@ public class SequenceVisualizer implements Visualizer {
 		final Button string = new Button("hi");
 		final DrawingArea toReturn = new DrawingArea(600,600);
 		if(seq == null){
-			toReturn.add(new Text(20,50, "Name: Sequence 0"));
-			Text text = new Text( 0, 100, "actg");
+			toReturn.add(new Text(20,50, "No sequence"));
+			Text text = new Text( 0, 100, ":(");
 			text.setFillColor("#ff0000");
-			text.setFontSize(35);
+			text.setFontSize(18);
 			toReturn.add(text);
 			return toReturn;
 		

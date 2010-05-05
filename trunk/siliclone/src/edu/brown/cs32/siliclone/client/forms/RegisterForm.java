@@ -79,6 +79,7 @@ public class RegisterForm extends DynamicForm {
 	
 						public void onFailure(Throwable caught) {
 							SC.say(caught.getMessage());
+							caught.printStackTrace();
 						}
 						
 						public void onSuccess(User result) {

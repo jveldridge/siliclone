@@ -190,6 +190,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 				statement = conn.prepareStatement("select id from " + Database.USERS + " where name = ?;"); //all
 				statement.setString(1, u.getName());  // of this 
 				res= statement.executeQuery(); // will be 
+				if(!res.next()){
+					throw new DataServiceException("Failed to register user");
+				}
 				u.setId(res.getInt(1));// deleted
 				u.setPassword(null);
 				setLoggedIn(u);//todo send email instead
@@ -198,6 +201,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 				throw new DataServiceException("Could not add new user to database.");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally {
 			try {
