@@ -112,7 +112,8 @@ public class Database {
 					WORKSPACES +
 					"(id mediumint not null primary key auto_increment, " +
 					"name varchar(60) not null, " +
-					"data longblob not null);");
+					"data longblob not null," +
+					"owner mediumint not null);");
 			statement.executeUpdate("create table if not exists " +
 					WORKSPACE_GROUP_PERMISSIONS + 
 					"(workspace_id mediumint not null, " +

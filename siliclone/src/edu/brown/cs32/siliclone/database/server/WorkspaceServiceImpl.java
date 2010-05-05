@@ -74,8 +74,9 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 				throw new DataServiceException("Workspace with name " + name + " already exists.");
 			}
 			
-			statement = conn.prepareStatement("insert into "+ Database.WORKSPACES + "(name, data) values (?,?)");
+			statement = conn.prepareStatement("insert into "+ Database.WORKSPACES + "(name, data, owner) values (?,?,?)");
 			statement.setString(1, name);
+			statement.setInt(3, u.getId());
 			Database.saveCompressedObject(statement, 2, w);
 			statement.executeUpdate();
 			
@@ -84,14 +85,6 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 				workspaceId = getWorkspaceId(conn, name);
 			}catch(DataServiceException e){
 				throw new DataServiceException("Workspace data could not be written.");
-			}
-			
-			statement = conn.prepareStatement("insert into " + Database.WORKSPACE_USER_PERMISSIONS + 
-					"(workspace_id, user_id) values (?, ?)");
-			statement.setInt(1, workspaceId);
-			statement.setInt(2, u.getId());
-			if(0 >= statement.executeUpdate()){
-				throw new DataServiceException("Could not update permissions to new workspace.");
 			}
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
@@ -113,13 +106,23 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		Connection conn = Database.getConnection();
 		
 		try{
-			PreparedStatement statement = conn.prepareStatement("select t2.data from " +
+			PreparedStatement statement = conn.prepareStatement("select t2.data from " + 
+					Database.WORKSPACES + " where name = ? and owner = ?");
+			statement.setString(1, name);
+			statement.setInt(2, u.getId());
+			ResultSet res = statement.executeQuery();
+			if(res.next()){
+				return (Workspace) Database.loadCompressedObject(res.getBlob(1));
+			}
+			
+			
+			statement = conn.prepareStatement("select t2.data from " +
 					Database.WORKSPACE_USER_PERMISSIONS + " as t1 left join " + 
 					Database.WORKSPACES + " as t2 on t1.workspace_id = t2.id where t2.name = ? " +
 							"and t1.user_id = ?;");
 			statement.setString(1, name);
 			statement.setInt(2, u.getId());
-			ResultSet res = statement.executeQuery();
+			res = statement.executeQuery();
 
 			if(res.next()){
 				return (Workspace) Database.loadCompressedObject(res.getBlob("data"));
@@ -155,13 +158,41 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
+	public List<String> getOwnedWorkspaces() throws DataServiceException {
+		User u = getLoggedIn();
+		Connection conn = Database.getConnection();
+		ArrayList<String> owned = new ArrayList<String>();
+		try {
+			PreparedStatement statement = conn.prepareStatement("select name from " + 
+					Database.WORKSPACES + " where owner = ?");
+			statement.setInt(1, u.getId());
+			ResultSet res = statement.executeQuery();
+			while(res.next()){
+				String name = res.getString(1);
+				if(name != null){
+					owned.add(name);
+				}
+			}
+			return owned;
+		}catch (SQLException e){
+			e.printStackTrace();
+			throw new DataServiceException("Error communicating with database.");
+		}finally {
+			try{
+				conn.close();
+			}catch(SQLException e){ e.printStackTrace();}
+		}
+		
+	}
+	
+	
 	/**
 	 * Lists workspaces that user has access to.
 	 */
 	public List<String> getAvailableWorkspaces() throws DataServiceException {
 		User u = getLoggedIn();
 		Connection conn = Database.getConnection();
-		ArrayList<String> available = new ArrayList<String>();
+		List<String> available = getOwnedWorkspaces();
 		try{
 			// add those with explicit user access
 			PreparedStatement statement = conn.prepareStatement("select t2.name from " +
@@ -212,9 +243,10 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		Connection conn = Database.getConnection();
 		
 		try{
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.WORKSPACES +
+			PreparedStatement statement = conn.prepareStatement("select id, owner from " + Database.WORKSPACES +
 					" where name = ?");
 			statement.setString(1, name);
+			statement.setInt(2, u.getId());
 			ResultSet res = statement.executeQuery();
 			if(!res.next()){
 				conn.close();
@@ -222,21 +254,8 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			}
 			int id = res.getInt(1);
 			
-			statement = conn.prepareStatement("select * from " + Database.WORKSPACE_USER_PERMISSIONS
-					+ " where workspace_id = ? and user_id = ?");
-			statement.setInt(1, id);
-			statement.setInt(2, u.getId());
-			res = statement.executeQuery();
-			if(!res.next()){
-				statement = conn.prepareStatement("select * from " + Database.WORKSPACE_GROUP_PERMISSIONS +
-					" as t1 left join " + Database.GROUP_PERMISSIONS + " as t2 on t1.group_id = t2.group_id " +
-					" where t1.workspace_id = ? and t2.member_id = ?");
-				statement.setInt(1, id);
-				statement.setInt(2, u.getId());
-				res = statement.executeQuery();
-				if(!res.next()){
-					throw new DataServiceException("User does not have access to the group, so cannot overwrite it.");
-				}
+			if(res.getInt(2) != u.getId()){
+				throw new DataServiceException("User does not own workspace, so cannot overwrite it.");
 			}
 			
 			statement = conn.prepareStatement("update " + Database.WORKSPACES + " set data = ? where id = ?");
