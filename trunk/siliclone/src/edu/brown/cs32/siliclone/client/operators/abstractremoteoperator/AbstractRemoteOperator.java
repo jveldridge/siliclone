@@ -40,8 +40,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 	private void updateProgress(){
 		
 		abstractRemoteOperatorServiceAsync.getProgress(computationHook, new AsyncCallback<Integer>() {
-			
-			@Override
+
 			public void onSuccess(Integer result) {
 				// TODO set the progress bar
 				setProgress(result);
@@ -54,7 +53,6 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 							computationHook=null;
 						}
 
-						@Override
 						public void onSuccess(Collection<SequenceHook> result) {
 							outputSequence = result;
 							propagateCalculations();
@@ -66,8 +64,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 				}
 				
 			}
-			
-			@Override
+
 			public void onFailure(Throwable caught) {
 				SC.say(caught.toString());
 				
@@ -82,16 +79,13 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 
 		
 		if(computationHook!=null){
-			abstractRemoteOperatorServiceAsync.cancelComputation(computationHook, new AsyncCallback<Void>()
-					{
-						
-						@Override
+			abstractRemoteOperatorServiceAsync.cancelComputation(computationHook, new AsyncCallback<Void>() {
+
 						public void onSuccess(Void result) {
 							//do nothing
 							
 						}
-						
-						@Override
+
 						public void onFailure(Throwable caught) {
 							SC.say(caught.toString());
 							

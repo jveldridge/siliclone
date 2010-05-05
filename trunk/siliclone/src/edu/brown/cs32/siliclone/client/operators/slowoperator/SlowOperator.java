@@ -10,6 +10,7 @@ import edu.brown.cs32.siliclone.client.operators.abstractremoteoperator.Abstract
 import edu.brown.cs32.siliclone.client.operators.abstractremoteoperator.AbstractRemoteOperatorServiceAsync;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
+@SuppressWarnings("serial")
 public class SlowOperator extends AbstractRemoteOperator {
 
 	@Override
@@ -17,13 +18,12 @@ public class SlowOperator extends AbstractRemoteOperator {
 		return GWT.create(SlowOperatorService.class);
 	}
 
-	@Override
+
 	public int getNumInputs() {
 		// TODO Auto-generated method stub
 		return 1;
 	}
 
-	@Override
 	public PropertiesSelector getPropertiesSelector() {
 		return new PropertiesSelector() {
 			
@@ -41,7 +41,6 @@ public class SlowOperator extends AbstractRemoteOperator {
 		};
 	}
 
-	@Override
 	public Widget getWidget() {
 		Canvas w = new Canvas();
 		w.setBackgroundColor("blue");
@@ -55,7 +54,6 @@ public class SlowOperator extends AbstractRemoteOperator {
 		return w;
 	}
 
-	@Override
 	public void init() {
 		// TODO Auto-generated method stub
 
