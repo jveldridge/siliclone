@@ -119,7 +119,6 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	 */
 	private void initUploadTab() {
 		final SequenceUploadServiceAsync service = GWT.create(SequenceUploadService.class);
-		
 		Tab uploadTab = new Tab();
 		uploadTab.setTitle("Upload");
 		Canvas uploadPane = new Canvas();
@@ -149,15 +148,14 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 	     
 	    	public void onFinish(IUploader uploader) {
 	    		if (uploader.getStatus() == Status.SUCCESS) {
-	        		SC.say(uploader.getInputName());
-	        		
+	    			
 	        		AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
 	        			public void onFailure(Throwable caught) {
 							SC.say(caught.toString());	
 						}
 
 						public void onSuccess(SequenceHook result) {
-							SC.say(result.getSeqName());
+							//SC.say(result.getSeqName());
 							_operator.setSequence(result);
 						}
 					};
@@ -180,21 +178,25 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 				String format = formats.getDisplayValue();
 				
 				if (!name.equals("")) {
+					System.out.println(single1.getInputName());
 					AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+
 						public void onFailure(Throwable caught) {
 							SC.say(caught.getMessage());
 						}
 
 						public void onSuccess(Void result) {
-							//"click" the upload button
+							//"click" the SingleUploader's upload button to actually send the file
 							hidden.click();
 						}
-						
 					};
 					
-					service.setUploadedFileAttributes(single1.getInputName(), name, format, callback);
+					try {
+						service.setUploadedFileAttributes(single1.getInputName(), name, format, callback);
+					} catch (UploadedFileNotFoundException e) {
+						e.printStackTrace();
+					}
 				}
-				
 			}
 		});
 	    
