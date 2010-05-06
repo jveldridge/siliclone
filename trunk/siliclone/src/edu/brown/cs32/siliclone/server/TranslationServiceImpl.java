@@ -14,20 +14,27 @@ import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 
 @SuppressWarnings("serial")
-public class TranslationServiceImpl extends RemoteServiceServlet implements TranslationService {
+public class TranslationServiceImpl extends RemoteServiceServlet implements
+		TranslationService {
 
-	public String getForwardTranslationOne(SequenceHook seq) throws DataServiceException {
-		String nucleotides = SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession()).toString();
+	public String getForwardTranslationOne(SequenceHook seq)
+			throws DataServiceException {
+		String nucleotides = SequenceServiceImpl.getSequence(seq,
+				this.getThreadLocalRequest().getSession()).toString();
 		return this.translateSequence(nucleotides);
 	}
 
-	public String getForwardTranslationThree(SequenceHook seq) throws DataServiceException {
-		String nucleotides = SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession()).toString();
+	public String getForwardTranslationThree(SequenceHook seq)
+			throws DataServiceException {
+		String nucleotides = SequenceServiceImpl.getSequence(seq,
+				this.getThreadLocalRequest().getSession()).toString();
 		return this.translateSequence(nucleotides.substring(1));
 	}
 
-	public String getForwardTranslationTwo(SequenceHook seq) throws DataServiceException {
-		String nucleotides = SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession()).toString();
+	public String getForwardTranslationTwo(SequenceHook seq)
+			throws DataServiceException {
+		String nucleotides = SequenceServiceImpl.getSequence(seq,
+				this.getThreadLocalRequest().getSession()).toString();
 		return this.translateSequence(nucleotides.substring(2));
 	}
 
@@ -48,21 +55,21 @@ public class TranslationServiceImpl extends RemoteServiceServlet implements Tran
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	private String translateSequence(String toTranslate) {
 		SymbolList symL = null;
 		try {
 			int mod = toTranslate.length() % 3;
 			toTranslate = toTranslate.substring(0, toTranslate.length() - mod);
-			
+
 			symL = DNATools.createDNA(toTranslate);
-			
-			//transcribe to RNA
+
+			// transcribe to RNA
 			symL = DNATools.toRNA(symL);
-			
-			//translate to protein
+
+			// translate to protein
 			symL = RNATools.translate(symL);
-			
+
 		} catch (IllegalSymbolException e) {
 			// this should never happen
 			e.printStackTrace();
@@ -70,9 +77,9 @@ public class TranslationServiceImpl extends RemoteServiceServlet implements Tran
 			// this should never happen
 			e.printStackTrace();
 		}
-	 
-	      //prove that it worked
-	      return symL.seqString();
+
+		// prove that it worked
+		return symL.seqString();
 	}
 
 }

@@ -16,7 +16,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 	transient private static final int CHECK_DELAY=300;
 	transient Timer checkProgressTimer;
 	
-	protected abstract Class getServiceClass();
+	protected abstract AbstractRemoteOperatorServiceAsync getServiceAsyncObject();
 	
 	transient private ComputationHook computationHook;
 	
@@ -69,7 +69,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 	private transient AbstractRemoteOperatorServiceAsync abstractRemoteOperatorServiceAsync;
 	
 	public void calculate() {
-		abstractRemoteOperatorServiceAsync = GWT.create(getServiceClass());
+		abstractRemoteOperatorServiceAsync = getServiceAsyncObject();
 
 		
 		if(computationHook!=null){
