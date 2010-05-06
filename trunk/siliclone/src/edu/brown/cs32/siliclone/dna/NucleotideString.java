@@ -3,7 +3,10 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
 /**
@@ -64,13 +67,70 @@ public class NucleotideString implements Serializable{
 	 * copy constructor
 	 * @param ns
 	 */
+	/*
 	public NucleotideString(NucleotideString ns){
 		this.sequence = ns.sequence;
-		this.searchTreeRoot = new SearchTreeNode(ns.searchTreeRoot);
+		this.searchTreeRoot = ns.searchTreeRoot;
 		this.hash = ns.hash;
 		this.indexDepth=ns.indexDepth;
 		
+	}*/
+	
+	/**
+	 * makes the nucleotideString that is the composite of the two given, the overlap is the offset of
+	 * ns2 over ns1. Ns2 shields ns1 (ie where they overlap, ns2 is the final product).
+	 */
+	public NucleotideString(NucleotideString ns1,NucleotideString ns2,int overlap){
+		if(overlap>ns1.getLength()||0-overlap>ns2.getLength()){
+			this.sequence = new byte[Math.max(ns2.getLength()+overlap,ns1.getLength())-Math.min(overlap,0)];
+			System.arraycopy(ns1.sequence, 0, this.sequence, Math.max(0, 0-overlap), ns1.getLength());
+			System.arraycopy(ns2.sequence, 0, this.sequence, Math.max(0, overlap), ns2.getLength());
+			hash= Arrays.hashCode(sequence);
+		}
 	}
+	
+	/**
+	 * the same as NucleotideString(NucleotideString,NucleotideString,int),
+	 * but with int defaulted to the length of the first nucleotidestring
+	 * @param ns1 string on the left
+	 * @param ns2 string on the right
+	 */
+	public NucleotideString(NucleotideString ns1, NucleotideString ns2){
+		this(ns1,ns2,ns1.getLength());
+	}
+	
+	/**
+	 * makes a substring of this nucleotideString;
+	 * @param ns
+	 * @param left
+	 * @param length
+	 */
+	public NucleotideString(NucleotideString ns,int left,int length){
+		if(length<=0||length>ns.getLength()){
+			throw new IllegalArgumentException("Meaningless length");
+		}
+		this.sequence = new byte[length];
+		for(int i =0;i<length;i++){
+			this.sequence[i+left]=ns.sequence[(i+left)%ns.getLength()];
+		}
+		hash= Arrays.hashCode(sequence);
+	}
+	
+	/**
+	 * Like NucleotideString(NucleotideString,int,int), but with the length being the NucleotideString's length
+	 * Essentially, does a circular permutation of the nucleotidesequence passed
+	 * @param ns
+	 * @param left
+	 */
+	public NucleotideString(NucleotideString ns, int left){
+		left = left % ns.getLength();
+		this.sequence = new byte[ns.getLength()];
+		System.arraycopy(ns.sequence, left, sequence, 0, ns.getLength()-left);
+		System.arraycopy(ns.sequence, 0, sequence, ns.getLength()-left, ns.getLength());
+		hash= Arrays.hashCode(sequence);
+		
+	}
+	
 	
 	public NucleotideString(String input) {
 
@@ -98,6 +158,9 @@ public class NucleotideString implements Serializable{
 		hash= Arrays.hashCode(sequence);
 	}
 	
+	
+	
+	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		for(byte b:sequence){
@@ -105,10 +168,6 @@ public class NucleotideString implements Serializable{
 		}
 		return sb.toString();
 		
-	}
-	
-	public byte[] getSequenceBytes(){
-		return sequence;
 	}
 	
 	private class SearchTreeNode implements Serializable{
@@ -141,20 +200,24 @@ public class NucleotideString implements Serializable{
 	
 	private SearchTreeNode searchTreeRoot;
 	
-	private byte[] parseSearchNucleotides(SimpleNucleotide[] searchNucleotideArray, int startPos){
-		byte[] r = new byte[searchNucleotideArray.length-startPos];
-		for (int i = startPos; i<searchNucleotideArray.length;i++){
-			r[i-startPos]=(byte) searchNucleotideArray[i].ordinal();
+	
+	public Collection<Integer> getPositions(SimpleNucleotide[] searchString,boolean circular) {
+
+		if(!circular){
+			Collection<Integer> positions = getPositions(searchString,true);
+			Collection<Integer> r = new LinkedList<Integer>();
+			for (Integer integer : positions) {
+				if((integer+searchString.length>getLength())){
+					break;
+				}
+				r.add(integer);
+			}
+			return r;
 		}
-	return r;
-	}
-	
-	
-	public Collection<Integer> getPositions(SimpleNucleotide[] searchString) {
-		if(indexDepth<0) throw new IllegalArgumentException("cannot index with negative depth");
+		
 		if(indexDepth==0){
 			LinkedList<Integer> r = new LinkedList<Integer>();
-outerloop:	for (int i = 0; i<=sequence.length-searchString.length;i++){
+outerloop:	for (int i = 0; i<sequence.length;i++){
 				 for(int j = 0;j<searchString.length;j++){
 					 if(searchString[j]!=getSimpleNucleotideAt(i+j)){
 						 continue outerloop; //(in other words, skip r.add(i)
@@ -181,13 +244,13 @@ outerloop:	for (int i = 0; i<=sequence.length-searchString.length;i++){
 		 }
 		 LinkedList<Integer> r = new LinkedList<Integer>();
 outerloop: for(Integer i:currentNode.positions){
-			 if(i+searchString.length-indexDepth<sequence.length-1){
+			// if(i+searchString.length-indexDepth<sequence.length-1){
 			 for(int j = indexDepth;j<searchString.length;j++){
 			 if(searchString[j]!=getSimpleNucleotideAt(i+j)){
 				 continue outerloop;
 			 }}
 			 r.add(i);
-			 }
+			// }
 		 }
 		 return r;
 		 
@@ -197,15 +260,16 @@ outerloop: for(Integer i:currentNode.positions){
 	public void makeIndex(int indexDepth){
 		
 		this.indexDepth=indexDepth;
+		if(indexDepth<0) throw new IllegalArgumentException("cannot index with negative depth");
 		this.searchTreeRoot = new SearchTreeNode();
 		
 		if(indexDepth>0)
-		for(int i = 0;i<sequence.length;i++){
+		for(int i = 0;i<getLength();i++){
 			SearchTreeNode currentNode = searchTreeRoot;
 			for(int l = 0;l<indexDepth;l++){
-				if(l+i>=sequence.length){
+				/*if(l+i>=sequence.length){
 					break;
-				}
+				}*/
 				SimpleNucleotide currentNucleotide = getSimpleNucleotideAt(i+l);
 				if(!currentNode.nextcharacter.containsKey(currentNucleotide)){
 					currentNode.nextcharacter.put(currentNucleotide, new SearchTreeNode());
@@ -223,8 +287,16 @@ outerloop: for(Integer i:currentNode.positions){
 	
 	private static final String[] debugRepresentation= {"A","T","C","G","n4mC","5mC","6mA"};
 	
+	
+	/**
+	 * 
+	 * returns the nucleotide at position
+	 * @param position cannot be larger than twice the length of the nucleotidestring.
+	 * If longer than the nucleotidestring, it subtracts the length of the nucleotidestring
+	 * @return the simplenucleotide at this position: either a,t,c,or g
+	 */
 	public SimpleNucleotide getSimpleNucleotideAt(int position){
-		switch(getComplexNucleotideAt(position)){
+		switch(getComplexNucleotideAt(position % getLength())){
 		case adenine:
 		case C6methyladenine:
 			return SimpleNucleotide.a;
@@ -245,8 +317,16 @@ outerloop: for(Integer i:currentNode.positions){
 		a,t,c,g;
 	}
 	
+	
+	/**
+	 * 
+	 * returns the nucleotide, including modifications, at position
+	 * @param position cannot be larger than twice the length of the nucleotidestring.
+	 * If longer than the nucleotidestring, it subtracts the length of the nucleotidestring
+	 * @return the ComplexNucleotide at this position
+	 */
 	public ComplexNucleotide getComplexNucleotideAt(int position){
-		return ComplexNucleotide.values()[sequence[position]];
+		return ComplexNucleotide.values()[sequence[position%getLength()]];
 	}
 	
 	public enum ComplexNucleotide{
