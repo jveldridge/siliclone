@@ -113,7 +113,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 
 						public void onSuccess(SequenceHook result) {
 							//add circularity property to the newly added sequence
-							_service.addProperty(result, "isCircular", (Boolean) circular.getValue(), new AsyncCallback<Void>() {
+ 							_service.addProperty(result, "isCircular", (Boolean) circular.getValue(), new AsyncCallback<Void>() {
 								public void onFailure(Throwable caught) {
 									SC.say(caught.getMessage());
 								}

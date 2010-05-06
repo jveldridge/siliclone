@@ -3,6 +3,7 @@ package edu.brown.cs32.siliclone.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -24,12 +25,12 @@ public class MainView extends Canvas {
 		_workspaceTabs = new TabSet();
 		_tabMap = new HashMap<Workspace,Tab>();
 		
-		this.setWidth100();
-		this.setHeight100();
+
 		
 		VLayout mainLayout = new VLayout();  
         mainLayout.setWidth100();  
         mainLayout.setHeight100();  
+        mainLayout.setOverflow(Overflow.HIDDEN);
   
         //top menu
         mainLayout.addMember(new TopMenu(_main));  
@@ -44,10 +45,15 @@ public class MainView extends Canvas {
         notMenuLayout.addMember(opList);
         
         notMenuLayout.addMember(_workspaceTabs); 
-  
-        mainLayout.addMember(notMenuLayout);  
+        _workspaceTabs.setOverflow(Overflow.HIDDEN);
+        _workspaceTabs.setWidth100();
+        _workspaceTabs.setHeight100();
         
+        mainLayout.addMember(notMenuLayout);  
+		this.setWidth100();
+		this.setHeight100();
         this.addChild(mainLayout);
+        this.setOverflow(Overflow.HIDDEN);
 	}
 	
 	public void addWorkspace(Workspace w) {

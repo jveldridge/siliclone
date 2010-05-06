@@ -3,6 +3,7 @@ package edu.brown.cs32.siliclone.client;
 import java.util.HashMap;
 
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.util.EventHandler;
 
 import com.smartgwt.client.widgets.events.*;
@@ -21,12 +22,17 @@ import edu.brown.cs32.siliclone.operators.Operator;
  */
 public class WorkspaceView extends Canvas {
 	
+	private static final int WORKSPACE_WIDTH=2000;
+	private static final int WORKSPACE_HEIGHT=2000;
+	
 	private Workspace workspace; 
 	
 	public WorkspaceView(Workspace workspace){
-		this.setHeight100();
-		this.setWidth100();
+
 		this.setShowEdges(true);
+		this.setOverflow(Overflow.HIDDEN);
+		this.setHeight(WORKSPACE_HEIGHT);
+		this.setWidth(WORKSPACE_WIDTH);
 		
 		this.workspace = workspace;
 		
