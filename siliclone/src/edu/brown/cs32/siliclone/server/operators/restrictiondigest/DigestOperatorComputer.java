@@ -39,12 +39,15 @@ public class DigestOperatorComputer implements OperatorComputer {
 		LinkedList<Feature> r_f = new LinkedList<Feature>();
 		LinkedList<Map<String, Object>> r_pr = new LinkedList<Map<String, Object>>();
 		
-		RestrictionEnzyme re = ENZYMES.get((String)properties.get("enzyme"));
+		//RestrictionEnzyme re = ENZYMES.get((String)properties.get("enzyme"));
+		RestrictionEnzyme re = new RestrictionEnzyme(new SimpleNucleotide[]{c,c,c}, 0);
+		
+		
 		Collection<SequenceHook> r = new LinkedList<SequenceHook>();
 		
 		int progint = 0;
 		for (SequenceHook sequenceHook : input[0]) {
-			progress=50/r_sh.size()*progint;
+			progress=50/input[0].size()*progint;
 			progint++;
 			
 			try {
