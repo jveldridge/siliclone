@@ -90,6 +90,38 @@ public class PCRTask implements Task {
 						}
 					}
 				}
+				
+				//Also try with the forward and reverse primers switched
+				for(NucleotideString forward : reversePrimers)
+				{
+					int fLength = (matchLength > forward.getLength()) ? forward.getLength() : matchLength;
+					SimpleNucleotide[] forwardCheck = forward.getSimpleNucleotides(forward.getLength() - fLength, fLength);
+					Collection<Integer> forwardMatches = template.getPositions(forwardCheck, true);
+					for(NucleotideString reverse : forwardPrimers)
+					{
+						int rLength = (matchLength > reverse.getLength()) ? reverse.getLength() : matchLength;
+						SimpleNucleotide[] reverseCheck = reverse.getSimpleNucleotides(0, rLength);
+						Collection<Integer> reverseMatches = template.getPositions(reverseCheck, true);
+						
+						for(Integer f : forwardMatches)
+						{
+							for(Integer r : reverseMatches)
+							{
+								//First get the part of the template between the primers
+								Integer primerSeparation = r - (f + fLength);
+								if(primerSeparation >= 0)
+								{
+									NucleotideString product = new NucleotideString(template, f + fLength, primerSeparation);
+									//Concatenate with forward primer
+									product = new NucleotideString(forward, product);
+									//Then concatenate with reverse primer
+									product = new NucleotideString(product, reverse);
+									outputStrings.add(product);
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			for(NucleotideString out : outputStrings)
