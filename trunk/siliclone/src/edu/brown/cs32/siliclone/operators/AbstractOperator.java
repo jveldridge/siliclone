@@ -2,7 +2,10 @@ package edu.brown.cs32.siliclone.operators;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map;
 
 import com.smartgwt.client.widgets.Window;
@@ -21,8 +24,9 @@ public abstract class AbstractOperator implements Operator {
 	protected Collection<Operator> children = new ArrayList<Operator>();
 	private transient VisualizerDisplay visualizerDisplay;
 	private transient Window visualizerDisplayWindow;
+	private Map properties = new HashMap();
 	
-	protected Map<String, String> properties;
+	
 	protected transient OpView view;
 	
 	
@@ -37,6 +41,10 @@ public abstract class AbstractOperator implements Operator {
 		this.view = view;
 		
 		visualizerDisplay = new VisualizerDisplay(view.getWorkspaceView(), this);	
+	}
+	
+	public Map getProperties(){
+		return properties;
 	}
 	
 	

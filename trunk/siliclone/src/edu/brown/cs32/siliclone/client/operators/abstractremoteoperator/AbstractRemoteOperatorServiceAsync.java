@@ -11,8 +11,7 @@ import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 public interface AbstractRemoteOperatorServiceAsync {
 
 	void startComputation(Collection<SequenceHook>[] input,
-			Map<String, String> properties,
-			AsyncCallback<ComputationHook> callback);
+			Map properties,AsyncCallback<ComputationHook> callback);
 
 	void getResult(ComputationHook hook,
 			AsyncCallback<Collection<SequenceHook>> callback);
@@ -20,5 +19,7 @@ public interface AbstractRemoteOperatorServiceAsync {
 	void getProgress(ComputationHook hook, AsyncCallback<Integer> callback);
 
 	void cancelComputation(ComputationHook hook, AsyncCallback<Void> callback);
+
+
 
 }

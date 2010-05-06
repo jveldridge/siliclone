@@ -1,6 +1,7 @@
 package edu.brown.cs32.siliclone.client.operators.abstractremoteoperator;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
@@ -69,6 +70,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 	private transient AbstractRemoteOperatorServiceAsync abstractRemoteOperatorServiceAsync;
 	
 	public void calculate() {
+		System.out.println("hi debug");
 		abstractRemoteOperatorServiceAsync = getServiceAsyncObject();
 
 		
@@ -92,10 +94,14 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 				
 		Collection<SequenceHook>[] inputSequences = new Collection[inputs.length];
 		for (int i = 0 ;i<inputs.length;i++){
+			if(inputs[i]==null){
+			inputSequences[i]=new LinkedList<SequenceHook>();
+			}else{
 			inputSequences[i]=inputs[i].getOutputSequence();		
 		}
+		}
 		
-		abstractRemoteOperatorServiceAsync.startComputation(inputSequences, properties, new AsyncCallback<ComputationHook>() {
+		abstractRemoteOperatorServiceAsync.startComputation(inputSequences, getProperties(), new AsyncCallback<ComputationHook>() {
 
 			
 			public void onFailure(Throwable caught) {

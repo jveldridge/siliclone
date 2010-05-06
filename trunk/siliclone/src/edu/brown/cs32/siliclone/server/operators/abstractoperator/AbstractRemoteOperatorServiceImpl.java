@@ -41,7 +41,7 @@ public abstract class AbstractRemoteOperatorServiceImpl extends RemoteServiceSer
 	}
 	
 	public ComputationHook startComputation(final Collection<SequenceHook>[] input,
-			final Map<String, String> properties) throws IllegalArgumentException {
+			final Map properties) throws IllegalArgumentException {
 		
 		final OperatorComputer oc = getNewOperatorComputer();
 		final ComputationHook ch = new ComputationHook();

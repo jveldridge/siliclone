@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.operators.rd;
+package edu.brown.cs32.siliclone.client.operators.restrictiondigest;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;

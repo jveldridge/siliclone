@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.server.operators.slowoperator;
+package edu.brown.cs32.siliclone.server.operators.restrictiondigest;
 
 import java.util.Collection;
 import java.util.Map;
@@ -6,27 +6,15 @@ import java.util.Map;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.server.operators.abstractoperator.OperatorComputer;
 
-public class SlowOperatorComputer implements OperatorComputer {
+public class DigestOperatorComputer implements OperatorComputer {
 
 	
 	private int progress;
 
 	public Collection<SequenceHook> computeOutput(
 			Collection<SequenceHook>[] input, Map properties) {
-
-		progress = 0;
-		for(int i = 0;i<=100;i++){
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				
-			}
-			progress = i;
-			System.out.println(i+"%");
-			
-		}
+		System.out.println("hi debug3");
+		System.out.println("Were here! "+properties.get("enzymes").toString());
 		return input[0];
 	}
 
