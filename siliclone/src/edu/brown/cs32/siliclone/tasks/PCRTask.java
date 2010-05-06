@@ -17,7 +17,6 @@ public class PCRTask implements Task {
 		this.properties = properties;
 	}
 
-	@Override
 	public void compute() {
 		Integer matchLength = Integer.parseInt(properties.get("match"));
 		

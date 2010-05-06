@@ -15,4 +15,13 @@ public interface TranslationServiceAsync {
 	void getForwardTranslationTwo(SequenceHook seq,
 			AsyncCallback<String> callback);
 
+	void getReverseTranslationOne(SequenceHook seq,
+			AsyncCallback<String> callback);
+
+	void getReverseTranslationTwo(SequenceHook seq,
+			AsyncCallback<String> callback);
+
+	void getReverseTranslationThree(SequenceHook seq,
+			AsyncCallback<String> callback);
+
 }

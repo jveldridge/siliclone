@@ -14,4 +14,10 @@ public interface TranslationService extends RemoteService {
 	public String getForwardTranslationTwo(SequenceHook seq) throws DataServiceException;
 	
 	public String getForwardTranslationThree(SequenceHook seq) throws DataServiceException;
+	
+	public String getReverseTranslationOne(SequenceHook seq) throws DataServiceException;
+	
+	public String getReverseTranslationTwo(SequenceHook seq) throws DataServiceException;
+	
+	public String getReverseTranslationThree(SequenceHook seq) throws DataServiceException;
 }

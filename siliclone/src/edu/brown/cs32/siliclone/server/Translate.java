@@ -15,6 +15,9 @@ public class Translate {
  
       //translate to protein
       symL = RNATools.translate(symL);
+      
+      symL = DNATools.reverseComplement(symL);
+
  
       //prove that it worked
            System.out.println(symL.seqString());
