@@ -63,8 +63,13 @@ public class DigestPropertiesSelector extends PropertiesSelector {
 			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
 				ListGridRecord[] lgra = enzymeGrid.getSelection();
 
-				operator.getProperties().put("enzyme",lgra[0]);
+				System.out.println("hihi");
+				operator.getProperties().put("enzyme",lgra[0].getAttributeAsObject("enzymeName"));
+				System.out.println("hihi2");
+				
+				
 				operator.calculate();
+				System.out.println("hihi3");
 			}
 		});
         
