@@ -7,6 +7,10 @@ import edu.brown.cs32.siliclone.operators.Operator;
 
 public interface Workspace extends Serializable {
 
+	public boolean getHasBeenSavedBefore();
+	
+	public void setHasBeenSavedBefore(boolean savedBefore);
+	
 	/**
 	 * Sets the name of this workspace.  The name is chosen
 	 * entirely at the discretion of the user.
