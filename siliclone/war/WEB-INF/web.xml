@@ -79,6 +79,16 @@
     <url-pattern>/siliclone/slowOperatorService</url-pattern>
   </servlet-mapping>
   
+      <servlet>
+        <servlet-name>translationService</servlet-name>
+        <servlet-class>edu.brown.cs32.siliclone.server.TranslationServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>translationService</servlet-name>
+    <url-pattern>/siliclone/translation</url-pattern>
+  </servlet-mapping>
+  
 
   <!-- Default page to serve -->
   <welcome-file-list>
