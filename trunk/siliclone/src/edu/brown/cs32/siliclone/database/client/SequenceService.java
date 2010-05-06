@@ -72,9 +72,9 @@ public interface SequenceService extends RemoteService {
 	
 	public void addProperty(SequenceHook seq, String key, String value) throws DataServiceException;
 	
-	public void addProperty(SequenceHook seq, String key, boolean value) throws DataServiceException;
+	public void addProperty(SequenceHook seq, String key, Boolean value) throws DataServiceException;
 	
-	public void addProperty(SequenceHook seq, String key, int value) throws DataServiceException;
+	public void addProperty(SequenceHook seq, String key, Integer value) throws DataServiceException;
 	
 	/**
 	 * Returns information about a particular property of this sequence.

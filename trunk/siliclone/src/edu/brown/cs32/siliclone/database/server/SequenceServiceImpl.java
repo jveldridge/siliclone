@@ -639,13 +639,13 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	}
 
 
-	public void addProperty(SequenceHook seq, String key, boolean value)
+	public void addProperty(SequenceHook seq, String key, Boolean value)
 			throws DataServiceException {
 		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
 	}
 
 
-	public void addProperty(SequenceHook seq, String key, int value)
+	public void addProperty(SequenceHook seq, String key, Integer value)
 			throws DataServiceException {
 		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
 	}

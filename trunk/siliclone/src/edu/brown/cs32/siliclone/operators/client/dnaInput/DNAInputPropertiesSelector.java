@@ -138,6 +138,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 								}
 							});
  							
+ 							
  							_service.addProperty(result, "leftOverhang", new Integer(0), new AsyncCallback<Void>() {
 								public void onFailure(Throwable caught) {
 									SC.say(caught.getMessage());

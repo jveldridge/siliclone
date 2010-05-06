@@ -375,6 +375,22 @@ outerloop: for(Integer i:currentNode.positions){
 	
 	public enum SimpleNucleotide{
 		a,t,c,g;
+		
+		public SimpleNucleotide opposite() {
+			switch(this) {
+			case a:
+				return t;
+			case t:
+				return a;
+			case c:
+				return g;
+			case g:
+				return c;
+			default:
+				return null;
+			}
+			
+		}
 	}
 	
 	

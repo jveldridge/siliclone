@@ -43,10 +43,10 @@ public interface SequenceServiceAsync {
 	void addProperty(SequenceHook seq, String key, String value,
 			AsyncCallback<Void> callback);
 
-	void addProperty(SequenceHook seq, String key, boolean value,
+	void addProperty(SequenceHook seq, String key, Boolean value,
 			AsyncCallback<Void> callback);
 
-	void addProperty(SequenceHook seq, String key, int value,
+	void addProperty(SequenceHook seq, String key, Integer value,
 			AsyncCallback<Void> callback);
 
 	void getIsSerializableProperty(SequenceHook seq, String key,
