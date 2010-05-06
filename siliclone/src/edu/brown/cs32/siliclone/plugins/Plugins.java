@@ -5,6 +5,7 @@ import edu.brown.cs32.siliclone.client.operators.slowoperator.SlowOperatorTempla
 import edu.brown.cs32.siliclone.client.visualizers2.DataVisualizerTemplate;
 import edu.brown.cs32.siliclone.client.visualizers2.SequenceVisualizerTemplate;
 import edu.brown.cs32.siliclone.client.visualizers2.VisualizerAdder;
+import edu.brown.cs32.siliclone.client.visualizers2.translation.TranslationVisualizerTemplate;
 import edu.brown.cs32.siliclone.operators.OperatorAdder;
 import edu.brown.cs32.siliclone.operators.anothertestop.AnotherTestOpFactory;
 import edu.brown.cs32.siliclone.operators.client.dnaInput.DNAInputTemplate;
@@ -25,7 +26,7 @@ public class Plugins {
 	public static void defineVisualizers(VisualizerAdder visualizerAdder){
 		visualizerAdder.addVisualizer(new SequenceVisualizerTemplate());
 		visualizerAdder.addVisualizer(new DataVisualizerTemplate());
-		
+		visualizerAdder.addVisualizer(new TranslationVisualizerTemplate());
 	}
 	
 }
