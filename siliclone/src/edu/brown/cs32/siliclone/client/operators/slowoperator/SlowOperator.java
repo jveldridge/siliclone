@@ -1,21 +1,19 @@
 package edu.brown.cs32.siliclone.client.operators.slowoperator;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.DoubleClickEvent;
 import com.smartgwt.client.widgets.events.DoubleClickHandler;
 
 import edu.brown.cs32.siliclone.client.operators.abstractremoteoperator.AbstractRemoteOperator;
+import edu.brown.cs32.siliclone.client.operators.abstractremoteoperator.AbstractRemoteOperatorServiceAsync;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 @SuppressWarnings("serial")
 public class SlowOperator extends AbstractRemoteOperator {
 
-	@Override
-	protected Class getServiceClass() {
-		return SlowOperatorService.class;
-	}
-
+	
 
 	public int getNumInputs() {
 		// TODO Auto-generated method stub
@@ -55,6 +53,12 @@ public class SlowOperator extends AbstractRemoteOperator {
 
 	public void init() {
 		
+	}
+
+	@Override
+	protected AbstractRemoteOperatorServiceAsync getServiceAsyncObject() {
+		
+		return GWT.create(SlowOperatorService.class);
 	}
 
 }
