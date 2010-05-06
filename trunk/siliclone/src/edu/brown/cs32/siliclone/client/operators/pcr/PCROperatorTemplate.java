@@ -9,7 +9,7 @@ public class PCROperatorTemplate extends AbstractRemoteOperatorTemplate {
 
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "PCR2";
+		return "PCR";
 	}
 
 	public Widget getWidget() {

@@ -33,8 +33,8 @@ public class PCRTask implements Task {
 			System.out.println(s);
 			Integer matchLength = Integer.parseInt(properties.get("match"));
 			Collection<NucleotideString> templates = new LinkedList<NucleotideString>();
-			Collection<NucleotideString> forwardPrimers = new LinkedList<NucleotideString>();
-			Collection<NucleotideString> reversePrimers = new LinkedList<NucleotideString>();
+			Collection<NucleotideString> firstPrimers = new LinkedList<NucleotideString>();
+			Collection<NucleotideString> secondPrimers = new LinkedList<NucleotideString>();
 			Collection<NucleotideString> outputStrings = new LinkedList<NucleotideString>();
 			//Input[0] is the templates
 			for(SequenceHook sh : input[0])
@@ -47,26 +47,26 @@ public class PCRTask implements Task {
 			{
 				NucleotideString seq = SequenceServiceImpl.getSequence(sh);
 				//Only look for matches with the last (matchLength) nucleotides of the sequence
-				forwardPrimers.add(seq);
+				firstPrimers.add(seq);
 			}
 			//Input[2] is the reverse primer
 			for(SequenceHook sh : input[2])
 			{
 				NucleotideString seq = SequenceServiceImpl.getSequence(sh);
-				seq = seq.reverseComplement();
-				reversePrimers.add(seq);
+				secondPrimers.add(seq);
 			}
 			
 			for(NucleotideString template : templates)
 			{
 				
-				for(NucleotideString forward : forwardPrimers)
+				for(NucleotideString forward : firstPrimers)
 				{
 					int fLength = (matchLength > forward.getLength()) ? forward.getLength() : matchLength;
 					SimpleNucleotide[] forwardCheck = forward.getSimpleNucleotides(forward.getLength() - fLength, fLength);
 					Collection<Integer> forwardMatches = template.getPositions(forwardCheck, true);
-					for(NucleotideString reverse : reversePrimers)
+					for(NucleotideString reverse : secondPrimers)
 					{
+						reverse = reverse.reverseComplement();
 						int rLength = (matchLength > reverse.getLength()) ? reverse.getLength() : matchLength;
 						SimpleNucleotide[] reverseCheck = reverse.getSimpleNucleotides(0, rLength);
 						Collection<Integer> reverseMatches = template.getPositions(reverseCheck, true);
@@ -92,13 +92,15 @@ public class PCRTask implements Task {
 				}
 				
 				//Also try with the forward and reverse primers switched
-				for(NucleotideString forward : reversePrimers)
+				for(NucleotideString forward : secondPrimers)
 				{
+
 					int fLength = (matchLength > forward.getLength()) ? forward.getLength() : matchLength;
 					SimpleNucleotide[] forwardCheck = forward.getSimpleNucleotides(forward.getLength() - fLength, fLength);
 					Collection<Integer> forwardMatches = template.getPositions(forwardCheck, true);
-					for(NucleotideString reverse : forwardPrimers)
+					for(NucleotideString reverse : firstPrimers)
 					{
+						reverse = reverse.reverseComplement();
 						int rLength = (matchLength > reverse.getLength()) ? reverse.getLength() : matchLength;
 						SimpleNucleotide[] reverseCheck = reverse.getSimpleNucleotides(0, rLength);
 						Collection<Integer> reverseMatches = template.getPositions(reverseCheck, true);
