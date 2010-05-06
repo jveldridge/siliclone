@@ -9,10 +9,12 @@ import java.util.Random;
 
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.client.dna.features.Feature;
+import edu.brown.cs32.siliclone.client.utilities.enzymes.EnzymeListGenerator;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.server.operators.abstractoperator.OperatorComputer;
+import static edu.brown.cs32.siliclone.dna.NucleotideString.SimpleNucleotide.*;
 import static edu.brown.cs32.siliclone.dna.NucleotideString.*;
 
 public class DigestOperatorComputer implements OperatorComputer {
@@ -20,17 +22,30 @@ public class DigestOperatorComputer implements OperatorComputer {
 	
 	private int progress;
 	private boolean cancelled = false;
+	private static final HashMap<String,RestrictionEnzyme> ENZYMES = new HashMap<String, RestrictionEnzyme>() {{
+	    put("NdeI",     new RestrictionEnzyme(new SimpleNucleotide[]{c,a,t}, -1));
+	    put("XhoI",     new RestrictionEnzyme(new SimpleNucleotide[]{c,t,c}, -2));
+	    put("SmaI",     new RestrictionEnzyme(new SimpleNucleotide[]{c,c,c}, 0));
+	    put("HindIII",   new RestrictionEnzyme(new SimpleNucleotide[]{a,a,g}, -2));
+	    put("PvuII",   new RestrictionEnzyme(new SimpleNucleotide[]{c,a,g}, 0));
+	 }};
 
+	
+	
+	
 	public Collection<SequenceHook> computeOutput(
 			Collection<SequenceHook>[] input, Map properties) {
 		Collection<NucleotideString> r_sh = new LinkedList<NucleotideString>();
 		LinkedList<Feature> r_f = new LinkedList<Feature>();
 		LinkedList<Map<String, Object>> r_pr = new LinkedList<Map<String, Object>>();
 		
-		RestrictionEnzyme re = new RestrictionEnzyme(new SimpleNucleotide[]{NucleotideString.SimpleNucleotide.c,NucleotideString.SimpleNucleotide.c,NucleotideString.SimpleNucleotide.c}, 0);
+		RestrictionEnzyme re = ENZYMES.get((String)properties.get("enzyme"));
 		Collection<SequenceHook> r = new LinkedList<SequenceHook>();
 		
+		int progint = 0;
 		for (SequenceHook sequenceHook : input[0]) {
+			progress=50/r_sh.size()*progint;
+			progint++;
 			
 			try {
 				re.cut(SequenceServiceImpl.getSequence(sequenceHook),null,SequenceServiceImpl.getProperties(sequenceHook),r_sh,r_f,r_pr);
@@ -42,8 +57,11 @@ public class DigestOperatorComputer implements OperatorComputer {
 			Iterator<NucleotideString> nsi = r_sh.iterator();
 			Iterator<Map<String,Object>> pri = r_pr.iterator();
 			assert(r_sh.size()==r_pr.size());
+			progint=0;
 			Random random = new Random();
 			while (nsi.hasNext()) {
+				progress=50+50/r_sh.size()*progint;
+				progint++;
 				NucleotideString ns = nsi.next();
 				Map<String,Object> pr = pri.next();
 				try {
@@ -65,7 +83,7 @@ public class DigestOperatorComputer implements OperatorComputer {
 		
 		
 		
-		return input[0];
+		return r;
 	}
 
 	public int getProgress() {
@@ -78,7 +96,7 @@ public class DigestOperatorComputer implements OperatorComputer {
 		
 	}
 	
-	private class RestrictionEnzyme{
+	private static class RestrictionEnzyme{
 		int cutoffset;
 		int halfway;
 		NucleotideString.SimpleNucleotide[] fullSearchString;
@@ -116,7 +134,7 @@ public class DigestOperatorComputer implements OperatorComputer {
 
 			if(!(dnaProperties.get("isCircular")==null)&&(Boolean) dnaProperties.get("isCircular")){
 				Collection<Integer> ints = sequence.getPositions(fullSearchString, true);
-				
+				System.out.println("ic:"+ints);
 				if(ints.isEmpty()){
 				r_ns.add(sequence);
 				r_pr.add(dnaProperties);
@@ -143,7 +161,7 @@ public class DigestOperatorComputer implements OperatorComputer {
 				
 			}else{
 				Collection<Integer> ints = sequence.getPositions(fullSearchString, false);
-
+				System.out.println("nc:"+ints);
 				if(ints.isEmpty()){
 				r_ns.add(sequence);
 				r_pr.add(dnaProperties);
