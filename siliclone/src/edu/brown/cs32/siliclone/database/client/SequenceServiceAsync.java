@@ -1,14 +1,11 @@
 package edu.brown.cs32.siliclone.database.client;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.client.dna.features.Feature;
 
@@ -30,11 +27,6 @@ public interface SequenceServiceAsync {
 //			String seqName,
 //			Map<String, IsSerializable> properties,
 //			AsyncCallback<SequenceHook> callback) throws DataServiceException;
-
-	void saveSequence(String nucleotides,
-			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, IsSerializable> properties,
-			AsyncCallback<SequenceHook> callback);
 
 	void getNucleotides(SequenceHook seq, AsyncCallback<String> callback);
 
