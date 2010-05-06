@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 
-import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 
 /**
@@ -18,13 +17,10 @@ public class Siliclone implements EntryPoint {
 	private MainView _mainView;
 	private Canvas _panel;
 	
-	
-	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		
 		DOM.removeChild(RootPanel.getBodyElement(), DOM.getElementById("loading"));
 		
 		_panel = new Canvas();
@@ -33,21 +29,27 @@ public class Siliclone implements EntryPoint {
 		_panel.setOverflow(Overflow.HIDDEN);
 		
 		_loginScreen = new LoginScreen(this);
-		_mainView = new MainView(this);
-       
-		//this.showMainView();
-		this.showLoginScreen();
-		_panel.draw();
-	}
-	
-	public void showLoginScreen() {
-		_panel.removeChild(_mainView);
 		_panel.addChild(_loginScreen);
+		_panel.show();
 	}
 	
-	public void showMainView() {
-		_panel.removeChild(_loginScreen);
+	public void login() {
+		if (_loginScreen != null) {
+			_loginScreen.destroy();
+		}
+		
+		_mainView = new MainView(this);
 		_panel.addChild(_mainView);
+	}
+	
+	
+	public void logout() {
+		if (_mainView != null) {
+			_mainView.destroy();
+		}
+		
+		_loginScreen = new LoginScreen(this);
+		_panel.addChild(_loginScreen);
 	}
 	
 	public void addWorkspace(Workspace w) {

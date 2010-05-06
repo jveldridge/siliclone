@@ -4,9 +4,7 @@ package edu.brown.cs32.siliclone.client;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
-import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -104,11 +102,13 @@ public class LoginScreen extends HLayout {
 					w.show();
 				}
 			});
-
+			
+			Img reg = new Img("register.gif", 50, 50);
 			
 			this.addMember(new LayoutSpacer());
 			this.addMember(new LoginForm(_main));
 			this.addMember(register);
+			this.addMember(reg);
 			
 			this.addMember(new LayoutSpacer());
 			
