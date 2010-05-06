@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Canvas;
 
-import edu.brown.cs32.siliclone.client.visualizers.VisualizerDisplay;
+import edu.brown.cs32.siliclone.client.visualizers2.VisualizerDisplay;
 import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 

@@ -33,6 +33,7 @@ public class OpView extends Canvas {//implements Connectable {
 	private Rectangle _beforeDrag;
 	private InputNode[] inputs;
 	private OutputDragger output;
+	private WorkspaceView workspaceView;
 	
 	private Progressbar progress;
 	
@@ -44,6 +45,8 @@ public class OpView extends Canvas {//implements Connectable {
 		this.op.init();
 		op.setOpView(this);
 		this.addDragRepositionStopHandler(new RepositionHandler());
+		
+		workspaceView = workspace;
 		
 		setTop(op.getY());
 		setLeft(op.getX());
@@ -286,5 +289,7 @@ public class OpView extends Canvas {//implements Connectable {
 		op.setX(getLeft());
 	}
 	*/
-	
+	public WorkspaceView getWorkspaceView(){
+		return workspaceView;
+	}
 }

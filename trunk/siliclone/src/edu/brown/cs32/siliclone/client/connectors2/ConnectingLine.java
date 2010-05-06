@@ -7,7 +7,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 
 import edu.brown.cs32.siliclone.client.forms.RegisterForm;
-import edu.brown.cs32.siliclone.client.visualizers.VisualizerDisplay;
+import edu.brown.cs32.siliclone.client.visualizers2.VisualizerDisplay;
 
 public class ConnectingLine extends Canvas {
 	private final String LINE_COLOR = "#222222";
