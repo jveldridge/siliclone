@@ -24,13 +24,12 @@ public class PCRTask implements Task {
 	public PCRTask(Collection<SequenceHook>[] input, Map<String, String> properties) {
 		this.input = input;
 		this.properties = properties;
+		output = new LinkedList<SequenceHook>();
 	}
 
 	public void compute() {
-		output = new LinkedList<SequenceHook>();
 		try {
-			String s = properties.get("match");
-			System.out.println(s);
+
 			Integer matchLength = Integer.parseInt(properties.get("match"));
 			Collection<NucleotideString> templates = new LinkedList<NucleotideString>();
 			Collection<NucleotideString> firstPrimers = new LinkedList<NucleotideString>();
@@ -129,7 +128,7 @@ public class PCRTask implements Task {
 			for(NucleotideString out : outputStrings)
 			{
 				Map<String, Object> properties = new HashMap<String, Object>();
-				properties.put("Circular", false);
+				properties.put("isCircular", false);
 				String name = Integer.toString(out.hashCode() + new Random().nextInt(100000));
 				Map<String, Collection<Feature>> features = new HashMap<String, Collection<Feature>>();
 				SequenceServiceImpl.saveSequence(out, features, name, properties);

@@ -115,17 +115,41 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 
 						public void onSuccess(SequenceHook result) {
 							//add circularity property to the newly added sequence
- 							//_service.addProperty(result, "isCircular", (Boolean) circular.getValue(), new AsyncCallback<Void>() {
-//								public void onFailure(Throwable caught) {
-//									SC.say(caught.getMessage());
-//									caught.printStackTrace();
-//								}
-//
-//								public void onSuccess(Void result) {
-//									
-//								}
-//							});
+ 							_service.addProperty(result, "isCircular", (Boolean) circular.getValue(), new AsyncCallback<Void>() {
+								public void onFailure(Throwable caught) {
+									SC.say(caught.getMessage());
+									caught.printStackTrace();
+								}
+
+								public void onSuccess(Void result) {
+									
+								}
+							});
 							
+ 							//Add rightOverhang property to the newly added sequence
+ 							_service.addProperty(result, "rightOverhang", new Integer(0), new AsyncCallback<Void>() {
+								public void onFailure(Throwable caught) {
+									SC.say(caught.getMessage());
+									caught.printStackTrace();
+								}
+
+								public void onSuccess(Void result) {
+									
+								}
+							});
+ 							
+ 							_service.addProperty(result, "leftOverhang", new Integer(0), new AsyncCallback<Void>() {
+								public void onFailure(Throwable caught) {
+									SC.say(caught.getMessage());
+									caught.printStackTrace();
+								}
+
+								public void onSuccess(Void result) {
+									
+								}
+							});
+
+
 							//set the newly added sequence as the output of the operator
 							Collection<SequenceHook> r =  new LinkedList<SequenceHook>();
 							r.add(result);
