@@ -200,12 +200,10 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 
 	public Cache nucleotideStringCache; //TODO make cache
 	
-	public static NucleotideString getSequence(SequenceHook seq, HttpSession session)
-			throws DataServiceException {
+	public static NucleotideString getSequence(SequenceHook seq) throws DataServiceException {
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getSequence");
 		}
-		UserServiceImpl.verifyAccess(session, seq);
 		
 		Connection conn = Database.getConnection();
 		try{
@@ -234,6 +232,16 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
+	}
+	
+	public static NucleotideString getSequence(SequenceHook seq, HttpSession session)
+			throws DataServiceException {
+		if(seq == null){
+			throw new DataServiceException("Null value passed to SequenceService.getSequence");
+		}
+		UserServiceImpl.verifyAccess(session, seq);
+		
+		return SequenceServiceImpl.getSequence(seq);
 	}
 	
 	public String getNucleotides(SequenceHook seq) throws DataServiceException {
