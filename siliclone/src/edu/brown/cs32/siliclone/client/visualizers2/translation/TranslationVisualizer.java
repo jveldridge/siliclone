@@ -21,25 +21,25 @@ public class TranslationVisualizer extends VisualizerCanvas {
 		super(workspace, owner);
 	}
 
-	private VLayout drawing;
+	private VLayout contents;
 	private TranslationServiceAsync service;
 
-	@Override
 	public String getName() {
 		return "Translation Visualization";
 	}
 
-	@Override
 	public void update() {
-		if (drawing == null) {
-			drawing = new VLayout();
-			this.addChild(drawing);
+		if (contents == null) {
+			contents = new VLayout();
+			contents.setHeight100();
+			contents.setWidth100();
+			this.addChild(contents);
 		}
-		drawing.clear();
+		contents.clear();
 		Collection<SequenceHook> seqs = owner.getOutputSequence();
 		
 		if(seqs == null || seqs.isEmpty()){
-			drawing.addMember(new Label("No sequence"));
+			contents.addMember(new Label("<h1> No sequence </h1>"));
 		
 		}else {
 			AsyncCallback<String> callback1 = new AsyncCallback<String>() {
@@ -48,8 +48,8 @@ public class TranslationVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					drawing.addMember(new Label("5'3' Frame 1:"));
-					drawing.addMember(new Label(result));
+					contents.addMember(new Label("<h1><u> 5'3' Frame 1  </u></h1>"));
+					contents.addMember(new Label( "<h3>" + result + "</h3>"));
 				}
 			};
 			
@@ -64,8 +64,8 @@ public class TranslationVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					drawing.addMember(new Label("5'3' Frame 2:"));
-					drawing.addMember(new Label(result));
+					contents.addMember(new Label("<h1><u> 5'3' Frame 2  </u></h1>"));
+					contents.addMember(new Label("<h3>" + result + "</h3>"));
 				}
 			};
 			
@@ -77,8 +77,8 @@ public class TranslationVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					drawing.addMember(new Label("5'3' Frame 3:"));
-					drawing.addMember(new Label(result));
+					contents.addMember(new Label("<h1><u> 5'3' Frame 3  </u></h1>"));
+					contents.addMember(new Label("<h3>" + result + "</h3>"));
 				}
 			};
 			
