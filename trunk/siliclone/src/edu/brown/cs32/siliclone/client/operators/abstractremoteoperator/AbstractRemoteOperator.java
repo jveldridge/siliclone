@@ -95,7 +95,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 			inputSequences[i]=inputs[i].getOutputSequence();		
 		}
 		
-		abstractRemoteOperatorServiceAsync.startComputation(inputSequences, null, new AsyncCallback<ComputationHook>() {
+		abstractRemoteOperatorServiceAsync.startComputation(inputSequences, properties, new AsyncCallback<ComputationHook>() {
 
 			
 			public void onFailure(Throwable caught) {

@@ -12,7 +12,7 @@ public class SlowOperatorComputer implements OperatorComputer {
 	private int progress;
 
 	public Collection<SequenceHook> computeOutput(
-			Collection<SequenceHook>[] input, Map<String, Object> properties) {
+			Collection<SequenceHook>[] input, Map<String, String> properties) {
 		progress = 0;
 		for(int i = 0;i<=100;i++){
 			try {

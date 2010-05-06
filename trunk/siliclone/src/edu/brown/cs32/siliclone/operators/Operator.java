@@ -3,6 +3,7 @@ package edu.brown.cs32.siliclone.operators;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Canvas;
@@ -32,6 +33,8 @@ public interface Operator extends Serializable {
 	public int getNumInputs();
 	
 	public Operator[] getInputs();
+	
+	public void setProperties(Map<String, String> properties);
 	
 	public void removeInput(int slotNum);
 	

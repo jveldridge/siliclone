@@ -23,6 +23,8 @@ public class PCRPropertiesSelector extends PropertiesSelector {
 		
 		this.setAlign(Alignment.CENTER);
 	}
+	
+	
 
 	@Override
 	protected void processInput() {
