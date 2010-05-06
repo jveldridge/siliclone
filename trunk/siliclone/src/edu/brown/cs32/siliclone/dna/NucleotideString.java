@@ -82,12 +82,14 @@ public class NucleotideString implements Serializable{
 	 * ns2 over ns1. Ns2 shields ns1 (ie where they overlap, ns2 is the final product).
 	 */
 	public NucleotideString(NucleotideString ns1,NucleotideString ns2,int overlap){
-		if(overlap>ns1.getLength()||0-overlap>ns2.getLength()){
-			this.sequence = new byte[Math.max(ns2.getLength()+overlap,ns1.getLength())-Math.min(overlap,0)];
-			System.arraycopy(ns1.sequence, 0, this.sequence, Math.max(0, 0-overlap), ns1.getLength());
-			System.arraycopy(ns2.sequence, 0, this.sequence, Math.max(0, overlap), ns2.getLength());
-			hash= Arrays.hashCode(sequence);
-		}
+		if(overlap>ns1.getLength()||0-overlap>ns2.getLength()) throw new IllegalArgumentException("Overlap larger than sequence");
+		
+		this.sequence = new byte[Math.max(ns2.getLength()+overlap,ns1.getLength())-Math.min(overlap,0)];
+		System.arraycopy(ns1.sequence, 0, this.sequence, Math.max(0, 0-overlap), ns1.getLength());
+		System.arraycopy(ns2.sequence, 0, this.sequence, Math.max(0, overlap), ns2.getLength());
+		System.out.println(sequence.length);
+		hash= Arrays.hashCode(sequence);
+		
 	}
 	
 	/**
@@ -112,7 +114,7 @@ public class NucleotideString implements Serializable{
 		}
 		this.sequence = new byte[length];
 		for(int i =0;i<length;i++){
-			this.sequence[i+left]=ns.sequence[(i+left)%ns.getLength()];
+			this.sequence[i]=ns.sequence[(i+left)%ns.getLength()];
 		}
 		hash= Arrays.hashCode(sequence);
 	}
@@ -225,7 +227,7 @@ public class NucleotideString implements Serializable{
 		return sb.toString();
 	}
 	
-	public NucleotideString reverseCompliment(){
+	public NucleotideString reverseComplement(){
 		
 			NucleotideString rc = new NucleotideString();
 			rc.sequence=new byte[getLength()];

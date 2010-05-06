@@ -110,19 +110,21 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 					AsyncCallback<SequenceHook> callback = new AsyncCallback<SequenceHook>() {
 						public void onFailure(Throwable caught) {
 							SC.say(caught.getMessage());
+							System.out.println("erroring on save sequence");
 						}
 
 						public void onSuccess(SequenceHook result) {
 							//add circularity property to the newly added sequence
- 							_service.addProperty(result, "isCircular", (Boolean) circular.getValue(), new AsyncCallback<Void>() {
-								public void onFailure(Throwable caught) {
-									SC.say(caught.getMessage());
-								}
-
-								public void onSuccess(Void result) {
-									
-								}
-							});
+ 							//_service.addProperty(result, "isCircular", (Boolean) circular.getValue(), new AsyncCallback<Void>() {
+//								public void onFailure(Throwable caught) {
+//									SC.say(caught.getMessage());
+//									caught.printStackTrace();
+//								}
+//
+//								public void onSuccess(Void result) {
+//									
+//								}
+//							});
 							
 							//set the newly added sequence as the output of the operator
 							Collection<SequenceHook> r =  new LinkedList<SequenceHook>();

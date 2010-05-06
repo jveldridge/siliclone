@@ -59,7 +59,6 @@ public class DigestPropertiesSelector extends PropertiesSelector {
         final Button ok = new Button("OK");
         ok.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
 			
-			@Override
 			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
 				ListGridRecord[] lgra = enzymeGrid.getSelection();
 				Collection<String> col = new LinkedList<String>();	

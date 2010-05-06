@@ -20,7 +20,9 @@ public class PCR2OperatorComputer implements OperatorComputer {
 	public Collection<SequenceHook> computeOutput(
 			Collection<SequenceHook>[] input, Map properties) {
 		PCRTask task = new PCRTask(input, properties);
+		progress = 25;
 		task.compute();
+		progress = 100;
 		return task.getOutput();
 	}
 	

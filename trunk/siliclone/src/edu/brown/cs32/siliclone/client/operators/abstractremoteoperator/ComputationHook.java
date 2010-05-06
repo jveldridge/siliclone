@@ -3,8 +3,6 @@ package edu.brown.cs32.siliclone.client.operators.abstractremoteoperator;
 import java.io.Serializable;
 import java.util.Random;
 
-import edu.brown.cs32.siliclone.server.operators.abstractoperator.OperatorComputer;
-
 public class ComputationHook implements Serializable {
 	
 	private int hash;

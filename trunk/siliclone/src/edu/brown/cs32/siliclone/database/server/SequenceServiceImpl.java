@@ -268,7 +268,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getSequence");
 		}
-		UserServiceImpl.verifyAccess(session, seq);
+		//UserServiceImpl.verifyAccess(session, seq);
 		
 		return SequenceServiceImpl.getSequence(seq);
 	}
@@ -333,7 +333,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				
 				
 			}
-			
+			System.out.println(seqID);
+			System.out.println("Before where saving compressed object");
 			if(seqID==-1){
 			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
@@ -352,6 +353,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID), null);
 			
 		}
+			System.out.println("After indexing sequence");
 			
 			
 			
@@ -371,7 +373,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			}
 			int dataID = res.getInt(1);
 			
-			
+			System.out.println("returning" + dataID);
 			
 			//now index before the hook is returned.
 			
@@ -518,22 +520,26 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	public static SequenceHook saveSequence(String nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, Object> properties, HttpSession session) throws DataServiceException {
+		System.out.println("we should use a debugger");
 		NucleotideString seq = new NucleotideString(nucleotides);
 		return SequenceServiceImpl.saveSequence(seq, features, seqName, properties, session);
 	}
 
 	public SequenceHook saveSequence(String nucleotides, String seqName)
 			throws DataServiceException {
+		System.out.println("Save sequence");
 		return SequenceServiceImpl.saveSequence(nucleotides, seqName, this.getThreadLocalRequest().getSession());
 	}
 	
 	public static SequenceHook saveSequence(String nucleotides, String seqName, HttpSession session)
 	throws DataServiceException {
+		System.out.println("now in method 2");
 		return SequenceServiceImpl.saveSequence(nucleotides, new HashMap<String, Collection<Feature>>(), 
 		seqName, new HashMap<String, Object>(), session);
 	}
 	
 	public SequenceHook findSequence(String name) throws DataServiceException {
+		
 		if(name == null){
 			throw new DataServiceException("null value was passed to SequenceService.findSequence");
 		}
@@ -558,6 +564,29 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
+	public static SequenceHook findDNASequence(String name) throws DataServiceException {
+		if(name == null){
+			throw new DataServiceException("null value was passed to SequenceService.findSequence");
+		}
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select id, seq_id from " + Database.SEQUENCE_DATA + 
+					" where name = ?");
+			statement.setString(1, name);
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Sequence data with name " + name + " not found.");
+			}
+			int dataID = res.getInt(1);
+			int seqID = res.getInt(2);
+			SequenceHook seq = new SequenceHook(dataID, seqID, name);
+			conn.close();
+			return seq;
+		}catch(SQLException e){
+			e.printStackTrace();
+			throw new DataServiceException("Error communicating with database.");
+		}
+	}
 	public List<String> listAvailableSequences() throws DataServiceException {
 		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
 		Connection conn = Database.getConnection();
