@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -40,7 +41,7 @@ public abstract class AbstractRemoteOperatorServiceImpl extends RemoteServiceSer
 	}
 	
 	public ComputationHook startComputation(final Collection<SequenceHook>[] input,
-			final HashMap<String, Object> properties) throws IllegalArgumentException {
+			final Map<String, String> properties) throws IllegalArgumentException {
 		
 		final OperatorComputer oc = getNewOperatorComputer();
 		final ComputationHook ch = new ComputationHook();

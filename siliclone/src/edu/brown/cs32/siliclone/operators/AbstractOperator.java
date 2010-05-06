@@ -3,6 +3,7 @@ package edu.brown.cs32.siliclone.operators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
@@ -21,6 +22,7 @@ public abstract class AbstractOperator implements Operator {
 	private transient VisualizerDisplay visualizerDisplay;
 	private transient Window visualizerDisplayWindow;
 	
+	protected Map<String, String> properties;
 	protected transient OpView view;
 	
 	
@@ -42,7 +44,10 @@ public abstract class AbstractOperator implements Operator {
 		return view;
 	}
 	
-	
+	public void setProperties(Map<String, String> properties)
+	{
+		this.properties = properties;
+	}
 	
 	//TODO better algorithm? if this is used when there already was a loop, goes into infinite loop
 	//used to check if the operator is connected to itself through inputs

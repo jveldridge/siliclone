@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.plugins;
 
+import edu.brown.cs32.siliclone.client.operators.pcr2.PCR2OperatorTemplate;
 import edu.brown.cs32.siliclone.client.operators.slowoperator.SlowOperatorTemplate;
 import edu.brown.cs32.siliclone.client.visualizers2.DataVisualizerTemplate;
 import edu.brown.cs32.siliclone.client.visualizers2.SequenceVisualizerTemplate;
@@ -18,6 +19,7 @@ public class Plugins {
 		operatorAdder.addOperator(new DNAInputTemplate());
 		operatorAdder.addOperator(new DigestTemplate());
 		operatorAdder.addOperator(new SlowOperatorTemplate());
+		operatorAdder.addOperator(new PCR2OperatorTemplate());
 	}
 	
 	public static void defineVisualizers(VisualizerAdder visualizerAdder){
