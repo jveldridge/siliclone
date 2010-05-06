@@ -24,19 +24,16 @@ public class PCR2Operator extends AbstractRemoteOperator {
 		return PCROperatorService.class;
 	}
 
-	@Override
 	public int getNumInputs() {
 		// TODO Auto-generated method stub
 		return 3;
 	}
 
-	@Override
 	public PropertiesSelector getPropertiesSelector() {
 		// TODO Auto-generated method stub
 		return propertiesSelector;	
 	}
 
-	@Override
 	public Widget getWidget() {
 		// TODO Auto-generated method stub
 		return image;

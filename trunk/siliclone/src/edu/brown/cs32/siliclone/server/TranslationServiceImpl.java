@@ -30,6 +30,24 @@ public class TranslationServiceImpl extends RemoteServiceServlet implements Tran
 		String nucleotides = SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession()).toString();
 		return this.translateSequence(nucleotides.substring(2));
 	}
+
+	public String getReverseTranslationOne(SequenceHook seq)
+			throws DataServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getReverseTranslationThree(SequenceHook seq)
+			throws DataServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getReverseTranslationTwo(SequenceHook seq)
+			throws DataServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	private String translateSequence(String toTranslate) {
 		SymbolList symL = null;
