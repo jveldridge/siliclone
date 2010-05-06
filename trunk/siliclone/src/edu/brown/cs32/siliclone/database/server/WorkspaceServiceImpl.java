@@ -83,6 +83,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 				throw new DataServiceException("Workspace data could not be written.");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -219,6 +220,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			return available;
 		}
 		catch(SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		}finally{
 			try{
@@ -242,7 +244,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			PreparedStatement statement = conn.prepareStatement("select id, owner from " + Database.WORKSPACES +
 					" where name = ?");
 			statement.setString(1, name);
-			statement.setInt(2, u.getId());
+			//statement.setInt(2, u.getId());
 			ResultSet res = statement.executeQuery();
 			if(!res.next()){
 				conn.close();
@@ -257,10 +259,11 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			statement = conn.prepareStatement("update " + Database.WORKSPACES + " set data = ? where id = ?");
 			statement.setInt(2, id);
 			Database.saveCompressedObject(statement, 1, w);
-			if( 0 < statement.executeUpdate()){
+			if( 0 >= statement.executeUpdate()){
 				throw new DataServiceException("Workspace could not be updated.");
 			}
 		}catch (SQLException e){
+			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
 			e.printStackTrace();

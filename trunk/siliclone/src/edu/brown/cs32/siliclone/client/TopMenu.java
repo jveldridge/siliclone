@@ -43,6 +43,8 @@ import edu.brown.cs32.siliclone.database.client.WorkspaceServiceAsync;
 public class TopMenu extends ToolStrip {
 	
 	private Siliclone _main;
+	private ToolStripButton saveButton;
+	private ToolStripButton saveAsButton;
 	
 	public TopMenu(final Siliclone main){
         _main = main;
@@ -61,14 +63,21 @@ public class TopMenu extends ToolStrip {
         loadButton.setWidth("100px");
         loadButton.addClickHandler(new LoadClickHandler());
         
-        ToolStripButton saveButton = new ToolStripButton();
+        saveButton = new ToolStripButton();
         saveButton.setTitle("Save");
         saveButton.setWidth("100px");
+        saveButton.setDisabled(true);
         saveButton.addClickHandler(new SaveClickHandler());
+        
+        saveAsButton = new ToolStripButton();
+        saveAsButton.setTitle("Save As");
+        saveAsButton.setWidth("100px");
+        saveAsButton.addClickHandler(new SaveAsClickHandler());
         
         this.addButton(newButton); 
         this.addButton(loadButton); 
         this.addButton(saveButton);
+        this.addButton(saveAsButton);
         
         this.addSeparator();
         
@@ -140,6 +149,7 @@ public class TopMenu extends ToolStrip {
 					}
 
 					public void onSuccess(Workspace result) {
+						saveButton.setDisabled(false);
 						_main.addWorkspace(result);
 					}
 				};
@@ -189,11 +199,11 @@ public class TopMenu extends ToolStrip {
 	/**
 	 * ClickHandler for the "Save" workspace button.
 	 */
-	private class SaveClickHandler implements ClickHandler {
+	private class SaveAsClickHandler implements ClickHandler {
 		private WorkspaceServiceAsync _service;
 		private AsyncCallback<Void> _callback;
 		
-		public SaveClickHandler() {
+		public SaveAsClickHandler() {
 			_service = GWT.create(WorkspaceService.class);
 			_callback = new AsyncCallback<Void>() {
 				public void onFailure(Throwable caught) {
@@ -202,6 +212,8 @@ public class TopMenu extends ToolStrip {
 				}
 
 				public void onSuccess(Void result) {
+					saveButton.setDisabled(false);
+					_main.getCurrentWorkspace().setHasBeenSavedBefore(true);
 					SC.say("Workspace Saved");
 				}
 			};
@@ -225,6 +237,26 @@ public class TopMenu extends ToolStrip {
 			};
 			
 			SC.askforValue("Save workspace...", "Enter a name for this workspace:", dialogCallback);
+		}
+	}
+	
+	private class SaveClickHandler implements ClickHandler {
+		private WorkspaceServiceAsync _service = GWT.create(WorkspaceService.class);
+		
+		public void onClick(ClickEvent event) {
+			Workspace w = _main.getCurrentWorkspace();
+			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+				public void onFailure(Throwable caught) {
+					SC.say(caught.getMessage());
+					caught.printStackTrace();
+				}
+
+				public void onSuccess(Void result) {
+					SC.say("Workspace saved");
+				}
+			};
+
+			_service.overwriteWorkspace(w, w.getName(), callback);
 		}
 	}
 	

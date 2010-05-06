@@ -12,6 +12,7 @@ public class BasicWorkspace implements Workspace {
 	private HashMap <String, Object> properties;
 	private List<Operator> operators;
 	private String name;
+	private boolean hasBeenSavedBefore;
 	
 	@SuppressWarnings("unused")
 	private BasicWorkspace() {
@@ -22,6 +23,7 @@ public class BasicWorkspace implements Workspace {
 		this.properties = new HashMap<String, Object>();
 		this.operators = new ArrayList<Operator>();
 		this.name = name;
+		this.hasBeenSavedBefore = true;
 	}
 
 	public void addOperator(Operator o) {
@@ -54,6 +56,14 @@ public class BasicWorkspace implements Workspace {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean getHasBeenSavedBefore() {
+		return hasBeenSavedBefore;
+	}
+
+	public void setHasBeenSavedBefore(boolean savedBefore) {
+		this.hasBeenSavedBefore = savedBefore;
 	}
 
 
