@@ -18,15 +18,21 @@ import edu.brown.cs32.siliclone.operators.Operator;
 
 public class SequenceVisualizer extends VisualizerCanvas {
 
+	private DrawingArea drawing;
+	
 	public SequenceVisualizer(WorkspaceView workspace, Operator owner) {
 		super(workspace, owner);
 	}
 	
 	public void update() {
-		
+		if (drawing == null) {
+			drawing = new DrawingArea(600,600);
+			this.addChild(drawing);
+		}
+		drawing.clear();
 		Collection<SequenceHook> seqs = owner.getOutputSequence();
-		final DrawingArea drawing = new DrawingArea(600,600);
-		if(seqs == null || seqs.iterator().next() == null){
+		
+		if(seqs == null || seqs.isEmpty()){
 			drawing.add(new Text(20,50, "No sequence"));
 			Text text = new Text( 0, 100, ":(");
 			text.setFillColor("#ff0000");
@@ -41,17 +47,19 @@ public class SequenceVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					System.out.println(result);
+					System.out.println("success with result: " + result);
 					string.setTooltip(result);
 					string.setContents(result);
 					string.setTitle(result);
 					drawing.add(new Text(20,50,result));
 				}
 			};
+			System.out.println("about to make RPC in sequencevisualizer update method");
 			((SequenceServiceAsync) GWT.create(SequenceService.class)).
 						getNucleotides(seqs.iterator().next(), callback);
 		}
-		addChild(drawing);
+
+		this.redraw();
 	}
 	
 	

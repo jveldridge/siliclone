@@ -18,10 +18,9 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
  * 
  * @author jeldridg
  */
+@SuppressWarnings("serial")
 public class NucleotideString implements Serializable{
-	
-	
-	
+
 	private int hash=0;
 	
 	@Override
