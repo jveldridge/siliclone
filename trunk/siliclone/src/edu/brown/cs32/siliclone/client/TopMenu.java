@@ -91,10 +91,10 @@ public class TopMenu extends ToolStrip {
         	private AsyncCallback<Void> callback = new AsyncCallback<Void>(){
 				public void onFailure(Throwable caught) {
 					SC.say(caught.getMessage());
-					main.showLoginScreen();
+					main.logout();
 				}
 				public void onSuccess(Void result) {
-					main.showLoginScreen();
+					main.logout();
 				}
         		
         	};
