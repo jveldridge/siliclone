@@ -93,15 +93,15 @@ public interface SequenceService extends RemoteService {
 	public int getIntegerProperty(SequenceHook seq, String key) throws DataServiceException;
 	
 	
-	/**
-	 * Adds the nucleotide sequence to the database.
-	 * 
-	 * @param nucleotides
-	 * @param features
-	 * @return a SequenceHook that can be used to reference the newly added sequence
-	 */
-	public SequenceHook saveSequence(String nucleotides, Map<String, Collection<Feature>> features, 
-									String seqName,  Map<String,IsSerializable> properties) throws DataServiceException;
+//	/**
+//	 * Adds the nucleotide sequence to the database.
+//	 * 
+//	 * @param nucleotides
+//	 * @param features
+//	 * @return a SequenceHook that can be used to reference the newly added sequence
+//	 */
+//	public SequenceHook saveSequence(String nucleotides, Map<String, Collection<Feature>> features, 
+//									String seqName,  Map<String,IsSerializable> properties) throws DataServiceException;
 
 	public SequenceHook saveSequence (String nucleotides, String seqName) throws DataServiceException;
 	

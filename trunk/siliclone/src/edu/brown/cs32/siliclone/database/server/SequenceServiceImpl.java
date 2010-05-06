@@ -158,7 +158,36 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
 	}
-
+	
+	public static Map<String,Object> getProperties(SequenceHook seq) throws DataServiceException {
+		if(seq == null){
+			throw new DataServiceException("Null value passed to SequenceService.getProperties");
+		}
+		
+		Connection conn = Database.getConnection();
+		try{
+			PreparedStatement statement = conn.prepareStatement("select properties from " +
+					Database.SEQUENCE_DATA + " where id = ?");
+			statement.setInt(1, seq.getDataID());
+			ResultSet res = statement.executeQuery();
+			if(!res.next()){
+				throw new DataServiceException("Sequence could not be found in the database.");
+			}
+			return ((Map<String, Object>) Database.loadCompressedObject(res.getBlob(1)));
+		}catch (SQLException e){
+			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error reading data.");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) { e.printStackTrace(); }
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public static Object getProperty(SequenceHook seq, String key, HttpSession session)
@@ -246,22 +275,23 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	public String getNucleotides(SequenceHook seq) throws DataServiceException {
 		NucleotideString nuc = SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession());
-		return nuc.toString();
+		return nuc.getDisplayString();
 	}
 
 	public int length(SequenceHook seq) throws DataServiceException {
 		return SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession()).getLength();
 	}
 	
-	public SequenceHook saveSequence(NucleotideString nucleotides,
-			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, IsSerializable> properties) throws DataServiceException {
-		return saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
-	}
+//	@Deprecated
+//	public SequenceHook saveSequence(NucleotideString nucleotides,
+//			Map<String, Collection<Feature>> features, String seqName,
+//			Map<String, IsSerializable> properties) throws DataServiceException {
+//		return saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
+//	}
 
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, IsSerializable> properties, HttpSession session) throws DataServiceException {
+			Map<String, Object> properties, HttpSession session) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}
@@ -376,15 +406,16 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		
 	}
 	
-	public SequenceHook saveSequence(String nucleotides,
-			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, IsSerializable> properties) throws DataServiceException {
-		return SequenceServiceImpl.saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
-	}
+//	@Deprecated
+//	public SequenceHook saveSequence(String nucleotides,
+//			Map<String, Collection<Feature>> features, String seqName,
+//			Map<String, IsSerializable> properties) throws DataServiceException {
+//		return SequenceServiceImpl.saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
+//	}
 
 	public static SequenceHook saveSequence(String nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, IsSerializable> properties, HttpSession session) throws DataServiceException {
+			Map<String, Object> properties, HttpSession session) throws DataServiceException {
 		NucleotideString seq = new NucleotideString(nucleotides);
 		return SequenceServiceImpl.saveSequence(seq, features, seqName, properties, session);
 	}
@@ -397,10 +428,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	public static SequenceHook saveSequence(String nucleotides, String seqName, HttpSession session)
 	throws DataServiceException {
 		return SequenceServiceImpl.saveSequence(nucleotides, new HashMap<String, Collection<Feature>>(), 
-		seqName, new HashMap<String, IsSerializable>(), session);
-}
-
-
+		seqName, new HashMap<String, Object>(), session);
+	}
+	
 	public SequenceHook findSequence(String name) throws DataServiceException {
 		if(name == null){
 			throw new DataServiceException("null value was passed to SequenceService.findSequence");

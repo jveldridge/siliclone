@@ -33,8 +33,6 @@ public class TranslationVisualizer extends VisualizerCanvas {
 	public void update() {
 		if (drawing == null) {
 			drawing = new VLayout();
-			drawing.setHeight100();
-			drawing.setWidth100();
 			this.addChild(drawing);
 		}
 		drawing.clear();
@@ -50,7 +48,7 @@ public class TranslationVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					drawing.addMember(new Label("5'3' Frame 1"));
+					drawing.addMember(new Label("5'3' Frame 1:"));
 					drawing.addMember(new Label(result));
 				}
 			};
@@ -66,7 +64,7 @@ public class TranslationVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					drawing.addMember(new Label("5'3' Frame 2"));
+					drawing.addMember(new Label("5'3' Frame 2:"));
 					drawing.addMember(new Label(result));
 				}
 			};
@@ -79,7 +77,7 @@ public class TranslationVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					drawing.addMember(new Label("5'3' Frame 3"));
+					drawing.addMember(new Label("5'3' Frame 3:"));
 					drawing.addMember(new Label(result));
 				}
 			};
