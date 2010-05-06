@@ -288,7 +288,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 //			Map<String, IsSerializable> properties) throws DataServiceException {
 //		return saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
 //	}
-
+	
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, Object> properties, HttpSession session) throws DataServiceException {
@@ -376,14 +376,107 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			//now index before the hook is returned.
 			
 			
-			//now give current user permissions
-			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_USER_PERMISSIONS +
-					"(data_id, user_id) values (?, ?)");
-			statement.setInt(1, dataID);
-			statement.setInt(2, UserServiceImpl.getLoggedIn(session).getId());
-			if (0 >= statement.executeUpdate()){
-				throw new DataServiceException("Error granting user permission to saved sequence.");
+			return new SequenceHook(dataID, seqID, seqName);
+		}catch (SQLException e) {
+			throw new DataServiceException(e.getMessage());
+		} catch (IOException e) {
+			throw new DataServiceException(e.getMessage());
+		} catch (ClassNotFoundException e) {
+			throw new DataServiceException(e.getMessage());
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+		}
+		}
+
+	public static SequenceHook saveSequence(NucleotideString nucleotides,
+			Map<String, Collection<Feature>> features, String seqName,
+			Map<String, Object> properties) throws DataServiceException {
+		if(nucleotides == null || features == null || seqName == null || properties == null){
+			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
+		}
+		
+		Connection conn = Database.getConnection();
+		
+		try{
+			PreparedStatement statement = conn.prepareStatement("select * from " +
+					Database.SEQUENCE_DATA + " where name = ?", Statement.RETURN_GENERATED_KEYS);
+			statement.setString(1, seqName);
+			ResultSet res = statement.executeQuery();
+			if(res.next()){
+				throw new DataServiceException("Sequence data with name " + seqName + " already exists");
+			}
+			
+			int seqID=-1;
+			
+			
+			//first check if a sequence with the same hash exists already. if so, check if its the same
+			
+			PreparedStatement statement2 = conn.prepareStatement("select * from " +
+					Database.SEQUENCES + " where hash = ?", Statement.RETURN_GENERATED_KEYS);
+			statement2.setInt(1, nucleotides.hashCode());
+			System.out.println("hashcode: "+nucleotides.hashCode());
+			ResultSet res2 = statement2.executeQuery();
+			
+			
+			while(res2.next()){
+				Blob b2 = res2.getBlob(2);
+				NucleotideString ns2= (NucleotideString) Database.loadCompressedObject(b2);
+				System.out.println("someindex:"+ns2);
+				if(nucleotides.equals(ns2)){
+					
+					seqID = res2.getInt(1);
+					System.out.println("nucleotide string is already in database, making shallow hequencehook to id "+seqID);
+					
+					//TODO MAKE SURE THAT YOU BLOCK UNTIL THE SEQUENCE IS ACTUALLY INDEXED!!!
+				}
+				
+				
+			}
+			
+			if(seqID==-1){
+			
+			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
+					" (data,indexDepth,hash) values (?,?,?);", Statement.RETURN_GENERATED_KEYS);
+	
+			Database.saveCompressedObject(statement,1, nucleotides);
+			statement.setInt(2,nucleotides.getIndexDepth());
+			statement.setInt(3,nucleotides.hashCode());
+			statement.executeUpdate();
+			
+			res = statement.getGeneratedKeys();
+			if(!res.next()){
+				throw new DataServiceException("Error saving sequence to database.");
+			}
+			seqID = res.getInt(1);
+			TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID), null);
+			
+		}
+			
+			
+			
+			//saving the sequence data
+			
+			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_DATA + 
+					" (name, seq_id, features, properties) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+			statement.setString(1, seqName);
+			statement.setInt(2, seqID);
+			Database.saveCompressedObject(statement, 3, features);
+			Database.saveCompressedObject(statement, 4, properties);
+			statement.executeUpdate();
+			
+			res = statement.getGeneratedKeys();
+			if(!res.next()){
+				throw new DataServiceException("Error saving sequence data to database.");
+			}
+			int dataID = res.getInt(1);
+			
+			
+			
+			//now index before the hook is returned.
 			
 			return new SequenceHook(dataID, seqID, seqName);
 			
@@ -413,6 +506,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 //		return SequenceServiceImpl.saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
 //	}
 
+	
 	public static SequenceHook saveSequence(String nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, Object> properties, HttpSession session) throws DataServiceException {
