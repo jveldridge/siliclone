@@ -6,6 +6,8 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import sun.java2d.pipe.SpanShapeRenderer.Simple;
+
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
@@ -200,8 +202,65 @@ public class NucleotideString implements Serializable{
 	private SearchTreeNode searchTreeRoot;
 	
 	
+	/**
+	 * 
+	 * @param left left index
+	 * @param length length of substring
+	 * @return an array of simplenucleotides
+	 */
+	public SimpleNucleotide[] getSimpleNucleotides(int left, int length){
+		if(length<0) throw new IllegalArgumentException("negative length is meaningless");
+		SimpleNucleotide[] r =new SimpleNucleotide[length];
+		for (int i = 0; i < length; i++) {
+			r[i] = getSimpleNucleotideAt(left+i);
+		}
+		return r;
+	}
+	
+	public String getDisplayString(){
+		StringBuilder sb = new StringBuilder();
+		for(byte b:sequence){
+			sb.append(displayRepresentation[b]);
+		}
+		return sb.toString();
+	}
+	
+	public NucleotideString reverseCompliment(){
+		
+			NucleotideString rc = new NucleotideString();
+			rc.sequence=new byte[getLength()];
+			for (int i =0;i<getLength();i++){
+				switch (getSimpleNucleotideAt(i)) {
+				case a:
+					rc.sequence[getLength()-i-1]=(byte) ComplexNucleotide.thymine.ordinal();
+					break;
+				case t:
+					rc.sequence[getLength()-i-1]=(byte) ComplexNucleotide.adenine.ordinal();
+					break;
+				case c:
+					rc.sequence[getLength()-i-1]=(byte) ComplexNucleotide.guanine.ordinal();
+					break;
+				case g:
+					rc.sequence[getLength()-i-1]=(byte) ComplexNucleotide.cytosine.ordinal();
+					break;
+				}
+				
+				
+			}
+			hash= Arrays.hashCode(sequence);
+			return rc;
+		
+	}
+	
+	/**
+	 * Just like calling getSimpleNucleotides(0, getLength());
+	 */
+	public SimpleNucleotide[] getSimpleNucleotides(){
+		return getSimpleNucleotides(0, getLength());
+	}
+	
 	public Collection<Integer> getPositions(SimpleNucleotide[] searchString,boolean circular) {
-
+		if(getLength()==0||searchString.length==0)return new LinkedList<Integer>();
 		if(!circular){
 			Collection<Integer> positions = getPositions(searchString,true);
 			Collection<Integer> r = new LinkedList<Integer>();
@@ -285,7 +344,7 @@ outerloop: for(Integer i:currentNode.positions){
 	}
 	
 	private static final String[] debugRepresentation= {"A","T","C","G","n4mC","5mC","6mA"};
-	
+	private static final String[] displayRepresentation= {"A","T","C","G","C","C","A"};
 	
 	/**
 	 * 
