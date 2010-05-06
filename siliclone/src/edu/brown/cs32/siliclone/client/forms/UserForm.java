@@ -8,7 +8,6 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
@@ -95,11 +94,7 @@ public class UserForm extends DynamicForm {
 		});
 	}
 	
-	
-	
-	
-	
-	
+
 	private void loadDelete(){
 		final AsyncCallback<Void> callback = new AsyncCallback<Void>(){
 			public void onFailure(Throwable caught) {
@@ -107,7 +102,7 @@ public class UserForm extends DynamicForm {
 			}
 			public void onSuccess(Void result) {
 				SC.say("User account deleted.");
-				main.showLoginScreen();
+				main.logout();
 			}
 		};
 		final BooleanCallback boolCallback = new BooleanCallback(){

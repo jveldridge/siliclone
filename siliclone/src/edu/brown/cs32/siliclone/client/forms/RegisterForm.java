@@ -84,7 +84,7 @@ public class RegisterForm extends DynamicForm {
 						
 						public void onSuccess(User result) {
 							w.hide();
-							main.showMainView();
+							SC.say("Your account has now been registered.\nPlease log in to the right to start using Siliclone!");
 						}
 					};
 					
