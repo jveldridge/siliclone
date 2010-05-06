@@ -102,7 +102,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 		Connection conn = Database.getConnection();
 		
 		try{
-			PreparedStatement statement = conn.prepareStatement("select t2.data from " + 
+			PreparedStatement statement = conn.prepareStatement("select data from " + 
 					Database.WORKSPACES + " where name = ? and owner = ?");
 			statement.setString(1, name);
 			statement.setInt(2, u.getId());
