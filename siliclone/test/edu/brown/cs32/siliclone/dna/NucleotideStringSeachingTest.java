@@ -35,7 +35,7 @@ public class NucleotideStringSeachingTest {
 		
 		//load a file
 		
-		
+		/*
 		File file = new File("/home/tderond/sequence");
 		       StringBuffer contents = new StringBuffer();
 		       BufferedReader reader = null;
@@ -85,19 +85,24 @@ e.printStackTrace();
 		
 		System.out.println("done loading");
 		NucleotideString ns = new NucleotideString(contents.toString());
-		System.out.println("done making class");
+		System.out.println("done making class");*/
+		NucleotideString ns = new NucleotideString("aaaaaaaaaaagag");
 		for(int i =0;i<10;i++){   
 			System.out.println("for "+i);
 		long start = System.nanoTime();
 		ns.makeIndex(i);
 		long point = System.nanoTime();
-		ns.getPositions(new NucleotideString.SimpleNucleotide[]{t,c,g,a,g,c}); //note import static
+		System.out.println(ns.getPositions(new NucleotideString.SimpleNucleotide[]{a,a,a},true)); //note import static
 		long point2 = System.nanoTime();
-		ns.getPositions(new NucleotideString.SimpleNucleotide[]{a,a,a,a,a,a}); //note import static
-		System.out.println(i+":Index:"+(point-start)/1000000);
-		System.out.println(i+":Search1:"+(point2-point)/1000000);
-		System.out.println(i+":Search2:"+(System.nanoTime()-point2)/1000000);
-//		try {
+		System.out.println(ns.getPositions(new NucleotideString.SimpleNucleotide[]{a,a,g},true)); //note import static
+		System.out.println(ns.getPositions(new NucleotideString.SimpleNucleotide[]{g,a,a},true)); //note import static
+
+		
+		//		
+//		System.out.println(i+":Index:"+(point-start)/1000000);
+//		System.out.println(i+":Search1:"+(point2-point)/1000000);
+//		System.out.println(i+":Search2:"+(System.nanoTime()-point2)/1000000);
+////		try {
 //			FileOutputStream bais = new FileOutputStream(new File("/home/tderond/file"+i));
 //			new ObjectOutputStream(bais).writeObject(ns);
 //		} catch (IOException e) {
