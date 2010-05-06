@@ -12,6 +12,7 @@ import edu.brown.cs32.siliclone.client.dna.features.Feature;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
+import edu.brown.cs32.siliclone.dna.NucleotideString.SimpleNucleotide;
 
 public class LigationTask implements Task {
 
@@ -51,27 +52,57 @@ public class LigationTask implements Task {
 				if(circleOne == null || circleOne == false)
 				{
 					Integer rightOne = (Integer)one.properties.get("rightOverhang");
+					if(rightOne == null) {
+						one.properties.put("rightOverhang", 0);
+						rightOne = 0;
+					}
 					Integer leftOne = (Integer)one.properties.get("leftOverhang");
+					if(leftOne == null) {
+						one.properties.put("leftOverhang", 0);
+						leftOne = 0;
+					}
 					for(Sequence two : second)
 					{	
 						Boolean circleTwo = (Boolean)two.properties.get("isCircular");
 						System.out.println(circleTwo);
 						if(circleTwo == null || circleTwo == false) {
 							Integer rightTwo = (Integer)two.properties.get("rightOverhang");
+							if(rightTwo == null) {
+								two.properties.put("rightOverhang", 0);
+								rightTwo = 0;
+							}
 							Integer leftTwo = (Integer)two.properties.get("leftOverhang");
+							if(leftTwo == null) {
+								two.properties.put("leftOverhang", 0);
+								leftTwo = 0;
+							}
 							Sequence forward = new Sequence(null, new HashMap<String, Object>());
 							Sequence reverse = new Sequence(null, new HashMap<String, Object>());
-							//First check if the right side of sequence one ligates to anything:
-							if(rightOne == null || rightOne == 0)
-							{
-								if(leftTwo == null || leftTwo == 0) {
-									forward.str = new NucleotideString(one.str, two.str);
+							
+							//First check if the right side of sequence one ligates to anything:							
+							if(leftTwo == rightOne) {
+								boolean overlap = true;
+								for(int i = 0; i < Math.abs(rightOne); i++)
+								{
+									if(one.str.getSimpleNucleotideAt(one.str.getLength() - Math.abs(rightOne) + i) != two.str.getSimpleNucleotideAt(i).opposite())
+										overlap = false;
+								}
+								if(overlap == true) {
+									forward.str = new NucleotideString(one.str, two.str, one.str.getLength() - Math.abs(rightOne));
 									forward.properties.put("isCircular", false);
 									forward.properties.put("rightOverhang", rightTwo);
 									forward.properties.put("leftOverhang", leftOne);
 								}
-								if(rightTwo == null || rightTwo == 0) {
-									reverse.str = new NucleotideString(one.str, two.str.reverseComplement());
+							}
+							if(rightTwo == rightOne) {
+								boolean overlap = true;
+								NucleotideString rc = two.str.reverseComplement();
+								for(int i = 0; i < Math.abs(rightOne); i++) {
+									if(one.str.getSimpleNucleotideAt(one.str.getLength() - Math.abs(rightOne) + i) != rc.getSimpleNucleotideAt(i).opposite())
+										overlap = false;
+								}
+								if(overlap == true) {
+									reverse.str = new NucleotideString(one.str, rc, one.str.getLength() - Math.abs(rightOne));
 									reverse.properties.put("isCircular", false);
 									reverse.properties.put("rightOverhang", leftTwo);
 									reverse.properties.put("leftOverhang", leftOne);
@@ -79,55 +110,68 @@ public class LigationTask implements Task {
 							}
 							
 							//Then if the left side of sequence one ligates
-							if(leftOne == null || leftOne == 0)
-							{
-								if(rightTwo == null || rightTwo == 0) {
+
+							if(leftOne == rightTwo) {
+								boolean overlap = true;
+								for(int i = 0; i < Math.abs(leftOne); i++)
+									if(one.str.getSimpleNucleotideAt(i) != two.str.getSimpleNucleotideAt(two.str.getLength() - Math.abs(leftOne) + i))
+										overlap = false;
+								if(overlap == true)
 									if(forward.str == null) {
-										forward.str = new NucleotideString(two.str, one.str);
+										forward.str = new NucleotideString(two.str, one.str, two.str.getLength() - Math.abs(leftOne));
 										forward.properties.put("isCircular", false);
 										forward.properties.put("rightOverhang", rightOne);
 										forward.properties.put("leftOverhang", leftTwo);
 									}
 									//If forward != null, forward was created in the first ligation - now must circularize
 									else {
+										if(leftOne != 0) forward.str = new NucleotideString(forward.str, 0, forward.str.getLength() - Math.abs(leftOne));
 										forward.properties.put("isCircular", true);
 										forward.properties.put("rightOverhang", 0);
 										forward.properties.put("leftOverhang", 0);
 									}
-									if(leftTwo == null || leftTwo == 0) {
-										if(reverse.str == null)
-										{
-											reverse.str = new NucleotideString(two.str.reverseComplement(), one.str);
-											reverse.properties.put("isCircular", false);
-											reverse.properties.put("rightOverhang", rightOne);
-											reverse.properties.put("leftOverhang", rightTwo);
-										}
-										else {
-											reverse.properties.put("isCircular", true);
-											reverse.properties.put("rightOverhang", 0);
-											reverse.properties.put("leftOverhang", 0);										}
+							}
+							if(leftOne == leftTwo) {
+								boolean overlap = true;
+								NucleotideString rc = two.str.reverseComplement();
+								for(int i = 0; i < Math.abs(leftOne); i++)
+								if(one.str.getSimpleNucleotideAt(i) != rc.getSimpleNucleotideAt(rc.getLength() - Math.abs(leftOne) + i))
+									overlap = false;
+								if(overlap == true) {
+									if(reverse.str == null)
+									{
+										reverse.str = new NucleotideString(rc, one.str, rc.getLength() - Math.abs(leftOne));
+										reverse.properties.put("isCircular", false);
+										reverse.properties.put("rightOverhang", rightOne);
+										reverse.properties.put("leftOverhang", rightTwo);
 									}
-										
+									else {
+										if(leftOne != 0) reverse.str = new NucleotideString(reverse.str, 0, reverse.str.getLength() - Math.abs(leftOne));
+										reverse.properties.put("isCircular", true);
+										reverse.properties.put("rightOverhang", 0);
+										reverse.properties.put("leftOverhang", 0);										
+									}
 								}
 							}
+							
 							Map<String, Collection<Feature>> fMap = new HashMap<String, Collection<Feature>>();
 							Map<String, Collection<Feature>> rMap = new HashMap<String, Collection<Feature>>();
 							Random rng = new Random();
-							String fName = Integer.toString(forward.str.hashCode() + rng.nextInt());
-							String rName = Integer.toString(reverse.str.hashCode() + rng.nextInt());
 							if(forward.str != null) {
+								String fName = Integer.toString(forward.str.hashCode() + rng.nextInt());
 								SequenceServiceImpl.saveSequence(forward.str, fMap, fName, forward.properties);
 								output.add(SequenceServiceImpl.findDNASequence(fName));
 							}
 							if(reverse.str != null) {
+								String rName = Integer.toString(reverse.str.hashCode() + rng.nextInt());
 								SequenceServiceImpl.saveSequence(reverse.str, rMap, rName, reverse.properties);
 								output.add(SequenceServiceImpl.findDNASequence(rName));
 							}
-						}
-					}
-				}
-			}
-		}
+						}//end of check that two isn't circular
+					}//end of loop through input 2
+				}//end of check that one isn't circular
+			}//end of loop through input 1
+		}//end of try
 		catch (DataServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();	
