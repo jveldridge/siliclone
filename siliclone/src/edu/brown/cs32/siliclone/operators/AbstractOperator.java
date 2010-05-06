@@ -9,8 +9,9 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.CloseClientEvent;
 
+import edu.brown.cs32.siliclone.client.WorkspaceView;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
-import edu.brown.cs32.siliclone.client.visualizers.VisualizerDisplay;
+import edu.brown.cs32.siliclone.client.visualizers2.VisualizerDisplay;
 
 @SuppressWarnings("serial")
 public abstract class AbstractOperator implements Operator {
@@ -24,22 +25,26 @@ public abstract class AbstractOperator implements Operator {
 	
 	protected transient OpView view;
 	
-	public void init() {
-		visualizerDisplay = new VisualizerDisplay(this);
-	}
 	
 	public void setProgress(int percent){
 		if(view != null){
 			view.setProgress(percent);
 		}
 	}
+	public void init(){}
 	
 	public void setOpView(OpView view){
 		this.view = view;
+		
+		visualizerDisplay = new VisualizerDisplay(view.getWorkspaceView(), this);	
 	}
+	
+	
 	public OpView getOpView(){
 		return view;
 	}
+	
+	
 	
 	//TODO better algorithm? if this is used when there already was a loop, goes into infinite loop
 	//used to check if the operator is connected to itself through inputs
@@ -146,13 +151,12 @@ public abstract class AbstractOperator implements Operator {
 			visualizerDisplayWindow.setCanDragResize(true);
 			
 			visualizerDisplayWindow.addCloseClickHandler(new CloseClickHandler() {
-				
+
 				public void onCloseClick(CloseClientEvent event) {
 					visualizerDisplayWindow.hide();
-					
 				}
 			});
-			
+
 		}
 		visualizerDisplayWindow.show();
 		

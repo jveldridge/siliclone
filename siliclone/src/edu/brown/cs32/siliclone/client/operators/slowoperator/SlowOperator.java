@@ -52,8 +52,9 @@ public class SlowOperator extends AbstractRemoteOperator {
 		return w;
 	}
 
+
 	public void init() {
-		super.init();
+		
 	}
 
 }
