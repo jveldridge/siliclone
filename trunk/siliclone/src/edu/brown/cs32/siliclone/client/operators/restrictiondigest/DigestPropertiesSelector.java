@@ -46,14 +46,14 @@ public class DigestPropertiesSelector extends PropertiesSelector {
         enzymeGrid.setHeight(200);
         enzymeGrid.setShowAllRecords(true);
         enzymeGrid.setSelectionType(SelectionStyle.SIMPLE);
-        enzymeGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);
+        enzymeGrid.setSelectionAppearance(SelectionAppearance.ROW_STYLE);
 
         
         
         
         ListGridField nameField = new ListGridField("enzymeName", "Restriction Enzyme");
         enzymeGrid.setFields(nameField);
-        enzymeGrid.setData(new ListGridRecord[]{new EnzymeRecord("NdeI"),new EnzymeRecord("SmaI"),new EnzymeRecord("HindIII")});
+        enzymeGrid.setData(new ListGridRecord[]{new EnzymeRecord("NdeI"),new EnzymeRecord("PvuII"),new EnzymeRecord("XhoI"),new EnzymeRecord("SmaI"),new EnzymeRecord("HindIII")});
         addMember(enzymeGrid);
         
         
@@ -62,11 +62,8 @@ public class DigestPropertiesSelector extends PropertiesSelector {
 			
 			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
 				ListGridRecord[] lgra = enzymeGrid.getSelection();
-				Collection<String> col = new LinkedList<String>();	
-				for (ListGridRecord listGridRecord : lgra) {
-					col.add(listGridRecord.getAttribute("enzymeName"));
-				}
-				operator.getProperties().put("enzymes",col);
+
+				operator.getProperties().put("enzyme",lgra[0]);
 				operator.calculate();
 			}
 		});
