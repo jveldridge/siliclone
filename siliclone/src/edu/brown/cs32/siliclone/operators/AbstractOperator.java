@@ -1,15 +1,13 @@
 package edu.brown.cs32.siliclone.operators;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
 
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.CloseClientEvent;
 
-import edu.brown.cs32.siliclone.client.WorkspaceView;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.client.visualizers2.VisualizerDisplay;
 
@@ -18,7 +16,7 @@ public abstract class AbstractOperator implements Operator {
 	
 	protected int x, y;
 	protected Operator[] inputs = new Operator[getNumInputs()];
-	protected Collection<SequenceHook> outputSequence; 
+	protected Collection<SequenceHook> outputSequence = new LinkedList<SequenceHook>();
 	protected Collection<Operator> children = new ArrayList<Operator>();
 	private transient VisualizerDisplay visualizerDisplay;
 	private transient Window visualizerDisplayWindow;
@@ -167,9 +165,20 @@ public abstract class AbstractOperator implements Operator {
 			}
 			
 			if (i == inputs.length - 1) {
+				//calculate new output sequence
 				this.calculate();
-				updateVisualizations();
 			}
+		}
+	}
+	
+	public void onCompletion() {
+		System.out.println("onCompletion called");
+		//update visualizations
+		updateVisualizations();
+		
+		//propagate calculations
+		for (Operator op : children) {
+			op.calculate();
 		}
 	}
 }

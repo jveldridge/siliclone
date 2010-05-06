@@ -86,6 +86,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		
 		final CheckboxItem circular = new CheckboxItem("Circular?");
 		circular.setEndRow(true);
+		circular.setValue(false);
 		
 		final TextAreaItem manualSequence = new TextAreaItem("Sequence");
 		manualSequence.setEndRow(true);
@@ -119,7 +120,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 								}
 
 								public void onSuccess(Void result) {
-
+									
 								}
 							});
 							
@@ -127,6 +128,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 							Collection<SequenceHook> r =  new LinkedList<SequenceHook>();
 							r.add(result);
 							_operator.setSequence(r);
+							_operator.onCompletion();
 						}
 					};
 					
@@ -188,6 +190,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 
 						public void onSuccess(Collection<SequenceHook> result) {
 							_operator.setSequence(result);
+							_operator.onCompletion();
 							DNAInputPropertiesSelector.this.hide();
 						}
 					};
@@ -306,6 +309,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 						Collection<SequenceHook> outputCollection = new ArrayList<SequenceHook>();
 						outputCollection.add(result);
 						_operator.setSequence(outputCollection);
+						_operator.onCompletion();
 						DNAInputPropertiesSelector.this.hide();
 					}
 				};

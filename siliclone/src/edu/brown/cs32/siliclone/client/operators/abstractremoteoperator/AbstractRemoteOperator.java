@@ -20,12 +20,6 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 	
 	transient private ComputationHook computationHook;
 	
-	private void propagateCalculations(){
-		for (Operator op : children) {
-			op.calculate();
-		}
-	}
-	
 	private void startTimer(){
 		if(checkProgressTimer==null){
 			checkProgressTimer=new Timer() {
@@ -56,8 +50,7 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 
 						public void onSuccess(Collection<SequenceHook> result) {
 							outputSequence = result;
-							propagateCalculations();
-							
+							onCompletion();							
 						}
 					});
 				}else{

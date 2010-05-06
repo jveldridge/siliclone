@@ -12,6 +12,8 @@ import edu.brown.cs32.siliclone.operators.Operator;
 
 public class DataVisualizer extends VisualizerCanvas {
 
+	private DrawingArea drawing;
+	
 	public DataVisualizer(WorkspaceView workspace, Operator owner) {
 		super(workspace, owner);
 	}
@@ -21,10 +23,14 @@ public class DataVisualizer extends VisualizerCanvas {
 	}
 
 	public void update() {
+		if(drawing == null){
+			drawing = new DrawingArea(600,600);
+			addChild(drawing);
+		}
+		drawing.clear();
 		Collection<SequenceHook> seqs = owner.getOutputSequence();
-		DrawingArea drawing = new DrawingArea(600,600);
-		if(seqs == null){
-			System.out.println("got here");
+		//DrawingArea drawing = new DrawingArea(600,600);
+		if(seqs.isEmpty()){
 			drawing.add(new Ellipse(50 , 50, 45, 20));
 			drawing.add(new Text(20,200, "Name: Sequence 0"));
 			drawing.add(new Text(20, 300, "Data ID: 0"));
@@ -36,7 +42,8 @@ public class DataVisualizer extends VisualizerCanvas {
 			drawing.add(new Text(20, 300, "Data ID: " + seq.getDataID()));
 			drawing.add(new Text(20,400, "Sequence ID: " + seq.getSeqID()));
 		}
-		addChild(drawing);
+		this.redraw();
+		//addChild(drawing);
 	}
 
 }

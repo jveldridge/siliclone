@@ -25,9 +25,10 @@ public class VisualizerDisplay extends Canvas {
 	
 	
 	public VisualizerDisplay(WorkspaceView w, Operator o){
+		System.out.println("new visualizerdisplay constructed");
 		workspace = w;
 		owner = o;
-		Plugins.defineVisualizers(visualizerAdder);
+		
 		
 
 		final Tab buttonTab = new Tab("New Visualizers");
@@ -41,6 +42,7 @@ public class VisualizerDisplay extends Canvas {
 			b.addClickHandler(new ClickHandler(){
 				public void onClick(ClickEvent event) {
 					VisualizerCanvas v = template.makeVisualizer(workspace, owner);
+					visualizers.add(v);
 					v.update();
 					Tab t = new Tab(template.getName());
 					t.setPane(v);
@@ -76,4 +78,8 @@ public class VisualizerDisplay extends Canvas {
 			return this.templates;
 		}
 	};
+	
+	static {
+		Plugins.defineVisualizers(visualizerAdder);
+	}
 }
