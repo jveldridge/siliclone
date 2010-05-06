@@ -39,6 +39,7 @@ public class SequenceVisualizer extends VisualizerCanvas {
 			AsyncCallback<String> callback = new AsyncCallback<String>() {
 				public void onFailure(Throwable caught) {
 					SC.say(caught.getMessage());
+					System.out.println("failing in Sqeuencevsiauli");
 				}
 				
 				public void onSuccess(String result) {

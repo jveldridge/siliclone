@@ -375,6 +375,14 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			
 			//now index before the hook is returned.
 			
+			//now give the current user permissions
+			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_USER_PERMISSIONS + " (data_id, user_id) values (?, ?)");
+			statement.setInt(1, dataID);
+			statement.setInt(2, UserServiceImpl.getLoggedIn(session).getId());
+			if (0 >= statement.executeUpdate()) {
+				throw new DataServiceException("Error granting user permission to saved sequence");
+			}
+			
 			
 			return new SequenceHook(dataID, seqID, seqName);
 		}catch (SQLException e) {

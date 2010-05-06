@@ -564,6 +564,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			if(!res.next()){
 				statement = conn.prepareStatement("select * from " + 
 						Database.SEQUENCE_USER_PERMISSIONS + " where data_id = ? and user_id = ? ");
+				System.out.println("data_id: " + seq.getDataID() + "; user_id: " + u.getId()); 
 				statement.setInt(1, seq.getDataID());
 				statement.setInt(2, u.getId());
 				res = statement.executeQuery();
