@@ -56,11 +56,17 @@ public class LoginScreen extends HLayout {
 			introduction.setShowHeader(false);
 		//	introduction.setCanDragReposition(true);
 		//	introduction.setCanDragResize(true);
+			introduction.setCanDrag(false);
+			introduction.setCanDragReposition(false);
 			introduction.setWidth(400);
-			introduction.setHeight(150);
+			introduction.setHeight(200);
 			introduction.setAutoCenter(true);
-			Label titleLabel = new Label("<h3>Siliclone is an in-silico molecular biology cloning simulator and productivity tool.  Using Siliclone, you can...</h3>" +
-					"<h2>To get started using Siliclone, login to the right or click below to register for an account!</h2>");
+			Label titleLabel = new Label("<h3>Siliclone is an in-silico molecular biology cloning " +
+					"simulator and productivity tool.  Using Siliclone, you can rapidly develop cloning strategies" +
+					" in workspaces by linking together logical operators. You can then share these workspaces " +
+					"with other users.</h3>" +
+					"<h2>To get started using Siliclone, login to the right or click below to register" +
+					" for an account!</h2>");
 			titleLabel.setBackgroundColor("white");
 			titleLabel.setAlign(Alignment.CENTER);
 			introduction.addItem(titleLabel);
