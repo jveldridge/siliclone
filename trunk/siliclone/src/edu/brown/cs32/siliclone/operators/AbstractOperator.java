@@ -68,16 +68,7 @@ public abstract class AbstractOperator implements Operator {
 		input.addChild(this);
 		inputs[slotNum] = input;
 		
-		//if all inputs have been connected, calculate
-		for (int i = 0; i < inputs.length; i++) {
-			if (inputs[i] == null) {
-				break;
-			}
-			
-			if (i == inputs.length - 1) {
-				this.calculate();
-			}
-		}
+		this.update();
 
 	}
 
@@ -150,6 +141,9 @@ public abstract class AbstractOperator implements Operator {
 			visualizerDisplayWindow.setCanDragReposition(true);
 			visualizerDisplayWindow.setCanDragResize(true);
 			
+			view.addPeer(visualizerDisplayWindow);
+			visualizerDisplayWindow.setKeepInParentRect(true);
+			
 			visualizerDisplayWindow.addCloseClickHandler(new CloseClickHandler() {
 
 				public void onCloseClick(CloseClientEvent event) {
@@ -162,5 +156,20 @@ public abstract class AbstractOperator implements Operator {
 		
 	}
 	
+	public void updateVisualizations(){
+		visualizerDisplay.update();
+	}
 	
+	public void update(){
+		for (int i = 0; i < inputs.length; i++) {
+			if (inputs[i] == null) {
+				return;
+			}
+			
+			if (i == inputs.length - 1) {
+				this.calculate();
+				updateVisualizations();
+			}
+		}
+	}
 }
