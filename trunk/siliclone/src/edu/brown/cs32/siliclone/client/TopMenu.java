@@ -126,11 +126,15 @@ public class TopMenu extends ToolStrip {
 			_dialog = new Dialog();
 			_dialog.setSize("400px","300px");
 			_dialog.setTitle("Load workspace...");
+			_dialog.setIsModal(true);
+			_dialog.setShowModalMask(true);
+			
 			
 			_sequenceGrid = new ListGrid();
 			_sequenceGrid.setSelectionType(SelectionStyle.SINGLE);
 			_sequenceGrid.setShowAllRecords(true);
-			_sequenceGrid.addSelectionChangedHandler(new SelectionChangedHandler() {			
+			_sequenceGrid.setEmptyMessage("Loading saved workspaces...");
+			_sequenceGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 				public void onSelectionChanged(SelectionEvent event) {
 					if (_sequenceGrid.getSelection().length > 0) {
 						_workspaceToLoad = _sequenceGrid.getSelection()[0].getAttribute("name");
@@ -165,11 +169,12 @@ public class TopMenu extends ToolStrip {
 			
 			_dialog.addItem(_sequenceGrid);
 			_dialog.addItem(okButton);
-								
+						
 			_service = GWT.create(WorkspaceService.class);
 		}
 		
 		public void onClick(ClickEvent event) {	
+			_dialog.show();		
 			AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 				public void onFailure(Throwable caught) {
 					SC.say("failure");
@@ -183,7 +188,8 @@ public class TopMenu extends ToolStrip {
 						data[i].setAttribute("name", result.get(i));
 					}
 					_sequenceGrid.setData(data);
-					_dialog.show();
+					_sequenceGrid.setEmptyMessage("No saved workspaces found.");
+					
 				}
 				
 			};
@@ -305,6 +311,7 @@ public class TopMenu extends ToolStrip {
 			//w.setAutoSize(true);
 			w.setAutoCenter(true);
 			w.show();
+			
 		}
 	}
 }
