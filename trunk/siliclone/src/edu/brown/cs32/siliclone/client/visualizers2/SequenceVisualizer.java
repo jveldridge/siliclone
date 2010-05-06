@@ -2,13 +2,12 @@ package edu.brown.cs32.siliclone.client.visualizers2;
 
 import java.util.Collection;
 
-import org.vaadin.gwtgraphics.client.DrawingArea;
-import org.vaadin.gwtgraphics.client.shape.Text;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Label;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.layout.VLayout;
 
 import edu.brown.cs32.siliclone.client.WorkspaceView;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
@@ -18,27 +17,23 @@ import edu.brown.cs32.siliclone.operators.Operator;
 
 public class SequenceVisualizer extends VisualizerCanvas {
 
-	private DrawingArea drawing;
-	
+	private Label contents;
 	public SequenceVisualizer(WorkspaceView workspace, Operator owner) {
 		super(workspace, owner);
 	}
 	
 	public void update() {
-		if (drawing == null) {
-			drawing = new DrawingArea(600,600);
-			this.addChild(drawing);
+		if(contents == null){
+			VLayout layout = new VLayout();
+			contents = new Label();
+			contents.setText("");
+			layout.addMember(contents);
+			this.addChild(layout);
 		}
-		drawing.clear();
 		Collection<SequenceHook> seqs = owner.getOutputSequence();
 		
 		if(seqs == null || seqs.isEmpty()){
-			drawing.add(new Text(20,50, "No sequence"));
-			Text text = new Text( 0, 100, ":(");
-			text.setFillColor("#ff0000");
-			text.setFontSize(18);
-			drawing.add(text);
-		
+			contents.setText("Add more input to get results from this operator.");
 		}else {
 			final Button string = new Button("hi");
 			AsyncCallback<String> callback = new AsyncCallback<String>() {
@@ -47,19 +42,14 @@ public class SequenceVisualizer extends VisualizerCanvas {
 				}
 				
 				public void onSuccess(String result) {
-					System.out.println("success with result: " + result);
-					string.setTooltip(result);
-					string.setContents(result);
-					string.setTitle(result);
-					drawing.add(new Text(20,50,result));
+					contents.setText(result);
 				}
 			};
 			System.out.println("about to make RPC in sequencevisualizer update method");
 			((SequenceServiceAsync) GWT.create(SequenceService.class)).
 						getNucleotides(seqs.iterator().next(), callback);
 		}
-
-		this.redraw();
+  		this.redraw();
 	}
 	
 	
