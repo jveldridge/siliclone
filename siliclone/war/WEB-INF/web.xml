@@ -79,6 +79,16 @@
     <url-pattern>/siliclone/slowOperatorService</url-pattern>
   </servlet-mapping>
   
+<servlet>
+        <servlet-name>pcrOperatorServiceImpl</servlet-name>
+        <servlet-class>edu.brown.cs32.siliclone.server.operators.pcr2.PCR2OperatorServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>pcrOperatorServiceImpl</servlet-name>
+    <url-pattern>/siliclone/pcrOperatorService</url-pattern>
+  </servlet-mapping>
+
       <servlet>
         <servlet-name>translationService</servlet-name>
         <servlet-class>edu.brown.cs32.siliclone.server.TranslationServiceImpl</servlet-class>

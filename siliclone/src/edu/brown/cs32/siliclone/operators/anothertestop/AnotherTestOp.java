@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;
 
 import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
-import edu.brown.cs32.siliclone.dna.DNASequence;
 import edu.brown.cs32.siliclone.operators.AbstractOperator;
 import edu.brown.cs32.siliclone.operators.Operator;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
