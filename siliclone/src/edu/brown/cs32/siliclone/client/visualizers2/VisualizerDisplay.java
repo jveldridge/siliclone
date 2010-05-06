@@ -7,7 +7,6 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
@@ -22,7 +21,6 @@ public class VisualizerDisplay extends Canvas {
 	private final TabSet tabs = new TabSet();
 	private WorkspaceView workspace;
 	private Operator owner;
-	
 	
 	public VisualizerDisplay(WorkspaceView w, Operator o){
 		System.out.println("new visualizerdisplay constructed");
@@ -61,6 +59,9 @@ public class VisualizerDisplay extends Canvas {
 		tabs.setWidth100();
 		
 		this.addChild(tabs);
+		
+		
+		
 	}
 	
 	public void update(){
@@ -68,6 +69,7 @@ public class VisualizerDisplay extends Canvas {
 			v.update();
 		}
 	}
+	
 	
 	private static final VisualizerAdder visualizerAdder = new VisualizerAdder(){
 		private Collection<VisualizerTemplate> templates = new ArrayList<VisualizerTemplate>();
