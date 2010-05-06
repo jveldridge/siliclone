@@ -83,6 +83,8 @@ public interface Operator extends Serializable {
 	
 	public Widget getWidget();
 	
+	public Map getProperties();
+	
 	
 	/**
 	 * Runs the Operation that this Operator controls.  This method simply calls

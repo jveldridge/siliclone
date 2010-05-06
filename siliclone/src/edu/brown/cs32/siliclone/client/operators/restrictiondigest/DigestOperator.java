@@ -1,16 +1,19 @@
-package edu.brown.cs32.siliclone.operators.rd;
+package edu.brown.cs32.siliclone.client.operators.restrictiondigest;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Img;
 
+import edu.brown.cs32.siliclone.client.operators.abstractremoteoperator.AbstractRemoteOperator;
+import edu.brown.cs32.siliclone.client.operators.abstractremoteoperator.AbstractRemoteOperatorServiceAsync;
 import edu.brown.cs32.siliclone.client.workspace.CompletedListener;
 import edu.brown.cs32.siliclone.operators.AbstractOperator;
 import edu.brown.cs32.siliclone.operators.Operator;
 import edu.brown.cs32.siliclone.operators.PropertiesSelector;
 
 @SuppressWarnings("serial")
-public class DigestOperator extends AbstractOperator {
+public class DigestOperator extends AbstractRemoteOperator {
 	
 	transient private Widget image;
 	transient private DigestPropertiesSelector propertiesSelector;
@@ -25,20 +28,6 @@ public class DigestOperator extends AbstractOperator {
 		propertiesSelector = new DigestPropertiesSelector(this);
 	}
 
-	public void addCompletedListener(CompletedListener l) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void calculate() {
-		SC.say("Restriction digest calculate method called");
-	}
-
-	public void connect(Operator adjacent) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public PropertiesSelector getPropertiesSelector() {
 		return propertiesSelector;
 	}
@@ -48,7 +37,12 @@ public class DigestOperator extends AbstractOperator {
 	}
 
 	public int getNumInputs() {
-		return 3;
+		return 1;
+	}
+
+	@Override
+	protected AbstractRemoteOperatorServiceAsync getServiceAsyncObject() {
+		return GWT.create(DigestOperatorService.class);
 	}
 
 }

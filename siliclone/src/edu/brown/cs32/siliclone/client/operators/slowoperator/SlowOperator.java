@@ -55,7 +55,7 @@ public class SlowOperator extends AbstractRemoteOperator {
 		
 	}
 
-	@Override
+
 	protected AbstractRemoteOperatorServiceAsync getServiceAsyncObject() {
 		
 		return GWT.create(SlowOperatorService.class);

@@ -7,7 +7,7 @@ import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 
 public interface OperatorComputer {
 
-	public Collection<SequenceHook> computeOutput(Collection<SequenceHook>[] input, Map<String, String> properties);
+	public Collection<SequenceHook> computeOutput(Collection<SequenceHook>[] input, Map properties);
 	
 	public int getProgress();
 	
