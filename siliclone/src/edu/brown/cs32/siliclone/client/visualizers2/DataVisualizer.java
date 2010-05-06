@@ -31,10 +31,11 @@ public class DataVisualizer extends VisualizerCanvas {
 		Collection<SequenceHook> seqs = owner.getOutputSequence();
 		//DrawingArea drawing = new DrawingArea(600,600);
 		if(seqs.isEmpty()){
-			drawing.add(new Ellipse(50 , 50, 45, 20));
-			drawing.add(new Text(20,200, "Name: Sequence 0"));
-			drawing.add(new Text(20, 300, "Data ID: 0"));
-			drawing.add(new Text(20,400, "Sequence ID: 0"));
+			drawing.add(new Text(20,50, "No sequence"));
+			Text text = new Text( 0, 100, ":(");
+			text.setFillColor("#ff0000");
+			text.setFontSize(18);
+			drawing.add(text);
 		}else{
 			SequenceHook seq = seqs.iterator().next();
 			drawing.add(new Ellipse(50 , 50, 45, 20));
