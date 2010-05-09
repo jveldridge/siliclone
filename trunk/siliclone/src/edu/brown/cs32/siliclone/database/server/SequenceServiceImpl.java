@@ -28,8 +28,12 @@ import edu.brown.cs32.siliclone.database.client.SequenceService;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.server.TasksDelegation;
 
+/**
+ * SequenceService is responsible for communicating with the database about sequence data. 
+ */
 @SuppressWarnings("serial")
 public class SequenceServiceImpl extends RemoteServiceServlet implements SequenceService{
+	
 	
 	@SuppressWarnings("unchecked")
 	public void addFeature(SequenceHook seq, Feature toAdd)
@@ -159,6 +163,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Map<String,Object> getProperties(SequenceHook seq) throws DataServiceException {
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperties");
@@ -199,27 +204,11 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		
 		Connection conn = Database.getConnection();
 		try{
-			PreparedStatement statement = conn.prepareStatement("select properties from " +
-					Database.SEQUENCE_DATA + " where id = ?");
-			statement.setInt(1, seq.getDataID());
-			ResultSet res = statement.executeQuery();
-			if(!res.next()){
-				throw new DataServiceException("Sequence could not be found in the database.");
-			}
-			IsSerializable property = 
-				((Map<String, IsSerializable>) Database.loadCompressedObject(res.getBlob(1))).get(key);
+			IsSerializable property = (IsSerializable) getProperties(seq).get(key);
 			if(property == null){
 				throw new DataServiceException("Sequence property not found with key " + key);
 			}
 			return property;
-		}catch (SQLException e){
-			throw new DataServiceException("Error connecting to database.");
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new DataServiceException("Error reading data.");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new DataServiceException("Error reading data.");
 		}finally{
 			try {
 				conn.close();
@@ -227,7 +216,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
-	public Cache nucleotideStringCache; //TODO make cache
+	//public Cache nucleotideStringCache; //TODO make cache
+
 	
 	public static NucleotideString getSequence(SequenceHook seq) throws DataServiceException {
 		if(seq == null){
@@ -282,22 +272,69 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		return SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession()).getLength();
 	}
 	
-//	@Deprecated
-//	public SequenceHook saveSequence(NucleotideString nucleotides,
-//			Map<String, Collection<Feature>> features, String seqName,
-//			Map<String, IsSerializable> properties) throws DataServiceException {
-//		return saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
-//	}
 	
+	
+	
+	
+	
+	private static int saveNucleotideString(NucleotideString nucleotides, Connection conn)
+				throws DataServiceException{
+		try{
+			PreparedStatement statement = conn.prepareStatement("select * from " +
+					Database.SEQUENCES + " where hash = ?", Statement.RETURN_GENERATED_KEYS);
+			statement.setInt(1, nucleotides.hashCode());
+			System.out.println("hashcode: "+nucleotides.hashCode());
+			ResultSet res = statement.executeQuery();
+			while(res.next()){
+				Blob b2 = res.getBlob(2);
+				NucleotideString ns = (NucleotideString) Database.loadCompressedObject(b2);
+				
+				if(nucleotides.equals(ns)){
+					return res.getInt(1);
+				}
+			}
+			
+			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
+					" (data,indexDepth,hash) values (?,?,?);", Statement.RETURN_GENERATED_KEYS);
+			Database.saveCompressedObject(statement, 1, nucleotides);
+			statement.setInt(2,nucleotides.getIndexDepth());
+			statement.setInt(3,nucleotides.hashCode());
+			statement.executeUpdate();
+			
+			res = statement.getGeneratedKeys();
+	
+			if(!res.next()){
+				throw new DataServiceException("Error saving sequence to database.");
+			}
+			
+			return res.getInt(1);
+		}catch(SQLException e){
+			e.printStackTrace();
+			throw new DataServiceException("Error connecting to database.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error writing NucleotideString.");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw new DataServiceException("Error reading NucleotideString.");
+		} 
+	}
+	
+	
+	
+	
+	
+	
+
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, Object> properties, HttpSession session) throws DataServiceException {
+			Map<String, Object> properties) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}
-		
+			
 		Connection conn = Database.getConnection();
-		
+			
 		try{
 			PreparedStatement statement = conn.prepareStatement("select * from " +
 					Database.SEQUENCE_DATA + " where name = ?", Statement.RETURN_GENERATED_KEYS);
@@ -307,60 +344,16 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				throw new DataServiceException("Sequence data with name " + seqName + " already exists");
 			}
 			
-			int seqID=-1;
+			int seqID = saveNucleotideString(nucleotides, conn);
 			
-			
-			//first check if a sequence with the same hash exists already. if so, check if its the same
-			
-			PreparedStatement statement2 = conn.prepareStatement("select * from " +
-					Database.SEQUENCES + " where hash = ?", Statement.RETURN_GENERATED_KEYS);
-			statement2.setInt(1, nucleotides.hashCode());
-			System.out.println("hashcode: "+nucleotides.hashCode());
-			ResultSet res2 = statement2.executeQuery();
-			
-			
-			while(res2.next()){
-				Blob b2 = res2.getBlob(2);
-				NucleotideString ns2= (NucleotideString) Database.loadCompressedObject(b2);
-				System.out.println("someindex:"+ns2);
-				if(nucleotides.equals(ns2)){
-					
-					seqID = res2.getInt(1);
-					System.out.println("nucleotide string is already in database, making shallow hequencehook to id "+seqID);
-					
-					//TODO MAKE SURE THAT YOU BLOCK UNTIL THE SEQUENCE IS ACTUALLY INDEXED!!!
-				}
-				
-				
-			}
-			System.out.println(seqID);
-			System.out.println("Before where saving compressed object");
-			if(seqID==-1){
-			
-			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
-					" (data,indexDepth,hash) values (?,?,?);", Statement.RETURN_GENERATED_KEYS);
-	
-			Database.saveCompressedObject(statement,1, nucleotides);
-			statement.setInt(2,nucleotides.getIndexDepth());
-			statement.setInt(3,nucleotides.hashCode());
-			statement.executeUpdate();
-			
-			res = statement.getGeneratedKeys();
-			if(!res.next()){
-				throw new DataServiceException("Error saving sequence to database.");
-			}
-			seqID = res.getInt(1);
-			TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID), null);
-			
-		}
-			System.out.println("After indexing sequence");
-			
+				//notify task that it can start working now
+			TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID), null); 
 			
 			
 			//saving the sequence data
 			
 			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_DATA + 
-					" (name, seq_id, features, properties) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+				" (name, seq_id, features, properties) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, seqName);
 			statement.setInt(2, seqID);
 			Database.saveCompressedObject(statement, 3, features);
@@ -375,23 +368,11 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			
 			System.out.println("returning" + dataID);
 			
-			//now index before the hook is returned.
-			
-			//now give the current user permissions
-			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_USER_PERMISSIONS + " (data_id, user_id) values (?, ?)");
-			statement.setInt(1, dataID);
-			statement.setInt(2, UserServiceImpl.getLoggedIn(session).getId());
-			if (0 >= statement.executeUpdate()) {
-				throw new DataServiceException("Error granting user permission to saved sequence");
-			}
-			
 			
 			return new SequenceHook(dataID, seqID, seqName);
 		}catch (SQLException e) {
 			throw new DataServiceException(e.getMessage());
 		} catch (IOException e) {
-			throw new DataServiceException(e.getMessage());
-		} catch (ClassNotFoundException e) {
 			throw new DataServiceException(e.getMessage());
 		} finally {
 			try {
@@ -400,136 +381,67 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				e.printStackTrace();
 			}
 		}
-		}
-
+	}
+	
+	
+	
+	   
+	
+	
+	
+	
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, Object> properties) throws DataServiceException {
+			Map<String, Object> properties, HttpSession session) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}
 		
+		SequenceHook seq = saveSequence(nucleotides, features, seqName, properties);
+		
 		Connection conn = Database.getConnection();
 		
 		try{
-			PreparedStatement statement = conn.prepareStatement("select * from " +
-					Database.SEQUENCE_DATA + " where name = ?", Statement.RETURN_GENERATED_KEYS);
-			statement.setString(1, seqName);
-			ResultSet res = statement.executeQuery();
-			if(res.next()){
-				throw new DataServiceException("Sequence data with name " + seqName + " already exists");
+			PreparedStatement statement = conn.prepareStatement("insert into " + Database.SEQUENCE_USER_PERMISSIONS + " (data_id, user_id) values (?, ?)");
+			statement.setInt(1, seq.getDataID());
+			statement.setInt(2, UserServiceImpl.getLoggedIn(session).getId());
+			if (0 >= statement.executeUpdate()) {
+				throw new DataServiceException("Error granting user permission to saved sequence");
 			}
 			
-			int seqID=-1;
-			
-			
-			//first check if a sequence with the same hash exists already. if so, check if its the same
-			
-			PreparedStatement statement2 = conn.prepareStatement("select * from " +
-					Database.SEQUENCES + " where hash = ?", Statement.RETURN_GENERATED_KEYS);
-			statement2.setInt(1, nucleotides.hashCode());
-			System.out.println("hashcode: "+nucleotides.hashCode());
-			ResultSet res2 = statement2.executeQuery();
-			
-			
-			while(res2.next()){
-				Blob b2 = res2.getBlob(2);
-				NucleotideString ns2= (NucleotideString) Database.loadCompressedObject(b2);
-				System.out.println("someindex:"+ns2);
-				if(nucleotides.equals(ns2)){
-					
-					seqID = res2.getInt(1);
-					System.out.println("nucleotide string is already in database, making shallow hequencehook to id "+seqID);
-					
-					//TODO MAKE SURE THAT YOU BLOCK UNTIL THE SEQUENCE IS ACTUALLY INDEXED!!!
-				}
-				
-				
-			}
-			
-			if(seqID==-1){
-			
-			statement = conn.prepareStatement("insert into " + Database.SEQUENCES + 
-					" (data,indexDepth,hash) values (?,?,?);", Statement.RETURN_GENERATED_KEYS);
-	
-			Database.saveCompressedObject(statement,1, nucleotides);
-			statement.setInt(2,nucleotides.getIndexDepth());
-			statement.setInt(3,nucleotides.hashCode());
-			statement.executeUpdate();
-			
-			res = statement.getGeneratedKeys();
-			if(!res.next()){
-				throw new DataServiceException("Error saving sequence to database.");
-			}
-			seqID = res.getInt(1);
-			TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID), null);
-			
-		}
-			
-			
-			
-			//saving the sequence data
-			
-			statement = conn.prepareStatement("insert into " + Database.SEQUENCE_DATA + 
-					" (name, seq_id, features, properties) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-			statement.setString(1, seqName);
-			statement.setInt(2, seqID);
-			Database.saveCompressedObject(statement, 3, features);
-			Database.saveCompressedObject(statement, 4, properties);
-			statement.executeUpdate();
-			
-			res = statement.getGeneratedKeys();
-			if(!res.next()){
-				throw new DataServiceException("Error saving sequence data to database.");
-			}
-			int dataID = res.getInt(1);
-			
-			
-			
-			//now index before the hook is returned.
-			
-			return new SequenceHook(dataID, seqID, seqName);
-			
-		}catch (SQLException e){
+			return seq;
+		}catch (SQLException e) {
 			e.printStackTrace();
 			throw new DataServiceException("Error connecting to database.");
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new DataServiceException("Error connecting to database 2.");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new DataServiceException("Non-nucleotidestring data found in database ???");
-		}finally{
+		} finally {
 			try {
 				conn.close();
-			} catch (SQLException e) { e.printStackTrace(); }
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
-		
-
-		
 	}
 	
-//	@Deprecated
-//	public SequenceHook saveSequence(String nucleotides,
-//			Map<String, Collection<Feature>> features, String seqName,
-//			Map<String, IsSerializable> properties) throws DataServiceException {
-//		return SequenceServiceImpl.saveSequence(nucleotides, features, seqName, properties, this.getThreadLocalRequest().getSession());
-//	}
+	
+	
+	
+	
 
 	
 	public static SequenceHook saveSequence(String nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, Object> properties, HttpSession session) throws DataServiceException {
-		System.out.println("we should use a debugger");
 		NucleotideString seq = new NucleotideString(nucleotides);
 		return SequenceServiceImpl.saveSequence(seq, features, seqName, properties, session);
 	}
+	
 
 	public SequenceHook saveSequence(String nucleotides, String seqName)
 			throws DataServiceException {
 		System.out.println("Save sequence");
 		return SequenceServiceImpl.saveSequence(nucleotides, seqName, this.getThreadLocalRequest().getSession());
 	}
+	
 	
 	public static SequenceHook saveSequence(String nucleotides, String seqName, HttpSession session)
 	throws DataServiceException {
@@ -538,31 +450,18 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		seqName, new HashMap<String, Object>(), session);
 	}
 	
+	
+	
+	
 	public SequenceHook findSequence(String name) throws DataServiceException {
-		
-		if(name == null){
-			throw new DataServiceException("null value was passed to SequenceService.findSequence");
-		}
-		Connection conn = Database.getConnection();
-		try{
-			PreparedStatement statement = conn.prepareStatement("select id, seq_id from " + Database.SEQUENCE_DATA + 
-					" where name = ?");
-			statement.setString(1, name);
-			ResultSet res = statement.executeQuery();
-			if(!res.next()){
-				throw new DataServiceException("Sequence data with name " + name + " not found.");
-			}
-			int dataID = res.getInt(1);
-			int seqID = res.getInt(2);
-			SequenceHook seq = new SequenceHook(dataID, seqID, name);
-			conn.close();
-			UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
-			return seq;
-		}catch(SQLException e){
-			e.printStackTrace();
-			throw new DataServiceException("Error communicating with database.");
-		}
+		SequenceHook seq = findDNASequence(name);
+		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
+		return seq;
 	}
+	
+	
+	
+	
 
 	public static SequenceHook findDNASequence(String name) throws DataServiceException {
 		if(name == null){
@@ -587,6 +486,10 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			throw new DataServiceException("Error communicating with database.");
 		}
 	}
+	
+	
+	
+	
 	public List<String> listAvailableSequences() throws DataServiceException {
 		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
 		Connection conn = Database.getConnection();
@@ -625,6 +528,8 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			}catch (SQLException e1){e1.printStackTrace();}
 		}
 	}
+	
+	
 
 
 	public void addProperty(SequenceHook seq, String key, IsSerializable value)
