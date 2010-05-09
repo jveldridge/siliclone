@@ -24,24 +24,27 @@ import edu.brown.cs32.siliclone.database.client.DataServiceException;
 /**
  * The Database class is responsible for defining how the application server connects to the database server.
  *  It produces a connection which is handled using java.sql statements for mysql.
+ *  It also defines constants for the table names, and static methods for reading/writing objects to the database.
  */
 public class Database {
 	
-	// TODO - load these strings from a .config?
+	// TODO - load these strings from a .config? using java.util.properties?
 	private static final String DRIVER = "org.gjt.mm.mysql.Driver"; //must be in class path
 	private static final String URL = "jdbc:mysql://mysql.vxcv.com/cs032002";
-	private static final String USERNAME = "cs032002";
-	private static final String PASSWORD = "indy123";
+	private static final String USERNAME = "javauser";//"cs032002";
+	private static final String PASSWORD = "siliclone";//"indy123";
 	
 	static{
 		try {
-			Class.forName(DRIVER);
+			Class.forName(DRIVER); 
 		} catch (ClassNotFoundException e) {
 			System.err.println("Could not load mysql driver.");
 			e.printStackTrace();
 		}
 	}
 	
+	
+	//table names
 	public static final String USERS = "users";
 	public static final String GROUPS = "groups";
 	public static final String GROUP_PERMISSIONS = "group_permissions";
@@ -82,12 +85,12 @@ public class Database {
 	/**
 	 * Tries to create the tables used by this program in the given connection's database.
 	 * This is meant for development convenience - not a product feature.
-	 * @param conn Valid connection to db.
+	 * @param conn Valid connection to db, retrieved from getConnection().
 	 * @return True if connected and had permissions, false otherwise. Does not
 	 * 		 guarantee success (if tables exists with different number of columns
 	 */
 	public static boolean initializeDB(Connection conn){
-		//TODO tune blobsize to connection allowances?
+		//TODO not up to date?
 		try{
 			Statement statement = conn.createStatement();
 			  
@@ -155,7 +158,10 @@ public class Database {
 		}
 	}
 	
-	
+	/**
+	 * Convenience method to run initializeDB on getConnection 
+	 * @param argv
+	 */
 	public static void main(String[] argv) {
 		try{
 			Database.initializeDB(getConnection());
@@ -165,10 +171,11 @@ public class Database {
 	}
 	
 	/**
-	 * Wraps the given output stream in a compression stream
-	 * @param os
-	 * @return
-	 * @throws IOException
+	 * Wraps the given output stream in a compression stream.
+	 * @param os An output stream to modify by the given compression method. (not null)
+	 * @return The output stream, which now compresses before writing.
+	 * @throws IOException If there was an error in constructing the compression stream. 
+	 * @see GZIPOutputStream
 	 */
 	private static OutputStream getCompressedOutputStream(OutputStream os) throws IOException{
 		//return new GZIPOutputStream(os);
@@ -176,10 +183,11 @@ public class Database {
 	}
 	
 	/**
-	 * Wraps input stream in compression stream
-	 * @param is
-	 * @return
-	 * @throws IOException
+	 * Wraps input stream in a decompression stream
+	 * @param is An input stream to modify. (not null)
+	 * @return The same input stream wrapped in a decompression stream.
+	 * @throws IOException If there was an error constructing the stream.
+	 * @see GZIPInputStream
 	 */
 	private static InputStream getCompressedInputStream(InputStream is) throws IOException{
 		//return new GZIPInputStream(is);
@@ -187,12 +195,12 @@ public class Database {
 	}
 	
 	/**
-	 * Given prepared statement for insertion, sets object data to compressed value at given index
-	 * @param statement
-	 * @param columnindex
-	 * @param objectToWrite
-	 * @throws IOException
-	 * @throws SQLException
+	 * Given prepared statement for insertion, sets object data to compressed value at given index.
+	 * @param statement A PreparedStatement that specifies where the data update or insertion will be in the database. (not null)
+	 * @param columnindex The index of the data in the prepared statement (which '?'), starting at index 1.
+	 * @param objectToWrite The serializable object (not null) that is to be compressed and written.
+	 * @throws IOException If there is an error during compression.
+	 * @throws SQLException If there is an error in the statement syntax or database connection.
 	 */
 	public static void saveCompressedObject(PreparedStatement statement, int columnindex, Object objectToWrite) throws IOException, SQLException{
 		ByteArrayOutputStream baout = new ByteArrayOutputStream();
@@ -204,12 +212,12 @@ public class Database {
 	}
 	
 	/**
-	 * Given resultset from prepared statement for insertion/updating object data, inserts compressed object data.
-	 * @param resultset
-	 * @param columnindex
-	 * @param objectToWrite
-	 * @throws IOException
-	 * @throws SQLException
+	 * The same as saveCompressed object with a PreparedStatement, except this updates the stream of the resultset created from that statement.
+	 * @param resultset The resultset generated from a valid insertion or update statement. (not null)
+	 * @param columnindex The index of the data in the statement. (>= 1)
+	 * @param objectToWrite The serializable object (not null) that is to be compressed and written. (not null)
+	 * @throws IOException If there is an error during compression.
+	 * @throws SQLException If there is an error in the statement syntax or database connection.
 	 */
 	public static void saveCompressedObject(ResultSet resultset, int columnindex, Object objectToWrite) throws IOException, SQLException{
 		ByteArrayOutputStream baout = new ByteArrayOutputStream();
@@ -222,16 +230,16 @@ public class Database {
 	
 	/**
 	 * Reads compressed data from a blob object retrieved from the database.
-	 * @param b
-	 * @return
-	 * @throws IOException
-	 * @throws SQLException
-	 * @throws ClassNotFoundException
+	 * @param b The blob object retrieved from ResultSet.getBlob (not null)
+	 * @return The object, decompressed and deserialized.
+	 * @throws IOException If there was an error during decompression.
+	 * @throws SQLException If there was an error deserializing from the blob.
+	 * @throws ClassNotFoundException If there was an error deserializing from the blob.
 	 */
 	public static Object loadCompressedObject(Blob b) throws IOException, SQLException, ClassNotFoundException{
 		ByteArrayInputStream bis = new ByteArrayInputStream(b.getBytes(1, (int) b.length()));
 		ObjectInputStream ois = new ObjectInputStream(getCompressedInputStream(bis));
-	return ois.readObject();
+		return ois.readObject();
 	}
 	
 }
