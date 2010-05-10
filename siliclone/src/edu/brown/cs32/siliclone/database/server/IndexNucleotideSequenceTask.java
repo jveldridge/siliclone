@@ -51,7 +51,7 @@ public class IndexNucleotideSequenceTask implements Task {
 			NucleotideString ns =  (NucleotideString) Database.loadCompressedObject(b);
 			ns.makeIndex(SUFFIX_INDEX);
 			
-			statement = conn.prepareStatement("update " + Database.SEQUENCE_DATA + " set data = ?, indexDepth = ?  where id = ?");
+			statement = conn.prepareStatement("update " + Database.SEQUENCES + " set data = ?, indexDepth = ?  where id = ?");
 			statement.setInt(3, id);
 			statement.setInt(2, ns.getIndexDepth());
 			Database.saveCompressedObject(statement, 1, ns);
