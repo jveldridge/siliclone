@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -109,15 +110,17 @@ public abstract class AbstractRemoteOperatorServiceImpl extends RemoteServiceSer
 			throw new BadComputationHookException();
 		}
 		Collection<SequenceHook> result =((HashMap<ComputationHook, Collection<SequenceHook>>)allresults).remove(hook);
-		if(result==null){
+		/*if(result==null){
 			throw new BadComputationHookException();
-		}
+		}*/
 		Object computers = this.getThreadLocalRequest().getSession().getAttribute("runningOperatorComputers");
 		if (computers==null){
 			throw new BadComputationHookException();
 		}
 		((HashMap<ComputationHook, OperatorComputer>)computers).remove(hook);
-		return result;
+		LinkedList<SequenceHook> r = new LinkedList<SequenceHook>();
+		r.addAll(result);
+		return r;
 	}
 	
 	public void cancelComputation(ComputationHook hook) throws BadComputationHookException{

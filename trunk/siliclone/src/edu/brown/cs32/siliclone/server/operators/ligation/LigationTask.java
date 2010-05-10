@@ -1,6 +1,7 @@
-package edu.brown.cs32.siliclone.tasks;
+package edu.brown.cs32.siliclone.server.operators.ligation;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -13,6 +14,7 @@ import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.NucleotideString.SimpleNucleotide;
+import edu.brown.cs32.siliclone.tasks.Task;
 
 public class LigationTask implements Task {
 
@@ -25,11 +27,12 @@ public class LigationTask implements Task {
 
 		this.input = input;
 		this.properties = properties;
-		output = new LinkedList<SequenceHook>();
+		output = Collections.synchronizedList(new LinkedList<SequenceHook>());
 	}
 
 	public void compute() {
 		try{
+			Collection<Thread> saveThreads = new LinkedList<Thread>();
 			Collection<Sequence> first = new LinkedList<Sequence>();
 			Collection<Sequence> second = new LinkedList<Sequence>();
 			for(SequenceHook sh : input[0])
@@ -76,8 +79,8 @@ public class LigationTask implements Task {
 								two.properties.put("leftOverhang", 0);
 								leftTwo = 0;
 							}
-							Sequence forward = new Sequence(null, new HashMap<String, Object>());
-							Sequence reverse = new Sequence(null, new HashMap<String, Object>());
+							final Sequence forward = new Sequence(null, new HashMap<String, Object>());
+							final Sequence reverse = new Sequence(null, new HashMap<String, Object>());
 							
 							//First check if the right side of sequence one ligates to anything:							
 							if(leftTwo == rightOne) {
@@ -154,26 +157,61 @@ public class LigationTask implements Task {
 								}
 							}
 							
-							Map<String, Collection<Feature>> fMap = new HashMap<String, Collection<Feature>>();
-							Map<String, Collection<Feature>> rMap = new HashMap<String, Collection<Feature>>();
+							final Map<String, Collection<Feature>> fMap = new HashMap<String, Collection<Feature>>();
+							final Map<String, Collection<Feature>> rMap = new HashMap<String, Collection<Feature>>();
 							Random rng = new Random();
 							if(forward.str != null) {
-								String fName = Integer.toString(forward.str.hashCode() + rng.nextInt());
-								SequenceServiceImpl.saveSequence(forward.str, fMap, fName, forward.properties);
-								output.add(SequenceServiceImpl.findDNASequence(fName));
+								final String fName = Integer.toString(forward.str.hashCode() + rng.nextInt());
+								Thread t = new Thread(new Runnable() {
+									
+									@Override
+									public void run() {
+										try {
+											output.add(SequenceServiceImpl.saveSequence(forward.str, fMap, fName, forward.properties,false));
+										} catch (DataServiceException e) {
+											e.printStackTrace();
+										}
+										
+									}
+								});
+								saveThreads.add(t);
+								t.start();
+
 							}
 							if(reverse.str != null) {
-								String rName = Integer.toString(reverse.str.hashCode() + rng.nextInt());
-								SequenceServiceImpl.saveSequence(reverse.str, rMap, rName, reverse.properties);
-								output.add(SequenceServiceImpl.findDNASequence(rName));
+								final String rName = Integer.toString(reverse.str.hashCode() + rng.nextInt());
+								
+								saveThreads.add(new Thread(new Runnable() {
+									
+									@Override
+									public void run() {
+										try {
+											output.add(SequenceServiceImpl.saveSequence(reverse.str, rMap, rName, reverse.properties,false));
+										} catch (DataServiceException e) {
+											e.printStackTrace();
+										}
+										
+									}
+								}));
+								
+								
+								
 							}
 						}//end of check that two isn't circular
 					}//end of loop through input 2
 				}//end of check that one isn't circular
 			}//end of loop through input 1
+			
+			for (Thread thread : saveThreads) {
+				try {
+					thread.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
 		}//end of try
 		catch (DataServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();	
 		}
 

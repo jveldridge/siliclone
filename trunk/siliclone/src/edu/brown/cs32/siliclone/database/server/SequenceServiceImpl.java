@@ -461,7 +461,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	 */
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, Object> properties) throws DataServiceException {
+			Map<String, Object> properties, boolean indexInTask) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}
@@ -480,7 +480,11 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			int seqID = saveNucleotideString(nucleotides, conn);
 			
 				//notify task that it can start working now
-			TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID), null); 
+			if(indexInTask){
+				TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID));
+				}else{
+					new IndexNucleotideSequenceTask(seqID).compute();
+				}
 			
 			
 			//saving the sequence data
@@ -541,12 +545,12 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	 */
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, Object> properties, HttpSession session) throws DataServiceException {
+			Map<String, Object> properties, HttpSession session,boolean indexInTask) throws DataServiceException {
 		if(nucleotides == null || features == null || seqName == null || properties == null){
 			throw new DataServiceException("Null value passed to SequenceService.saveSequence");
 		}
 		
-		SequenceHook seq = saveSequence(nucleotides, features, seqName, properties);
+		SequenceHook seq = saveSequence(nucleotides, features, seqName, properties,indexInTask);
 		
 		Connection conn = Database.getConnection();
 		
@@ -594,9 +598,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	public static SequenceHook saveSequence(String nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
-			Map<String, Object> properties, HttpSession session) throws DataServiceException {
+			Map<String, Object> properties, HttpSession session,boolean indexInTask) throws DataServiceException {
 		NucleotideString seq = new NucleotideString(nucleotides);
-		return SequenceServiceImpl.saveSequence(seq, features, seqName, properties, session);
+		return SequenceServiceImpl.saveSequence(seq, features, seqName, properties, session,indexInTask);
 	}
 	
 	/**
@@ -614,7 +618,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	public SequenceHook saveSequence(String nucleotides, String seqName)
 			throws DataServiceException {
 		//System.out.println("Save sequence");
-		return SequenceServiceImpl.saveSequence(nucleotides, seqName, this.getThreadLocalRequest().getSession());
+		return SequenceServiceImpl.saveSequence(nucleotides, seqName, this.getThreadLocalRequest().getSession(),true);
 	}
 	
 	/**
@@ -630,11 +634,11 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	 * 		"Error granting user permission to saved sequence"
 	 * 		"Error connecting to database."
 	 */
-	public static SequenceHook saveSequence(String nucleotides, String seqName, HttpSession session)
+	public static SequenceHook saveSequence(String nucleotides, String seqName, HttpSession session,boolean indexInTask)
 	throws DataServiceException {
 		System.out.println("now in method 2");
 		return SequenceServiceImpl.saveSequence(nucleotides, new HashMap<String, Collection<Feature>>(), 
-		seqName, new HashMap<String, Object>(), session);
+		seqName, new HashMap<String, Object>(), session,indexInTask);
 	}
 	
 	

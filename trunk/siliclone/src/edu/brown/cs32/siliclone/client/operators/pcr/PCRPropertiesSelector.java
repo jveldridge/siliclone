@@ -24,8 +24,10 @@ public class PCRPropertiesSelector extends PropertiesSelector {
 		enzyme = new SelectItem();
 		enzyme.setTitle("Enzyme");
 		enzyme.setValueMap(EnzymeListGenerator.pcrEnzymeList());
+		enzyme.setValue((String)operator.getProperties().get("enzyme"));
 		matchLength = new TextItem();
 		matchLength.setTitle("Minimum matched region");
+		matchLength.setValue((Integer)operator.getProperties().get("match"));
 		
 		form.setFields(enzyme, matchLength, okButton);
 		
@@ -35,9 +37,9 @@ public class PCRPropertiesSelector extends PropertiesSelector {
 	@Override
 	protected void processInput() {
 		// TODO Auto-generated method stub
-		Map<String, String> properties = new HashMap<String, String>();
+		Map properties = new HashMap();
 		properties.put("enzyme", enzyme.getDisplayValue());
-		properties.put("match", matchLength.getDisplayValue());
+		properties.put("match", Integer.parseInt(matchLength.getDisplayValue()));
 		op.setProperties(properties);
 		if(op.getInputs()[0] != null && op.getInputs()[1] != null && op.getInputs()[2] != null)
 			op.calculate();

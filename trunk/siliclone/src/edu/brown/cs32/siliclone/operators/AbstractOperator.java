@@ -52,7 +52,7 @@ public abstract class AbstractOperator implements Operator {
 		return view;
 	}
 	
-	public void setProperties(Map<String, String> properties)
+	public void setProperties(Map properties)
 	{
 		this.properties = properties;
 	}

@@ -161,5 +161,22 @@ public class TaskClient implements Runnable{
 		}
 		
 	}
+	
+	public void close(){
+		try {
+			_oos.flush();
+			_socket.close();
+		} catch (IOException e) {
+			System.err.println("TaskClient could not be closed");
+		}
+		
+		
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		close();
+	}
 
 }
