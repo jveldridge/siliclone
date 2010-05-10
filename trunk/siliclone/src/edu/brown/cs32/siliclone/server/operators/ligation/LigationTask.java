@@ -60,11 +60,13 @@ public class LigationTask implements Task {
 						one.properties.put("rightOverhang", 0);
 						rightOne = 0;
 					}
+					System.out.println("Right overhang on input1 = " + rightOne);
 					Integer leftOne = (Integer)one.properties.get("leftOverhang");
 					if(leftOne == null) {
 						one.properties.put("leftOverhang", 0);
 						leftOne = 0;
 					}
+					System.out.println("Left overhang on input1 = " + leftOne);
 					for(Sequence two : second)
 					{	
 						Boolean circleTwo = (Boolean)two.properties.get("isCircular");
@@ -75,16 +77,19 @@ public class LigationTask implements Task {
 								two.properties.put("rightOverhang", 0);
 								rightTwo = 0;
 							}
+							System.out.println("Right overhang on input2 = " + rightTwo);
 							Integer leftTwo = (Integer)two.properties.get("leftOverhang");
 							if(leftTwo == null) {
 								two.properties.put("leftOverhang", 0);
 								leftTwo = 0;
 							}
+							System.out.println("Left overhang on input2 = " + leftTwo);
 							final Sequence forward = new Sequence(null, new HashMap<String, Object>());
 							final Sequence reverse = new Sequence(null, new HashMap<String, Object>());
 							
 							//First check if the right side of sequence one ligates to anything:							
-							if(leftTwo == rightOne) {
+							if(leftTwo.equals(rightOne)) {
+								System.out.println("Overhangs match (or blunt-ended) for forward ligation");
 								boolean overlap = true;
 								for(int i = 0; i < Math.abs(rightOne); i++)
 								{
@@ -92,13 +97,16 @@ public class LigationTask implements Task {
 										overlap = false;
 								}
 								if(overlap == true) {
+									System.out.println("should make new nucleotideString here");
 									forward.str = new NucleotideString(one.str, two.str, one.str.getLength() - Math.abs(rightOne));
+									if(forward.str == null) System.out.println("Did not actually add NucleotideString");
 									forward.properties.put("isCircular", false);
 									forward.properties.put("rightOverhang", rightTwo);
 									forward.properties.put("leftOverhang", leftOne);
 								}
 							}
-							if(rightTwo == rightOne) {
+							if(rightTwo.equals(rightOne)) {
+								System.out.println("Overhangs match for reverse ligation");
 								boolean overlap = true;
 								NucleotideString rc = two.str.reverseComplement();
 								for(int i = 0; i < Math.abs(rightOne); i++) {
@@ -106,6 +114,7 @@ public class LigationTask implements Task {
 										overlap = false;
 								}
 								if(overlap == true) {
+									System.out.println("should be doing reverse ligation here");
 									reverse.str = new NucleotideString(one.str, rc, one.str.getLength() - Math.abs(rightOne));
 									reverse.properties.put("isCircular", false);
 									reverse.properties.put("rightOverhang", leftTwo);
@@ -115,7 +124,7 @@ public class LigationTask implements Task {
 							
 							//Then if the left side of sequence one ligates
 
-							if(leftOne == rightTwo) {
+							if(leftOne.equals(rightTwo)) {
 								boolean overlap = true;
 								for(int i = 0; i < Math.abs(leftOne); i++)
 									if(one.str.getSimpleNucleotideAt(i) != two.str.getSimpleNucleotideAt(two.str.getLength() - Math.abs(leftOne) + i))
@@ -135,7 +144,7 @@ public class LigationTask implements Task {
 										forward.properties.put("leftOverhang", 0);
 									}
 							}
-							if(leftOne == leftTwo) {
+							if(leftOne.equals(leftTwo)) {
 								boolean overlap = true;
 								NucleotideString rc = two.str.reverseComplement();
 								for(int i = 0; i < Math.abs(leftOne); i++)
