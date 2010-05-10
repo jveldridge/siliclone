@@ -13,7 +13,16 @@ import com.smartgwt.client.widgets.tab.TabSet;
 import edu.brown.cs32.siliclone.client.workspace.BasicWorkspace;
 import edu.brown.cs32.siliclone.client.workspace.Workspace;
 
-
+/**
+ * This class is responsible for providing the GUI that
+ * users will interact with when logged in to the web
+ * application.  This consists of a TopMenu menu bar, a
+ * listing of all the available Operators, and a large
+ * tabbed area that will contain WorkspaceViews.
+ * 
+ * Also provides some methods to change/add workspaces to
+ * the underlying tabs of WorkspaceViews.
+ */
 public class MainView extends Canvas {
 
 	private Siliclone _main;
@@ -25,15 +34,13 @@ public class MainView extends Canvas {
 		_workspaceTabs = new TabSet();
 		_tabMap = new HashMap<Workspace,Tab>();
 		
-
-		
 		VLayout mainLayout = new VLayout();  
         mainLayout.setWidth100();  
         mainLayout.setHeight100();  
         mainLayout.setOverflow(Overflow.HIDDEN);
   
         //top menu
-        mainLayout.addMember(new TopMenu(_main));  
+        mainLayout.addMember(new TopMenu(_main));
         
         this.addWorkspace(new BasicWorkspace("New Workspace"));
   
@@ -56,6 +63,12 @@ public class MainView extends Canvas {
         this.setOverflow(Overflow.HIDDEN);
 	}
 	
+	/**
+	 * Creates a new tab with a new WorkspaceView to display
+	 * the workspace passed in as a parameter.
+	 * 
+	 * @param w
+	 */
 	public void addWorkspace(Workspace w) {
 		Tab newTab = new Tab();
 		_tabMap.put(w, newTab);
@@ -66,11 +79,27 @@ public class MainView extends Canvas {
 		_workspaceTabs.selectTab(newTab);
 	}
 
+	/**
+	 * Returns the Workspace object that is being displayed
+	 * in the currently active WorkspaceView.
+	 * 
+	 * @return the workspace object that is being displayed
+	 * in the currently active WorkspaceView.
+	 */
 	public Workspace getCurrentWorkspace() {
 		WorkspaceView w = (WorkspaceView) _workspaceTabs.getSelectedTab().getPane();
 		return w.getWorkspace();
 	}
 	
+	/**
+	 * Changes the display name of the Workspace passed in as a
+	 * parameter.  This consists of changing the title of the tab
+	 * for containing the Workspaceview that is displaying that
+	 * workspace.
+	 * 
+	 * @param w	the workspace whose name should be changed
+	 * @param newName the new name for the workspace
+	 */
 	public void changeWorkspaceName(Workspace w, String newName) {
 		_workspaceTabs.setTabTitle(_tabMap.get(w), (newName));
 	}
