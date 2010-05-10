@@ -1,5 +1,8 @@
 package edu.brown.cs32.siliclone.client.operators.restrictiondigest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;
 
@@ -18,7 +21,11 @@ public class DigestTemplate implements OperatorTemplate {
 	}
 
 	public Operator makeOperator() {
-		return new DigestOperator();
+		DigestOperator r = new DigestOperator();
+		Map m = new HashMap();
+		m.put("enzyme", "SmaI");
+		r.setProperties(m);
+		return r;
 	}
 	
 	public String getName(){

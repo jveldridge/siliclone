@@ -42,8 +42,7 @@ public class DigestOperatorComputer implements OperatorComputer {
 		LinkedList<Feature> r_f = new LinkedList<Feature>();
 		LinkedList<Map<String, Object>> r_pr = new LinkedList<Map<String, Object>>();
 		
-		//RestrictionEnzyme re = ENZYMES.get((String)properties.get("enzyme"));
-		RestrictionEnzyme re = new RestrictionEnzyme(new SimpleNucleotide[]{c,c,c}, 0);
+		RestrictionEnzyme re = ENZYMES.get((String)properties.get("enzyme"));
 		
 		
 		final Collection<SequenceHook> r = Collections.synchronizedList(new LinkedList<SequenceHook>());
@@ -76,7 +75,7 @@ public class DigestOperatorComputer implements OperatorComputer {
 					
 					public void run() {
 						try {
-							r.add(SequenceServiceImpl.saveSequence(ns, new HashMap<String,Collection<Feature>>(),"cutname"+random.nextInt(10000000),pr,true));
+							r.add(SequenceServiceImpl.saveSequence(ns, new HashMap<String,Collection<Feature>>(),"cut"+random.nextInt(10000000),pr,true));
 						} catch (DataServiceException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
