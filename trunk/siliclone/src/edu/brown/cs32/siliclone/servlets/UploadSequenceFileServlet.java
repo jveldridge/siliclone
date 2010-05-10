@@ -43,7 +43,7 @@ public class UploadSequenceFileServlet extends UploadAction {
 							sequence = new FastaParser().parseFastaFile(stream);
 						}
 		    		  
-						SequenceHook hook = SequenceServiceImpl.saveSequence(sequence, seqName, thisSession, false);
+						SequenceHook hook = SequenceServiceImpl.saveSequence(sequence, seqName, thisSession,true);
 						if (thisSession.getAttribute("uploadedSequences") == null) {
 							thisSession.setAttribute("uploadedSequences", new HashMap<String,Collection<SequenceHook>>());
 						}
