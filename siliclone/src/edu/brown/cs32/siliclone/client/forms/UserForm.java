@@ -19,6 +19,7 @@ import edu.brown.cs32.siliclone.database.client.UserServiceAsync;
 
 public class UserForm extends DynamicForm {
 	private final StaticTextItem name = new StaticTextItem();
+	private final StaticTextItem email = new StaticTextItem();
 	private final PasswordItem changePassword = new PasswordItem();
 	private final PasswordItem changePassword2 = new PasswordItem();
 	private final ButtonItem submitChange = new ButtonItem();
@@ -37,6 +38,7 @@ public class UserForm extends DynamicForm {
 		loadDelete();
 		
 		setFields(	name,
+					email,
 					changePassword,
 					changePassword2,
 					submitChange,
@@ -45,6 +47,8 @@ public class UserForm extends DynamicForm {
 	}
 	
 	private void loadName(){
+		name.setTitle("User name");
+		email.setTitle("Email");
 		AsyncCallback<User> callback = new AsyncCallback<User>(){
 			public void onFailure(Throwable caught) {
 				SC.say(caught.getMessage());
@@ -52,8 +56,9 @@ public class UserForm extends DynamicForm {
 
 			public void onSuccess(User result) {
 				loggedInUser = result;
-				name.setTitle("User name : " + result.getName() + 
-								"Email : " + result.getEmail());
+				
+				name.setValue(result.getName());
+				email.setValue(result.getEmail());
 			}
 		};
 		service.getLoggedIn(callback);
