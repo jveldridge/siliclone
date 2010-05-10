@@ -21,17 +21,14 @@ public class PCROperator extends AbstractRemoteOperator {
 
 
 	public int getNumInputs() {
-		// TODO Auto-generated method stub
 		return 3;
 	}
 
 	public PropertiesSelector getPropertiesSelector() {
-		// TODO Auto-generated method stub
 		return propertiesSelector;	
 	}
 
 	public Widget getWidget() {
-		// TODO Auto-generated method stub
 		return image;
 	}
 

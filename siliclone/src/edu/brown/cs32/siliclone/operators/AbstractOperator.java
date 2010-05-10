@@ -3,9 +3,7 @@ package edu.brown.cs32.siliclone.operators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Map;
 
 import com.smartgwt.client.widgets.Window;
@@ -18,17 +16,16 @@ import edu.brown.cs32.siliclone.client.visualizers2.VisualizerDisplay;
 @SuppressWarnings("serial")
 public abstract class AbstractOperator implements Operator {
 	
-	protected int x, y;
-	protected Operator[] inputs = new Operator[getNumInputs()];
-	protected Collection<SequenceHook> outputSequence = new LinkedList<SequenceHook>();
-	protected Collection<Operator> children = new ArrayList<Operator>();
 	private transient VisualizerDisplay visualizerDisplay;
 	private transient Window visualizerDisplayWindow;
 	private Map properties = new HashMap();
 	
+	protected int x, y;
+	protected Operator[] inputs = new Operator[getNumInputs()];
+	protected Collection<SequenceHook> outputSequence = new LinkedList<SequenceHook>();
+	protected Collection<Operator> children = new ArrayList<Operator>();
 	
 	protected transient OpView view;
-	
 	
 	public void setProgress(int percent){
 		if(view != null){
@@ -57,8 +54,6 @@ public abstract class AbstractOperator implements Operator {
 		this.properties = properties;
 	}
 	
-	//TODO better algorithm? if this is used when there already was a loop, goes into infinite loop
-	//used to check if the operator is connected to itself through inputs
 	private boolean containsCycle(Operator op, Operator start){
 		for(Operator input : op.getChildren()){
 			if(op == start){
@@ -72,7 +67,6 @@ public abstract class AbstractOperator implements Operator {
 	}
 	
 	public void setInput(int slotNum, Operator input) throws OperatorCycleException {
-		System.out.println("setInput called");
 		if(slotNum > inputs.length || slotNum < 0) {
 			return;
 		}
@@ -81,7 +75,6 @@ public abstract class AbstractOperator implements Operator {
 		inputs[slotNum] = input;
 		
 		this.update();
-
 	}
 
 	public Operator[] getInputs(){
@@ -104,6 +97,7 @@ public abstract class AbstractOperator implements Operator {
 		if(0 <= slotNum && slotNum < inputs.length){
 			inputs[slotNum].removeChild(this);
 			inputs[slotNum] = null;
+			AbstractOperator.this.outputSequence.clear();
 		}
 	}
 	
@@ -192,7 +186,7 @@ public abstract class AbstractOperator implements Operator {
 		
 		//propagate calculations
 		for (Operator op : children) {
-			op.calculate();
+			op.update();
 		}
 	}
 }
