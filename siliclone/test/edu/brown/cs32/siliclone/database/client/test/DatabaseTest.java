@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.database.server;
+package edu.brown.cs32.siliclone.database.client.test;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import edu.brown.cs32.siliclone.client.dna.features.Feature;
 import edu.brown.cs32.siliclone.database.client.DataServiceException;
+import edu.brown.cs32.siliclone.database.server.Database;
+import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 
 import java.sql.Connection;
@@ -19,6 +21,8 @@ public class DatabaseTest {
 
 	@Test
 	public void testGetConnection() {
+		
+		
 		Connection conn = null;
 		try {
 			conn = Database.getConnection();
@@ -36,15 +40,12 @@ public class DatabaseTest {
 	
 	
 	@Test
-	public void saveNucleotideTest(){
+	public void saveNucleotideTest(){	
 		NucleotideString ns = new NucleotideString("cgattccgccggttacgatcgatcgactcatagatatcagcacatatcagacgatcgtcagttctacgtgacgacgagctacgtgtcagtacgatcgatcgctgatcagtacgcatga");
 		try {
-			new SequenceServiceImpl().saveSequence(ns, new HashMap<String, Collection<Feature>>(), "someinterestingname"+Math.random(), new HashMap<String, Object>());
+			new SequenceServiceImpl().saveSequence(ns, new HashMap<String, Collection<Feature>>(), "someinterestingname"+Math.random(), new HashMap<String, Object>(), true);
 		} catch (DataServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		};
 	}
-	
-	
 }
