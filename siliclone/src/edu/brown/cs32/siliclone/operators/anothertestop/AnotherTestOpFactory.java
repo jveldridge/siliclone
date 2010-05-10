@@ -27,4 +27,9 @@ public class AnotherTestOpFactory implements OperatorTemplate {
 		return name;
 	}
 
+	public String getIconPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

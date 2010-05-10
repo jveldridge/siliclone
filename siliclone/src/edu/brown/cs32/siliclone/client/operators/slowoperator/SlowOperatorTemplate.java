@@ -20,4 +20,9 @@ public class SlowOperatorTemplate extends AbstractRemoteOperatorTemplate {
 		return new SlowOperator();
 	}
 
+	public String getIconPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

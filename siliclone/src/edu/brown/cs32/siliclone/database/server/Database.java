@@ -180,8 +180,8 @@ public class Database {
 	 * @see GZIPOutputStream
 	 */
 	private static OutputStream getCompressedOutputStream(OutputStream os) throws IOException{
-		//return new GZIPOutputStream(os);
-		return os;
+		return new GZIPOutputStream(os);
+		//return os;
 	}
 	
 	/**
@@ -192,8 +192,8 @@ public class Database {
 	 * @see GZIPInputStream
 	 */
 	private static InputStream getCompressedInputStream(InputStream is) throws IOException{
-		//return new GZIPInputStream(is);
-		return is;
+		return new GZIPInputStream(is);
+		//return is;
 	}
 	
 	/**

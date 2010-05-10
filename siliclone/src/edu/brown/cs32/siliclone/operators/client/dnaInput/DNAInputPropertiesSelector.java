@@ -290,7 +290,6 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		ssTab.setPane(ssPane);
 		
 		final SequenceServiceAsync service = GWT.create(SequenceService.class);
-		SequenceHook seqToLoad;
 		final ListGrid sequenceGrid = new ListGrid();
 		sequenceGrid.setWidth100();
 		sequenceGrid.setSelectionType(SelectionStyle.SINGLE);
