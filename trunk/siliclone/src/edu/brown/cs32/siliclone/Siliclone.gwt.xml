@@ -18,6 +18,8 @@
   <stylesheet src="Upload.css"/>
   <inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
   
+  <servlet path='/user' class='edu.brown.cs32.siliclone.database.server.UserServiceImpl'/>
+  
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='edu.brown.cs32.siliclone.client.Siliclone'/>
@@ -25,7 +27,6 @@
   <!-- Specify the paths for translatable code                    -->
   <source path='accounts'/>
   <source path='client'/>
-  <source path='accounts'/>
   <source path='operators'/>
   <source path='plugins'/>
   <source path='database/client'/>
