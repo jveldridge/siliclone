@@ -63,8 +63,7 @@ public class SequenceVisualizer extends VisualizerCanvas {
 					}
 					
 					public void onSuccess(String result) {
-						sequences.put(hook, result);
-						
+						sequences.put(hook, result.replaceAll("", " "));
 						SequenceVisualizer.super.setProgress(100 * (sequences.size() / seqs.size()));
 
 						if (sequences.size() == seqs.size()) {
