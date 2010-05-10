@@ -35,7 +35,7 @@ public abstract class AbstractOperator implements Operator {
 			view.setProgress(percent);
 		}
 	}
-	public void init(){}
+	public abstract void init();
 	
 	public void setOpView(OpView view){
 		this.view = view;
@@ -72,6 +72,7 @@ public abstract class AbstractOperator implements Operator {
 	}
 	
 	public void setInput(int slotNum, Operator input) throws OperatorCycleException {
+		System.out.println("setInput called");
 		if(slotNum > inputs.length || slotNum < 0) {
 			return;
 		}

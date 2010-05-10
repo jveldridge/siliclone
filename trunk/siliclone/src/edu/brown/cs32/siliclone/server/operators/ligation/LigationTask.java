@@ -164,7 +164,6 @@ public class LigationTask implements Task {
 								final String fName = Integer.toString(forward.str.hashCode() + rng.nextInt());
 								Thread t = new Thread(new Runnable() {
 									
-									@Override
 									public void run() {
 										try {
 											output.add(SequenceServiceImpl.saveSequence(forward.str, fMap, fName, forward.properties,false));
@@ -183,7 +182,6 @@ public class LigationTask implements Task {
 								
 								saveThreads.add(new Thread(new Runnable() {
 									
-									@Override
 									public void run() {
 										try {
 											output.add(SequenceServiceImpl.saveSequence(reverse.str, rMap, rName, reverse.properties,false));

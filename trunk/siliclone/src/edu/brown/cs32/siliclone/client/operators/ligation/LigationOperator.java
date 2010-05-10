@@ -15,7 +15,6 @@ public class LigationOperator extends AbstractRemoteOperator {
 	transient private Img image; 
 	
 	public void init() {
-		super.init();
 		image = new Img("ligation.gif");
 		propertiesSelector = new LigationPropertiesSelector(this);
 	}

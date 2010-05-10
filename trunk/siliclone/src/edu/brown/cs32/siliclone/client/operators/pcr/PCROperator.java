@@ -15,7 +15,6 @@ public class PCROperator extends AbstractRemoteOperator {
 	transient private Img image; 
 	
 	public void init() {
-		super.init();
 		image = new Img("pcr.gif");
 		propertiesSelector = new PCRPropertiesSelector(this);
 	}

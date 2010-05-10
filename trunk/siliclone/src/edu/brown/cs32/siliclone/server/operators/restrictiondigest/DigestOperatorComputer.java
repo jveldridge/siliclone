@@ -74,7 +74,6 @@ public class DigestOperatorComputer implements OperatorComputer {
 				final Map<String,Object> pr = pri.next();
 				Thread t = new Thread(new Runnable() {
 					
-					@Override
 					public void run() {
 						try {
 							r.add(SequenceServiceImpl.saveSequence(ns, new HashMap<String,Collection<Feature>>(),"cutname"+random.nextInt(10000000),pr,true));

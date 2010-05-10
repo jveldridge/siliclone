@@ -140,7 +140,6 @@ public class PCRTask implements Task {
 				final Map<String, Collection<Feature>> features = new HashMap<String, Collection<Feature>>();
 				savingThreads[i]=new Thread(new Runnable() {
 					
-					@Override
 					public void run() {
 						try {
 							output.add(SequenceServiceImpl.saveSequence(out, features, name, properties,false));
