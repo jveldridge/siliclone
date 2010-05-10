@@ -8,7 +8,12 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 
 import edu.brown.cs32.siliclone.client.forms.RegisterForm;
 import edu.brown.cs32.siliclone.client.visualizers2.VisualizerDisplay;
-
+/**
+ * A connecting line shows the three lines that connect two operators 
+ * in the visual workspace.
+ * It is constructed with both inputnode and output node set, and 
+ * is responsible for updating its positioning when reposition is called.
+ */
 public class ConnectingLine extends Canvas {
 	private final String LINE_COLOR = "#222222";
 	private final int LINE_WIDTH = 3;
@@ -17,6 +22,12 @@ public class ConnectingLine extends Canvas {
 	private OutputNode out;
 	private Canvas topLine, middleLine, bottomLine;
 	
+	/**
+	 * Constructs line connecting an input node to an output node,
+	 * where both nodes are not null and already placed.
+	 * @param in Already placed in workspace view, not null
+	 * @param out Already placed in workspace view, not null
+	 */
 	public ConnectingLine(InputNode in, OutputNode out){
 		this.in = in;
 		this.out = out;
@@ -24,14 +35,23 @@ public class ConnectingLine extends Canvas {
 		reposition();
 	}
 	
+	/**
+	 * @return The InputNode set on initialization.
+	 */
 	public InputNode getIn(){
 		return in;
 	}
 	
+	/**
+	 * @return the outputNode set on initialization.
+	 */
 	public OutputNode getOut(){
 		return out;
 	}
 	
+	/**
+	 * Draws the line.
+	 */
 	private void init(){
 		setPosition(Positioning.ABSOLUTE);
 		
@@ -58,6 +78,10 @@ public class ConnectingLine extends Canvas {
 		
 	}
 	
+	/**
+	 * Updates the position of the lines on the workspace view
+	 * to reflect the nodes' positions.
+	 */
 	public void reposition(){
 		setLeft(Math.min(in.getParentElement().getLeft() + in.getLeft(),
 						out.getParentElement().getLeft() + out.getLeft()));
