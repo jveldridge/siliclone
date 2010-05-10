@@ -123,11 +123,13 @@ public class DigestOperatorComputer implements OperatorComputer {
 	private static class RestrictionEnzyme{
 		int cutoffset;
 		int halfway;
+		int absoffset;
 		NucleotideString.SimpleNucleotide[] fullSearchString;
 		
 		
 		public RestrictionEnzyme(NucleotideString.SimpleNucleotide[] halfSearchString, int cutoffset){
 			this.cutoffset=cutoffset;
+			this.absoffset=Math.abs(cutoffset);
 			this.halfway=halfSearchString.length;
 			this.fullSearchString= new NucleotideString.SimpleNucleotide[halfway*2];
 			for (int i = 0;i<halfway;i++){
@@ -167,12 +169,15 @@ public class DigestOperatorComputer implements OperatorComputer {
 				Integer firstElement = ints.iterator().next();
 				Iterator<Integer> it = ints.iterator();
 				Integer previousPosition = it.next();
+				
+				System.out.println(absoffset+"=absoffset");
+				
 				while (it.hasNext()) {
 					Integer currentPosition =  it.next();
-					r_ns.add(new NucleotideString(sequence,previousPosition-cutoffset+halfway,currentPosition-previousPosition+cutoffset*2));
+					r_ns.add(new NucleotideString(sequence,previousPosition-absoffset+halfway,currentPosition-previousPosition+absoffset*2));
 					previousPosition = currentPosition;
 				}
-				r_ns.add(new NucleotideString(sequence,previousPosition-cutoffset+halfway,firstElement+sequence.getLength()-previousPosition+cutoffset*2));
+				r_ns.add(new NucleotideString(sequence,previousPosition-absoffset+halfway,firstElement+sequence.getLength()-previousPosition+absoffset*2));
 
 				}
 				for(int i = 0;i<ints.size();i++){
@@ -196,19 +201,24 @@ public class DigestOperatorComputer implements OperatorComputer {
 				Map<String, Object> previousProperties = new HashMap<String,Object>();
 				previousProperties.put("isCircular", false);
 				previousProperties.put("leftOverhang", dnaProperties.get("leftOverhang"));
+				boolean notfirst= false;
 				while (it.hasNext()) {
 					Integer currentPosition =  it.next();
-					r_ns.add(new NucleotideString(sequence,previousPosition-cutoffset+halfway,currentPosition-previousPosition+cutoffset*2));
+					if(notfirst){
+						r_ns.add(new NucleotideString(sequence,previousPosition-absoffset+halfway,currentPosition-previousPosition+absoffset*2));
+					}else{
+						r_ns.add(new NucleotideString(sequence,0,currentPosition+absoffset+halfway));
+					}
 					previousProperties.put("rightOverhang", cutoffset);
 					Map<String, Object> currentProperties = new HashMap<String,Object>();
 					currentProperties.put("isCircular", false);
 					currentProperties.put("leftOverhang", cutoffset);
 					r_pr.add(currentProperties);
 					previousPosition = currentPosition;
+					notfirst=true;
 				}
-				r_ns.add(new NucleotideString(sequence,previousPosition-cutoffset+halfway,sequence.getLength()-previousPosition+cutoffset*2));
+				r_ns.add(new NucleotideString(sequence,previousPosition-absoffset+halfway,sequence.getLength()-(previousPosition-absoffset+halfway)));
 				Map<String, Object> currentProperties = new HashMap<String,Object>();
-				previousProperties.put("leftOverhang", cutoffset);
 				previousProperties.put("rightOverhang", dnaProperties.get("rightOverhang"));
 				r_pr.add(previousProperties);
 				}
