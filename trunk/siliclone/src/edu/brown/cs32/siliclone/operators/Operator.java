@@ -85,6 +85,7 @@ public interface Operator extends Serializable {
 	
 	public Map getProperties();
 	
+	public void update();
 	
 	/**
 	 * Runs the Operation that this Operator controls.  This method simply calls

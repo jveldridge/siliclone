@@ -27,7 +27,6 @@ public class PCROperatorComputer implements OperatorComputer {
 	}
 	
 	public int getProgress() {
-		// TODO Auto-generated method stub
 		return progress;
 	}
 
