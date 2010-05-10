@@ -260,7 +260,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	 * @throws DataServiceException: "Null value was passed to UserService.remove"
 	 * 		"User is no longer logged in."
 	 * 		"Error - the account to delete is different from the current user's account."
-	 * 		"User " + u.getName() + " could not be removed from database."
 	 * 		"Error connecting  to database." 
 	 */
 	public void remove(User u)  throws DataServiceException {
@@ -276,10 +275,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{ //delete group memberships, then delete user, leave groups/data that others might need.
 			int id = findUserId(conn, u.getName());
 			Statement statement = conn.createStatement();
-			if(0 < statement.executeUpdate("delete from " + Database.USERS + " where id = " + id + ";")){
-				throw new DataServiceException("User " + u.getName() + " could not be removed from database.");
-			}
+			
+			
 			logout();
+
+			statement.executeUpdate("delete from " + Database.USERS + " where id = " + id );
 			statement.executeUpdate("delete from " + Database.GROUP_PERMISSIONS + " where member_id = " + id);
 			statement.executeUpdate("delete from " + Database.WORKSPACE_USER_PERMISSIONS + " where user_id = " + id);
 			statement.executeUpdate("delete from " + Database.SEQUENCE_USER_PERMISSIONS + " where user_id = " + id);			
