@@ -634,7 +634,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 		try{
 			int ownerId = u.getId();
 			
-			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS + "where group_name = ? and owner_id = ?");
+			PreparedStatement statement = conn.prepareStatement("select id from " + Database.GROUPS + " where group_name = ? and owner_id = ?");
 			statement.setString(1, group);
 			statement.setInt(2, ownerId);
 			ResultSet res = statement.executeQuery();
