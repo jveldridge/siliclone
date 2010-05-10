@@ -3,6 +3,8 @@ package edu.brown.cs32.siliclone.server.operators.abstractoperator;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 
 public interface OperatorComputer {
