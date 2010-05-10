@@ -15,7 +15,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import sun.misc.Cache;
+//import sun.misc.Cache;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -34,7 +34,19 @@ import edu.brown.cs32.siliclone.server.TasksDelegation;
 @SuppressWarnings("serial")
 public class SequenceServiceImpl extends RemoteServiceServlet implements SequenceService{
 	
-	
+	/**
+	 * Adds a feature to the sequence data indicated by the sequence hook,
+	 * if the current user has permission to access the given sequence.
+	 * @param seq The hook referencing the existing sequence data to modify. (not null)
+	 * @param Feature The feature to add. (not null)
+	 * @throws DataServiceException "Null value passed to SequenceService.addFeature"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence features could not be saved."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	@SuppressWarnings("unchecked")
 	public void addFeature(SequenceHook seq, Feature toAdd)
 			throws DataServiceException {
@@ -81,7 +93,22 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 	
-	
+	/**
+	 * Adds a property to the sequence data indicated by the hook, 
+	 * if the current user has permission to access the given sequence.
+	 * @param seq The hook referencing the existing sequence data to modify. (not null)
+	 * @param key The key to which the given property is mapped - the property name. (not null)
+	 * @param value The value of the property. (not null)
+	 * @param session The current session, from which the current user is read.
+	 * @throws DataServiceException "Null value passed to SequenceService.addProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence already contains property with given key."
+	 * 			"Sequence properties could not be saved."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	@SuppressWarnings("unchecked")
 	public static void addProperty(SequenceHook seq, String key, Object value, HttpSession session)
 			throws DataServiceException {
@@ -127,7 +154,19 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
-	
+	/**
+	 * Gives a collection of features of a given sequence's data, of a given type - 
+	 * if the current user has permission to view this data.
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param featureType The type description to which the features are mapped to. 
+	 * 			(from Feature.getType;  not null)
+	 * @throws DataServiceException "Null value passed to SequenceService.getFeaturesOfType"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	@SuppressWarnings("unchecked")
 	public Collection<Feature> getFeaturesOfType(SequenceHook seq,
 			String featureType) throws DataServiceException {
@@ -163,12 +202,44 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 	
+	
+
+	/**
+	 * Gives a map of all properties saved to the specified sequence data, 
+	 * if the current user has permission to view this data. 
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param session The session from which the current user is found.
+	 * @return A map of property names to the property values.
+	 * @throws DataServiceException"Null value passed to SequenceService.getProperties"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
+	public Map<String,Object> getProperties(SequenceHook seq,  HttpSession session) throws DataServiceException {
+		UserServiceImpl.verifyAccess(session, seq);
+		return getProperties(seq, this.getThreadLocalRequest().getSession(true));
+	}
+		
+
+	/**
+	 * Gives a map of all properties saved to the specified sequence data, 
+	 * Does not check user permissions.
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @return A map of property names to the property values.
+	 * @throws DataServiceException"Null value passed to SequenceService.getProperties"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String,Object> getProperties(SequenceHook seq) throws DataServiceException {
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperties");
 		}
-		
 		Connection conn = Database.getConnection();
 		try{
 			PreparedStatement statement = conn.prepareStatement("select properties from " +
@@ -194,31 +265,46 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Gives a single property value mapped to the given key for the specified sequence,
+	 * if the current user has permission to view this data. 
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param key The property name (not null)
+	 * @param session The session from which the current user is found. 
+	 * @return A map of property names to the property values.
+	 * @throws DataServiceException "Null value passed to SequenceService.getProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence property not found with key " + key
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public static Object getProperty(SequenceHook seq, String key, HttpSession session)
 			throws DataServiceException {
 		if(seq == null || key == null){
 			throw new DataServiceException("Null value passed to SequenceService.getProperty");
 		}
-		UserServiceImpl.verifyAccess(session, seq);
-		
-		Connection conn = Database.getConnection();
-		try{
-			IsSerializable property = (IsSerializable) getProperties(seq).get(key);
-			if(property == null){
-				throw new DataServiceException("Sequence property not found with key " + key);
-			}
-			return property;
-		}finally{
-			try {
-				conn.close();
-			} catch (SQLException e) { e.printStackTrace(); }
+		IsSerializable property = (IsSerializable) getProperties(seq).get(key);
+		if(property == null){
+			throw new DataServiceException("Sequence property not found with key " + key);
 		}
+		return property;
+		
 	}
 
 	//public Cache nucleotideStringCache; //TODO make cache
 
-	
+	/**
+	 * Gives the sequence nucleotide string pointed to by the sequence hook.
+	 * Does not check any permissions.
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @return The nucleotide string specified by the hook.
+	 * @throws DataServiceException "Null value passed to SequenceService.getSequence"
+	 * 		"Sequence could not be found in the database."
+	 * 		"Error reading data."
+	 * 		"Error connecting to database."
+	 */
 	public static NucleotideString getSequence(SequenceHook seq) throws DataServiceException {
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getSequence");
@@ -231,7 +317,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			statement.setInt(1, seq.getSeqID());
 			ResultSet res = statement.executeQuery();
 			if(!res.next()){
-				System.out.println("were here now "+statement.toString()+" e "+ res.toString());
+			//	System.out.println("were here now "+statement.toString()+" e "+ res.toString());
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
 			Blob b = res.getBlob(1);
@@ -252,31 +338,69 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
 	}
-	
+
+	/**
+	 * Gives the sequence nucleotide string pointed to by the sequence hook.
+	 * Checks if the current user has permission to access the given nucleotide sequence.
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param session The session from which the current user is found.
+	 * @return The nucleotide string specified by the hook.
+	 * @throws DataServiceException "Null value passed to SequenceService.getSequence"
+	 * 		"Sequence could not be found in the database."
+	 * 		"Error reading data."
+	 * 		"Error connecting to database."
+	 */
 	public static NucleotideString getSequence(SequenceHook seq, HttpSession session)
 			throws DataServiceException {
 		if(seq == null){
 			throw new DataServiceException("Null value passed to SequenceService.getSequence");
 		}
-		//UserServiceImpl.verifyAccess(session, seq);
+		UserServiceImpl.verifyAccess(session, seq);
 		
 		return SequenceServiceImpl.getSequence(seq);
 	}
 	
+	/**
+	 * Gives the sequence nucleotide string pointed to by the sequence hook.
+	 * Checks if the current user has permission to access the given nucleotide sequence.
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @return The nucleotide string's string value specified by the hook.
+	 * @throws DataServiceException "Null value passed to SequenceService.getSequence"
+	 * 		"Sequence could not be found in the database."
+	 * 		"Error reading data."
+	 * 		"Error connecting to database."
+	 */
 	public String getNucleotides(SequenceHook seq) throws DataServiceException {
 		NucleotideString nuc = SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession());
 		return nuc.getDisplayString();
 	}
 
+
+	/**
+	 * Gives the sequence nucleotide string's length, pointed to by the sequence hook.
+	 * Checks if the current user has permission to access the given nucleotide sequence.
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @return The nucleotide string's length specified by the hook.
+	 * @throws DataServiceException "Null value passed to SequenceService.getSequence"
+	 * 		"Sequence could not be found in the database."
+	 * 		"Error reading data."
+	 * 		"Error connecting to database."
+	 */
 	public int length(SequenceHook seq) throws DataServiceException {
 		return SequenceServiceImpl.getSequence(seq, this.getThreadLocalRequest().getSession()).getLength();
 	}
 	
-	
-	
-	
-	
-	
+	/**
+	 * Saves the given NucleotideString, first making sure that it has not been saved before
+	 * (no other NucleotideString that is equal to the given one). If it already saved, simply
+	 * returns the index of the existing data.
+	 * @param nucleotides The NucleotideString to save (not null)
+	 * @param conn The connection to be used to communicate with the database.
+	 * @return The index of the sequence saved in the database.
+	 * @throws DataServiceException "Error reading NucleotideString."
+	 * 			"Error writing sequence to database."
+	 * 			"Error connecting to database."
+	 */
 	private static int saveNucleotideString(NucleotideString nucleotides, Connection conn)
 				throws DataServiceException{
 		try{
@@ -304,7 +428,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			res = statement.getGeneratedKeys();
 	
 			if(!res.next()){
-				throw new DataServiceException("Error saving sequence to database.");
+				throw new DataServiceException("Error writing sequence to database.");
 			}
 			
 			return res.getInt(1);
@@ -313,7 +437,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new DataServiceException("Error writing NucleotideString.");
+			throw new DataServiceException("Error reading NucleotideString.");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new DataServiceException("Error reading NucleotideString.");
@@ -322,10 +446,19 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	
 	
-	
-	
-	
-
+	/**
+	 * Saves the given data, returning a sequence hook to refer to its location in the database.
+	 * Does not grant permission to any users.
+	 * @param nucleotides The underlying sequence data to use. not null
+	 * @param features The map of feature types to collections of sequence features to save. not null
+	 * @param seqName The name of the sequence data, not null
+	 * @param properties The map of sequence property names to property values.
+	 * @return The hook referring to the data's location in the database.
+	 * @throws DataServiceException "Null value passed to SequenceService.saveSequence"
+	 * 		"Sequence data with name " + seqName + " already exists"
+	 * 		"Error saving sequence data to database."
+	 * 		"Error connecting to database."
+	 */
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, Object> properties) throws DataServiceException {
@@ -371,9 +504,11 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			
 			return new SequenceHook(dataID, seqID, seqName);
 		}catch (SQLException e) {
-			throw new DataServiceException(e.getMessage());
+			e.printStackTrace();
+			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
-			throw new DataServiceException(e.getMessage());
+			e.printStackTrace();
+			throw new DataServiceException("Error saving sequence data to database.");
 		} finally {
 			try {
 				conn.close();
@@ -389,7 +524,21 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	
 	
-	
+	/**
+	 * Saves the given data, returning a sequence hook to refer to its location in the database.
+	 * Granting permission to read to the current user.
+	 * @param nucleotides The underlying sequence data to use. not null
+	 * @param features The map of feature types to collections of sequence features to save. not null
+	 * @param seqName The name of the sequence data, not null
+	 * @param properties The map of sequence property names to property values.
+	 * @param session The https session from which the current user is read.
+	 * @return The hook referring to the data's location in the database.
+	 * @throws DataServiceException "Null value passed to SequenceService.saveSequence"
+	 * 		"Sequence data with name " + seqName + " already exists"
+	 * 		"Error saving sequence data to database."
+	 * 		"Error granting user permission to saved sequence"
+	 * 		"Error connecting to database."
+	 */
 	public static SequenceHook saveSequence(NucleotideString nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
 			Map<String, Object> properties, HttpSession session) throws DataServiceException {
@@ -427,6 +576,21 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	
 
+	/**
+	 * Saves the given data, returning a sequence hook to refer to its location in the database.
+	 * Granting permission to read to the current user.
+	 * @param nucleotides The underlying sequence data to use as a string. not null
+	 * @param features The map of feature types to collections of sequence features to save. not null
+	 * @param seqName The name of the sequence data, not null
+	 * @param properties The map of sequence property names to property values.
+	 * @param session The https session from which the current user is read.
+	 * @return The hook referring to the data's location in the database.
+	 * @throws DataServiceException "Null value passed to SequenceService.saveSequence"
+	 * 		"Sequence data with name " + seqName + " already exists"
+	 * 		"Error saving sequence data to database."
+	 * 		"Error granting user permission to saved sequence"
+	 * 		"Error connecting to database."
+	 */
 	
 	public static SequenceHook saveSequence(String nucleotides,
 			Map<String, Collection<Feature>> features, String seqName,
@@ -435,14 +599,37 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		return SequenceServiceImpl.saveSequence(seq, features, seqName, properties, session);
 	}
 	
-
+	/**
+	 * Saves the given data, returning a sequence hook to refer to its location in the database.
+	 * Granting permission to read to the current user.
+	 * @param nucleotides The underlying sequence data to use. not null
+	 * @param seqName The name of the sequence data, not null
+	 * @return The hook referring to the data's location in the database.
+	 * @throws DataServiceException "Null value passed to SequenceService.saveSequence"
+	 * 		"Sequence data with name " + seqName + " already exists"
+	 * 		"Error saving sequence data to database."
+	 * 		"Error granting user permission to saved sequence"
+	 * 		"Error connecting to database."
+	 */
 	public SequenceHook saveSequence(String nucleotides, String seqName)
 			throws DataServiceException {
-		System.out.println("Save sequence");
+		//System.out.println("Save sequence");
 		return SequenceServiceImpl.saveSequence(nucleotides, seqName, this.getThreadLocalRequest().getSession());
 	}
 	
-	
+	/**
+	 * Saves the given data, returning a sequence hook to refer to its location in the database.
+	 * Granting permission to read to the current user.
+	 * @param nucleotides The underlying sequence data to use. not null
+	 * @param seqName The name of the sequence data, not null
+	 * @param session The https session from which the current user is read.
+	 * @return The hook referring to the data's location in the database.
+	 * @throws DataServiceException "Null value passed to SequenceService.saveSequence"
+	 * 		"Sequence data with name " + seqName + " already exists"
+	 * 		"Error saving sequence data to database."
+	 * 		"Error granting user permission to saved sequence"
+	 * 		"Error connecting to database."
+	 */
 	public static SequenceHook saveSequence(String nucleotides, String seqName, HttpSession session)
 	throws DataServiceException {
 		System.out.println("now in method 2");
@@ -452,17 +639,35 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	
 	
-	
+	/**
+	 * Gives the hook referring to the sequence data of the given name,
+	 * if the current user has permission to view this data.
+	 * @param name The name of the exisiting sequence that the user has access to.
+	 * @throws DataServiceException  "null value was passed to SequenceService.findSequence"
+	 * 			"Sequence data with name " + name + " not found."
+	 * 			"Sequence could not be found in the database."
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Error communicating with database."
+	 */
 	public SequenceHook findSequence(String name) throws DataServiceException {
 		SequenceHook seq = findDNASequence(name);
 		UserServiceImpl.verifyAccess(this.getThreadLocalRequest().getSession(), seq);
 		return seq;
 	}
+		
 	
 	
 	
-	
-
+	/**
+	 * Gives the hook referring to the sequence data of the given name,
+	 * Does not check user permissions
+	 * @param name The name of the exisiting sequence that the user has access to.
+	 * @throws DataServiceException  "null value was passed to SequenceService.findSequence"
+	 * 			"Sequence data with name " + name + " not found."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Error communicating with database."
+	 */
 	public static SequenceHook findDNASequence(String name) throws DataServiceException {
 		if(name == null){
 			throw new DataServiceException("null value was passed to SequenceService.findSequence");
@@ -489,7 +694,12 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	
 	
-	
+	/**
+	 * Gives a list of sequence data names for all sequences that the current user has 
+	 * permission to access.
+	 * @return The list of available sequence data, empty if none are found.
+	 * @throws DataServiceException "Error connecting to database."
+	 */
 	public List<String> listAvailableSequences() throws DataServiceException {
 		User u = UserServiceImpl.getLoggedIn(this.getThreadLocalRequest().getSession());
 		Connection conn = Database.getConnection();
@@ -531,31 +741,106 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	
 	
 
-
+	
+	/**
+	 * Adds a property to the sequence data indicated by the hook, 
+	 * if the current user has permission to access the given sequence.
+	 * @param seq The hook referencing the existing sequence data to modify. (not null)
+	 * @param key The key to which the given property is mapped - the property name. (not null)
+	 * @param value The value of the property. (not null)
+	 * @throws DataServiceException "Null value passed to SequenceService.addProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence already contains property with given key."
+	 * 			"Sequence properties could not be saved."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public void addProperty(SequenceHook seq, String key, IsSerializable value)
 			throws DataServiceException {
 		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
 	}
 
 
+	/**
+	 * Adds a property to the sequence data indicated by the hook, 
+	 * if the current user has permission to access the given sequence.
+	 * @param seq The hook referencing the existing sequence data to modify. (not null)
+	 * @param key The key to which the given property is mapped - the property name. (not null)
+	 * @param value The value of the property. (not null)
+	 * @throws DataServiceException "Null value passed to SequenceService.addProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence already contains property with given key."
+	 * 			"Sequence properties could not be saved."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public void addProperty(SequenceHook seq, String key, String value)
 			throws DataServiceException {
 		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
 	}
 
 
+	/**
+	 * Adds a property to the sequence data indicated by the hook, 
+	 * if the current user has permission to access the given sequence.
+	 * @param seq The hook referencing the existing sequence data to modify. (not null)
+	 * @param key The key to which the given property is mapped - the property name. (not null)
+	 * @param value The value of the property. (not null)
+	 * @throws DataServiceException "Null value passed to SequenceService.addProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence already contains property with given key."
+	 * 			"Sequence properties could not be saved."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public void addProperty(SequenceHook seq, String key, Boolean value)
 			throws DataServiceException {
 		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
 	}
 
 
+	/**
+	 * Adds a property to the sequence data indicated by the hook, 
+	 * if the current user has permission to access the given sequence.
+	 * @param seq The hook referencing the existing sequence data to modify. (not null)
+	 * @param key The key to which the given property is mapped - the property name. (not null)
+	 * @param value The value of the property. (not null)
+	 * @throws DataServiceException "Null value passed to SequenceService.addProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence already contains property with given key."
+	 * 			"Sequence properties could not be saved."
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public void addProperty(SequenceHook seq, String key, Integer value)
 			throws DataServiceException {
 		SequenceServiceImpl.addProperty(seq, key, value, this.getThreadLocalRequest().getSession());
 	}
 
 
+	/**
+	 * Gives a single property value mapped to the given key for the specified sequence,
+	 * if the current user has permission to view this data. 
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param key The property name (not null)
+	 * @return A map of property names to the property values.
+	 * @throws DataServiceException "Null value passed to SequenceService.getProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence property not found with key " + key
+	 * 			"Property '" + key + "' is not of type boolean"
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public boolean getBooleanProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		boolean result;
@@ -570,6 +855,21 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	}
 
 
+	/**
+	 * Gives a single property value mapped to the given key for the specified sequence,
+	 * if the current user has permission to view this data. 
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param key The property name (not null)
+	 * @return A map of property names to the property values.
+	 * @throws DataServiceException "Null value passed to SequenceService.getProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence property not found with key " + key
+	 * 			"Property '" + key + "' is not of type integer"
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public int getIntegerProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		int result;
@@ -583,7 +883,21 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		return result;
 	}
 
-
+	/**
+	 * Gives a single property value mapped to the given key for the specified sequence,
+	 * if the current user has permission to view this data. 
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param key The property name (not null)
+	 * @return A map of property names to the property values.
+	 * @throws DataServiceException "Null value passed to SequenceService.getProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence property not found with key " + key
+	 * 			"Property '" + key + "' is not of type IsSerializable"
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public IsSerializable getIsSerializableProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		IsSerializable result;
@@ -597,7 +911,21 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		return result;
 	}
 
-
+	/**
+	 * Gives a single property value mapped to the given key for the specified sequence,
+	 * if the current user has permission to view this data. 
+	 * @param seq The hook referencing the existing sequence data to access. (not null)
+	 * @param key The property name (not null)
+	 * @return A map of property names to the property values.
+	 * @throws DataServiceException "Null value passed to SequenceService.getProperty"
+	 * 			"User is no longer logged in."
+	 * 			"User does not have permission to use requested sequence."
+	 * 			"Sequence could not be found in the database."
+	 * 			"Sequence property not found with key " + key
+	 * 			"Property '" + key + "' is not of type String"
+	 * 			"Error reading data."
+	 * 			"Error connecting to database."
+	 */
 	public String getStringProperty(SequenceHook seq, String key)
 			throws DataServiceException {
 		String result;
