@@ -1,5 +1,6 @@
 package edu.brown.cs32.siliclone.client.operators.restrictiondigest;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
@@ -40,36 +42,29 @@ public class DigestPropertiesSelector extends PropertiesSelector {
 			*/
 		this.setAlign(Alignment.CENTER);
 	
-		
-        final ListGrid enzymeGrid = new ListGrid();
-        enzymeGrid.setWidth(200);
-        enzymeGrid.setHeight(200);
-        enzymeGrid.setShowAllRecords(true);
-        enzymeGrid.setSelectionType(SelectionStyle.SIMPLE);
-        enzymeGrid.setSelectionAppearance(SelectionAppearance.ROW_STYLE);
-
-        
-        
-        
-        ListGridField nameField = new ListGridField("enzymeName", "Restriction Enzyme");
-        enzymeGrid.setFields(nameField);
-        enzymeGrid.setData(new ListGridRecord[]{new EnzymeRecord("NdeI"),new EnzymeRecord("PvuII"),new EnzymeRecord("XhoI"),new EnzymeRecord("SmaI"),new EnzymeRecord("HindIII")});
-        addMember(enzymeGrid);
+        final SelectItem enzymeChoice= new SelectItem();
+        enzymeChoice.setTitle("Restriction Enzyme");
+        enzymeChoice.setWidth(200);
+        enzymeChoice.setValueMap("NdeI","PvuII","XhoI","SmaI","HindIII");
+        enzymeChoice.setValue((String)operator.getProperties().get("enzyme"));
+        form.setFields(enzymeChoice);
         
         
         final Button ok = new Button("OK");
         ok.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
 			
 			public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
-				ListGridRecord[] lgra = enzymeGrid.getSelection();
 
-				System.out.println("hihi");
-				operator.getProperties().put("enzyme",lgra[0].getAttributeAsObject("enzymeName"));
-				System.out.println("hihi2");
+				
+				if(!Arrays.asList(enzymeChoice.getValues()).contains(enzymeChoice.getValue())){
+					SC.say("Please select an existing restriction enzyme");
+					return;
+				}
+					
+				operator.getProperties().put("enzyme",enzymeChoice.getValue());
 				
 				
-				operator.calculate();
-				System.out.println("hihi3");
+				operator.update();
 			}
 		});
         
