@@ -38,5 +38,7 @@ public interface UserServiceAsync {
 	void getLoggedIn(AsyncCallback<User> callback);
 
 	void logout(AsyncCallback<Void> callback);
+
+	void removeGroup(String group, AsyncCallback<Void> callback);
 	
 }

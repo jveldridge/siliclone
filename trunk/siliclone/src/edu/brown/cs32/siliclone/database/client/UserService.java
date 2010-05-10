@@ -48,6 +48,7 @@ public interface UserService extends RemoteService {
 	 * @return message describing success or failure
 	 */
 	void createGroup(String group) throws DataServiceException;
+	void removeGroup(String group) throws DataServiceException;
 	
 	List<String> getOwnedGroups() throws DataServiceException;
 	List<String> getAvailableGroups() throws DataServiceException;
