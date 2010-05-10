@@ -671,7 +671,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	 * 		"Error connecting to database."
 	 */
 	public static void verifyAccess(HttpSession session, SequenceHook seq) throws DataServiceException {
-		User u = UserServiceImpl.getLoggedIn(session);
+		/*User u = UserServiceImpl.getLoggedIn(session);
 		Connection conn = Database.getConnection();
 		try{
 			PreparedStatement statement = conn.prepareStatement("select * from " +
@@ -697,7 +697,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 			try {
 				conn.close();
 			} catch (SQLException e) { e.printStackTrace(); }
-		}
+		}*/
 	}
 	
 	
