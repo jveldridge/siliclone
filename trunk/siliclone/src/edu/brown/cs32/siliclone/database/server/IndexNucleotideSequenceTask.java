@@ -1,8 +1,6 @@
 package edu.brown.cs32.siliclone.database.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,14 +11,30 @@ import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.tasks.Task;
 
+/**
+ * The Index Nucleotide Sequence Task is responsible for 
+ * updating a nucleotide string in the sequences table of the database,
+ * so that the nucleotide string has a suffix tree initialized.
+ */
+@SuppressWarnings("serial")
 public class IndexNucleotideSequenceTask implements Task {
-
-	
 	int id;
 	
-	public IndexNucleotideSequenceTask(int id) {
-		this.id = id;	}
 	
+	private static final int SUFFIX_INDEX = 6;
+	
+	/**
+	 * Constructs a task to index the nuclotide string
+	 * at the given index in the sequences table.
+	 * @param id The index of the existing sequence.
+	 */
+	public IndexNucleotideSequenceTask(int id) {
+		this.id = id;	
+	}
+	
+	/**
+	 * Executes the task - indexing the nucleotide sequence.
+	 */
 	public void compute()  {
 		Connection conn;
 		try {
@@ -35,8 +49,8 @@ public class IndexNucleotideSequenceTask implements Task {
 			}
 			Blob b = res.getBlob(2);
 			NucleotideString ns =  (NucleotideString) Database.loadCompressedObject(b);
-			ns.makeIndex(6);
-			res.updateObject(2, ns);
+			ns.makeIndex(SUFFIX_INDEX);
+			Database.saveCompressedObject(res, 2, ns);
 			res.updateInt(3, ns.getIndexDepth());
 			res.updateRow();
 			
@@ -44,13 +58,10 @@ public class IndexNucleotideSequenceTask implements Task {
 		}catch (SQLException e){
 			e.printStackTrace();
 			} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (DataServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			try {
@@ -58,12 +69,10 @@ public class IndexNucleotideSequenceTask implements Task {
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
 		} catch (DataServiceException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
 		System.out.println("finished compute for indexing");
-
 	}
 
 }
