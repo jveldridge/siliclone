@@ -15,6 +15,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.tools.ant.taskdefs.rmic.KaffeRmic;
+
 //import sun.misc.Cache;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -34,6 +36,35 @@ import edu.brown.cs32.siliclone.server.TasksDelegation;
 @SuppressWarnings("serial")
 public class SequenceServiceImpl extends RemoteServiceServlet implements SequenceService{
 	
+	private static void lockDB(Connection c,String lock, int timeout) throws SQLException, DataServiceException{
+	
+		PreparedStatement lockStatement = c.prepareStatement("select GET_LOCK(?,?)");
+		lockStatement.setString(1,lock);
+		lockStatement.setInt(2, timeout);
+		ResultSet lockRes = lockStatement.executeQuery();
+		if(!lockRes.next()||lockRes.getInt(1)!=1){
+			throw new DataServiceException("Database locking problem.");
+		}
+		
+		
+	}
+	
+	private static void unlockDB(Connection c,String lock) throws SQLException, DataServiceException{
+		
+		
+		PreparedStatement lockStatement = c.prepareStatement("select RELEASE_LOCK(?)");
+		lockStatement.setString(1,lock);
+		ResultSet lockRes = lockStatement.executeQuery();
+		if(!lockRes.next()||lockRes.getInt(1)!=1){
+			throw new DataServiceException("Database locking problem.");
+		}
+		
+		
+	}
+	
+	
+	
+	
 	/**
 	 * Adds a feature to the sequence data indicated by the sequence hook,
 	 * if the current user has permission to access the given sequence.
@@ -46,6 +77,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	 * 			"Sequence features could not be saved."
 	 * 			"Error reading data."
 	 * 			"Error connecting to database."
+	 * 			"Database locking problem."
 	 */
 	@SuppressWarnings("unchecked")
 	public void addFeature(SequenceHook seq, Feature toAdd)
@@ -57,6 +89,12 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		
 		Connection conn = Database.getConnection();
 		try{
+			
+			
+			
+			lockDB(conn, "features"+seq.getDataID(), Database.lockingTimeOutPropertiesAndFeatures);
+			
+			
 			PreparedStatement statement = conn.prepareStatement("select features from " + 
 					Database.SEQUENCE_DATA + " where id = ?");
 			statement.setInt(1, seq.getDataID());
@@ -80,6 +118,11 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if (0 >= statement.executeUpdate()){
 				throw new DataServiceException("Sequence features could not be saved.");
 			}
+			
+			
+			unlockDB(conn, "features"+seq.getDataID());
+			
+			
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		}catch (IOException e){
@@ -117,8 +160,14 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 		UserServiceImpl.verifyAccess(session, seq);
 		
+		
 		Connection conn = Database.getConnection();
 		try{
+			
+			lockDB(conn, "properties"+seq.getDataID(), Database.lockingTimeOutPropertiesAndFeatures);
+			System.out.println("locked now for properties "+seq.getDataID()+" property "+key+" => "+value);
+			
+			
 			PreparedStatement statement = conn.prepareStatement("select properties from " + 
 					Database.SEQUENCE_DATA + " where id = ?");
 			statement.setInt(1, seq.getDataID());
@@ -141,6 +190,10 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			if (0 >= statement.executeUpdate()){
 				throw new DataServiceException("Sequence properties could not be saved.");
 			}
+			
+			unlockDB(conn, "properties"+seq.getDataID());
+			System.out.println("better be unlocked now for properties "+seq.getDataID()+" property "+key+" => "+value);
+			
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		}catch (IOException e){
@@ -177,6 +230,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		
 		Connection conn = Database.getConnection();
 		try{
+			
 			PreparedStatement statement = conn.prepareStatement("select features from " +
 					Database.SEQUENCE_DATA + " where id = ?");
 			statement.setInt(1, seq.getDataID());
@@ -185,8 +239,10 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				throw new DataServiceException("Sequence could not be found in the database.");
 			}
 			
+			
 			return ((Map<String, Collection<Feature>>) 
 					Database.loadCompressedObject(res.getBlob(1))).get(featureType);
+			
 		}catch (SQLException e){
 			throw new DataServiceException("Error connecting to database.");
 		} catch (IOException e) {
@@ -393,7 +449,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	/**
 	 * Saves the given NucleotideString, first making sure that it has not been saved before
 	 * (no other NucleotideString that is equal to the given one). If it already saved, simply
-	 * returns the index of the existing data.
+	 * returns a SequenceHook to the existing data.
 	 * @param nucleotides The NucleotideString to save (not null)
 	 * @param conn The connection to be used to communicate with the database.
 	 * @return The index of the sequence saved in the database.

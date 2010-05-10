@@ -90,10 +90,10 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		
 		final TextAreaItem manualSequence = new TextAreaItem("Sequence");
 		manualSequence.setEndRow(true);
-		RegExpValidator manualEntryVal = new RegExpValidator();
+		/*RegExpValidator manualEntryVal = new RegExpValidator();
 		manualEntryVal.setErrorMessage("Invalid sequence: only A,C,G,T are permitted.");
-		manualEntryVal.setExpression("^(A|C|G|T|a|t|g|c)+$");
-		manualSequence.setValidators(manualEntryVal);
+		manualEntryVal.setExpression("^(A|C|G|T|a|t|g|c|)+$");
+		manualSequence.setValidators(manualEntryVal);*/
 		
 		//TODO add ability for user to enter annotations
 

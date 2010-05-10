@@ -55,6 +55,8 @@ public class Database {
 	public static final String SEQUENCE_DATA = "sequence_data";
 	public static final String SEQUENCE_GROUP_PERMISSIONS = "sequence_group_permissions";
 	public static final String SEQUENCE_USER_PERMISSIONS = "sequence_user_permissions";
+	public static final int lockingTimeOutPropertiesAndFeatures = 10;
+	public static final int lockingTimeOutSequenceIndexing = 60;
 	
 	
 	/**

@@ -49,7 +49,19 @@ public class IndexNucleotideSequenceTask implements Task {
 			}
 			Blob b = res.getBlob(2);
 			NucleotideString ns =  (NucleotideString) Database.loadCompressedObject(b);
+			
+			
 			ns.makeIndex(SUFFIX_INDEX);
+			PreparedStatement statement2 = conn.prepareStatement("update "+Database.SEQUENCES+
+				" set data=?, indexDepth=? where id = ?");
+			
+			
+			Database.saveCompressedObject(statement2, 1, ns);
+			statement2.setInt(2, ns.getIndexDepth());
+			statement2.setInt(3, id);
+			
+			statement2.executeUpdate();
+			
 			
 			statement = conn.prepareStatement("update " + Database.SEQUENCES + " set data = ?, indexDepth = ?  where id = ?");
 			statement.setInt(3, id);
