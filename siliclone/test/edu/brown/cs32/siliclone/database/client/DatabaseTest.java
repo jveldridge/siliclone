@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.database.client.test;
+package edu.brown.cs32.siliclone.database.client;
 
 import static org.junit.Assert.*;
 
@@ -39,13 +39,4 @@ public class DatabaseTest {
 	}
 	
 	
-	@Test
-	public void saveNucleotideTest(){	
-		NucleotideString ns = new NucleotideString("cgattccgccggttacgatcgatcgactcatagatatcagcacatatcagacgatcgtcagttctacgtgacgacgagctacgtgtcagtacgatcgatcgctgatcagtacgcatga");
-		try {
-			new SequenceServiceImpl().saveSequence(ns, new HashMap<String, Collection<Feature>>(), "someinterestingname"+Math.random(), new HashMap<String, Object>(), true);
-		} catch (DataServiceException e) {
-			e.printStackTrace();
-		};
-	}
 }

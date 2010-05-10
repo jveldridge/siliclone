@@ -1,4 +1,4 @@
-package edu.brown.cs32.siliclone.database.client.test;
+package edu.brown.cs32.siliclone.database.client;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class UserServiceTest extends GWTTestCase{
 
 		final AsyncCallback<Void> deleteAccountTest = new AsyncCallback<Void>(){
 			public void onFailure(Throwable caught) {
-				fail("delete test error : " + caught.getMessage());
+				fail("delete user test error : " + caught.getMessage());
 			}
 			public void onSuccess(Void result) {
 				System.out.println("account deleted");
