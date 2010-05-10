@@ -8,12 +8,19 @@ public class DataServiceException extends Exception {
 	private String message;
 	
 	@SuppressWarnings("unused")
-	private DataServiceException(){}
+	private DataServiceException(){} //for RPC serialization only
 	
+	/**
+	 * Constructs an exception with the given message returned by getMessage()
+	 * @param message The message to return (not null)
+	 */
 	public DataServiceException(String message){
 		this.message = message;
 	}
 	
+	/**
+	 * @return the message set during construction.
+	 */
 	public String getMessage() {
 		return message;
 	}
