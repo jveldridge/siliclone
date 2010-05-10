@@ -41,7 +41,7 @@ public class IndexNucleotideSequenceTask implements Task {
 			conn = Database.getConnection();
 		try{
 			PreparedStatement statement = conn.prepareStatement("select * from " +
-					Database.SEQUENCES + " where id = ?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE);
+					Database.SEQUENCES + " where id = ?");//,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE);
 			statement.setInt(1, id);
 			ResultSet res = statement.executeQuery();
 			if(!res.next()){
@@ -50,10 +50,13 @@ public class IndexNucleotideSequenceTask implements Task {
 			Blob b = res.getBlob(2);
 			NucleotideString ns =  (NucleotideString) Database.loadCompressedObject(b);
 			ns.makeIndex(SUFFIX_INDEX);
-			Database.saveCompressedObject(res, 2, ns);
-			res.updateInt(3, ns.getIndexDepth());
-			res.updateRow();
 			
+			statement = conn.prepareStatement("update " + Database.SEQUENCE_DATA + " set data = ?, indexDepth = ?  where id = ?");
+			statement.setInt(3, id);
+			statement.setInt(2, ns.getIndexDepth());
+			Database.saveCompressedObject(statement, 1, ns);
+			
+			statement.executeUpdate();
 			
 		}catch (SQLException e){
 			e.printStackTrace();
