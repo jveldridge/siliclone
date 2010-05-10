@@ -27,7 +27,6 @@ public class DNAInputOp extends AbstractOperator {
 	}
 	
 	public void init() {
-		super.init();
 		this.image = new Img("dnaInput.gif");
 		this.properties = new DNAInputPropertiesSelector(this);
 	}

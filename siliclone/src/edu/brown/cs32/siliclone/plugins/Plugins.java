@@ -1,8 +1,9 @@
 package edu.brown.cs32.siliclone.plugins;
 
-import edu.brown.cs32.siliclone.client.operators.restrictiondigest.DigestTemplate;
+import edu.brown.cs32.siliclone.client.operators.filter.FilterOpTemplate;
 import edu.brown.cs32.siliclone.client.operators.ligation.LigationOperatorTemplate;
 import edu.brown.cs32.siliclone.client.operators.pcr.PCROperatorTemplate;
+import edu.brown.cs32.siliclone.client.operators.restrictiondigest.DigestTemplate;
 import edu.brown.cs32.siliclone.client.operators.slowoperator.SlowOperatorTemplate;
 import edu.brown.cs32.siliclone.client.visualizers2.DataVisualizerTemplate;
 import edu.brown.cs32.siliclone.client.visualizers2.SequenceVisualizerTemplate;
@@ -20,6 +21,7 @@ public class Plugins {
 		operatorAdder.addOperator(new DigestTemplate());
 		operatorAdder.addOperator(new SlowOperatorTemplate());
 		operatorAdder.addOperator(new PCROperatorTemplate());
+		operatorAdder.addOperator(new FilterOpTemplate());
 		operatorAdder.addOperator(new LigationOperatorTemplate());
 	}
 	

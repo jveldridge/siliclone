@@ -23,7 +23,6 @@ public class DigestOperator extends AbstractRemoteOperator {
 	}
 	
 	public void init() {
-		super.init();
 		image = new Img("digest.gif");
 		propertiesSelector = new DigestPropertiesSelector(this);
 	}

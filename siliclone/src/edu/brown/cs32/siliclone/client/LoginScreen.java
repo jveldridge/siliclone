@@ -63,8 +63,7 @@ public class LoginScreen extends HLayout {
 					"simulator and productivity tool.  Using Siliclone, you can rapidly develop cloning strategies" +
 					" in workspaces by linking together logical operators. You can then share these workspaces " +
 					"with other users.</h3>" +
-					"<h2>To get started using Siliclone, login to the right or click below to register" +
-					" for an account!</h2>");
+					"<h2>To get started using Siliclone, login or register for an account!</h2>");
 			titleLabel.setBackgroundColor("white");
 			titleLabel.setAlign(Alignment.CENTER);
 			introduction.addItem(titleLabel);
@@ -85,8 +84,10 @@ public class LoginScreen extends HLayout {
 			this.setLayoutAlign(Alignment.CENTER);
 			
 
-			Button register = new Button("Register");
-			register.addClickHandler(new ClickHandler(){
+			//Button register = new Button("Register");
+			
+			Img reg = new Img("register.jpg", 90, 30);
+			reg.addClickHandler(new ClickHandler(){
 				public void onClick(ClickEvent event) {
 					final Window w = new Window();
 					
@@ -103,12 +104,15 @@ public class LoginScreen extends HLayout {
 				}
 			});
 			
-			Img reg = new Img("register.gif", 50, 50);
+			HLayout buttonPanel = new HLayout();
+			buttonPanel.addMember(new LayoutSpacer());
+			buttonPanel.addMember(reg);
+			buttonPanel.addMember(new LayoutSpacer());
 			
 			this.addMember(new LayoutSpacer());
 			this.addMember(new LoginForm(_main));
-			this.addMember(register);
-			this.addMember(reg);
+			this.addMember(buttonPanel);
+			this.setAlign(Alignment.CENTER);
 			
 			this.addMember(new LayoutSpacer());
 			
