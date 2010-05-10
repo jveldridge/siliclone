@@ -31,6 +31,7 @@ public class LigationTask implements Task {
 	}
 
 	public void compute() {
+		System.out.println("In ligation task");
 		try{
 			Collection<Thread> saveThreads = new LinkedList<Thread>();
 			Collection<Sequence> first = new LinkedList<Sequence>();
@@ -161,6 +162,7 @@ public class LigationTask implements Task {
 							final Map<String, Collection<Feature>> rMap = new HashMap<String, Collection<Feature>>();
 							Random rng = new Random();
 							if(forward.str != null) {
+								System.out.println("in ligation forward");
 								final String fName = Integer.toString(forward.str.hashCode() + rng.nextInt());
 								Thread t = new Thread(new Runnable() {
 									
@@ -178,9 +180,10 @@ public class LigationTask implements Task {
 
 							}
 							if(reverse.str != null) {
+								System.out.println("in ligation reverse");
 								final String rName = Integer.toString(reverse.str.hashCode() + rng.nextInt());
 								
-								saveThreads.add(new Thread(new Runnable() {
+									Thread t = new Thread(new Runnable() {
 									
 									public void run() {
 										try {
@@ -190,7 +193,9 @@ public class LigationTask implements Task {
 										}
 										
 									}
-								}));
+								});
+								saveThreads.add(t);
+								t.start();
 								
 								
 								
