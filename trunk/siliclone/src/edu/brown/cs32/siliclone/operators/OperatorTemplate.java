@@ -29,4 +29,6 @@ public interface OperatorTemplate {
 	 * associated.
 	 */
 	public String getName();
+	
+	public String getIconPath();
 }

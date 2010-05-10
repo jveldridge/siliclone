@@ -26,5 +26,9 @@ public class DNAInputTemplate implements OperatorTemplate {
 		return new DNAInputOp();
 	}
 
+	public String getIconPath() {
+		return "dnaInput.gif";
+	}
+
 	
 }

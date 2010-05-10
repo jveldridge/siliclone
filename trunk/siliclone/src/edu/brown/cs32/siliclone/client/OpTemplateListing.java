@@ -43,10 +43,6 @@ public class OpTemplateListing extends VLayout {
         this.addMember(opGrid);
 	}
 	
-	/**
-	 * TODO why interface? ANSWER: Because I do not want anyone to instantiate
-	 * this class (like Iterators in the collections framework)
-	 */
 	private class OperatorAdderImpl implements OperatorAdder {
 		
 		public void addOperator(OperatorTemplate toBeAdded){

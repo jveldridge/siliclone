@@ -22,4 +22,8 @@ public class LigationOperatorTemplate extends AbstractRemoteOperatorTemplate {
 		return new LigationOperator();
 	}
 
+	public String getIconPath() {
+		return "ligation.gif";
+	}
+
 }

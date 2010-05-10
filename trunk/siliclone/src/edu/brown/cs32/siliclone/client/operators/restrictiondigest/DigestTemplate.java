@@ -25,4 +25,8 @@ public class DigestTemplate implements OperatorTemplate {
 		return name;
 	}
 
+	public String getIconPath() {
+		return "digest.gif";
+	}
+
 }

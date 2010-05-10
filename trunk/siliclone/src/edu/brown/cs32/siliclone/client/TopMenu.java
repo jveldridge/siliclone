@@ -284,19 +284,18 @@ public class TopMenu extends ToolStrip {
 			TabSet t = new TabSet();
 			w.setSize("400px", "300px");
 			
-			
 			Tab t1 = new Tab();
-			t1.setTitle("Group Settings");
-			t1.setPane(new GroupsForm());
+			t1.setTitle("User Settings");
+			t1.setPane(new UserForm(_main));
 			
 			Tab t2 = new Tab();
-			t2.setTitle("User Settings");
-			t2.setPane(new UserForm(_main));
+			t2.setTitle("Group Settings");
+			t2.setPane(new GroupsForm());
 			
 			Tab t3 = new Tab();
 			t3.setTitle("Workspace Permissions");
 			t3.setPane(new WorkspaceForm());
-			
+	
 			t.addTab(t1);
 			t.addTab(t2);
 			t.addTab(t3);

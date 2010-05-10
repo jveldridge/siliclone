@@ -107,7 +107,7 @@ public class WorkspaceView extends Canvas {
 			if(dropped instanceof TreeGrid){
 				ListGridRecord r = ((TreeGrid) dropped).getSelectedRecord();
 				if(r instanceof OpTemplateView){
-					Operator newOp = ((OpTemplateView) r).getFactory().makeOperator();
+					Operator newOp = ((OpTemplateView) r).getTemplate().makeOperator();
 				
 					newOp.setX(getOffsetX());
 					newOp.setY(getOffsetY());

@@ -25,4 +25,10 @@ public class FilterOpTemplate implements OperatorTemplate {
 		return name;
 	}
 
+	public String getIconPath() {
+		return "filter.gif";
+	}
+	
+	
+
 }

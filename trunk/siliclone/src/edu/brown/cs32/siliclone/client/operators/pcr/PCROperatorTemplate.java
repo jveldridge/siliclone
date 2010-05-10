@@ -6,7 +6,6 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.brown.cs32.siliclone.client.operators.abstractremoteoperator.AbstractRemoteOperatorTemplate;
-import edu.brown.cs32.siliclone.operators.AbstractOperator;
 import edu.brown.cs32.siliclone.operators.Operator;
 
 public class PCROperatorTemplate extends AbstractRemoteOperatorTemplate {
@@ -26,6 +25,10 @@ public class PCROperatorTemplate extends AbstractRemoteOperatorTemplate {
 		properties.put("match", 15);
 		r.setProperties(properties);
 		return r;
+	}
+
+	public String getIconPath() {
+		return "pcr.gif";
 	}
 
 }
