@@ -3,6 +3,7 @@ package edu.brown.cs32.siliclone.servlets;
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.server.FastaParser;
+import edu.brown.cs32.siliclone.server.TxtParser;
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
 
@@ -22,13 +23,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 
 public class UploadSequenceFileServlet extends UploadAction {
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 	
 	HashMap<String, SequenceHook> receivedFiles = new HashMap<String, SequenceHook>();
 	
 	@SuppressWarnings("unchecked")
 	public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
-		System.out.println("executing upload action");  
 			for (FileItem item : sessionFiles) {
 				if (false == item.isFormField()) {
 					try {
@@ -38,9 +38,12 @@ public class UploadSequenceFileServlet extends UploadAction {
 		    		  
 						InputStream stream = item.getInputStream();
 						String sequence = null;
-		    		  
+
 						if (seqFormat.equalsIgnoreCase("FASTA")) {
 							sequence = new FastaParser().parseFastaFile(stream);
+						}
+						else if (seqFormat.equalsIgnoreCase("TXT")) {
+							sequence = new TxtParser().parseTextFile(stream);
 						}
 		    		  
 						SequenceHook hook = SequenceServiceImpl.saveSequence(sequence, seqName, thisSession,true);

@@ -58,8 +58,8 @@ value="com.google.gwt.user.client.ui.TabListenerCollection"/>
 value="com.google.gwt.user.client.ui.TableListenerCollection"/>
 	<extend-configuration-property name="rpc.blacklist" 
 value="com.google.gwt.user.client.ui.TreeListenerCollection"/>
-  
-  
+    <extend-configuration-property name="rpc.blacklist" 
+value="com.google.gwt.user.client.rpc.SerializableException"/>
 
   
 
