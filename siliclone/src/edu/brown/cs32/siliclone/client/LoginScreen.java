@@ -1,9 +1,7 @@
 package edu.brown.cs32.siliclone.client;
 
-
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
@@ -16,7 +14,14 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import edu.brown.cs32.siliclone.client.forms.LoginForm;
 import edu.brown.cs32.siliclone.client.forms.RegisterForm;
 
-
+/**
+ * This class is responsible for displaying the main
+ * login screen that greets users when they navigate to
+ * the home page of the web application.
+ * 
+ * It allows users to login, register for an account,
+ * or read the Siliclone User Guide.
+ */
 public class LoginScreen extends HLayout {
 
 	private Siliclone _main;
@@ -63,7 +68,8 @@ public class LoginScreen extends HLayout {
 					"simulator and productivity tool.  Using Siliclone, you can rapidly develop cloning strategies" +
 					" in workspaces by linking together logical operators. You can then share these workspaces " +
 					"with other users.</h3>" +
-					"<h2>To get started using Siliclone, login or register for an account!</h2>");
+					"<h2>To get started using Siliclone, login or register for an account!</h2>" +
+					"<p><a href='UserGuide.pdf'>User Guide</a></p>");
 			titleLabel.setBackgroundColor("white");
 			titleLabel.setAlign(Alignment.CENTER);
 			introduction.addItem(titleLabel);
