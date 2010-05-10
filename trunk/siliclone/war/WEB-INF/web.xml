@@ -81,13 +81,39 @@
   
 <servlet>
         <servlet-name>pcrOperatorServiceImpl</servlet-name>
-        <servlet-class>edu.brown.cs32.siliclone.server.operators.pcr2.PCR2OperatorServiceImpl</servlet-class>
+        <servlet-class>edu.brown.cs32.siliclone.server.operators.pcr.PCROperatorServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>pcrOperatorServiceImpl</servlet-name>
     <url-pattern>/siliclone/pcrOperatorService</url-pattern>
   </servlet-mapping>
+
+
+<servlet>
+        <servlet-name>digestOperatorServiceImpl</servlet-name>
+        <servlet-class>edu.brown.cs32.siliclone.server.operators.restrictiondigest.DigestOperatorServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>digestOperatorServiceImpl</servlet-name>
+    <url-pattern>/siliclone/digestOperatorService</url-pattern>
+  </servlet-mapping>
+
+
+
+<servlet>
+        <servlet-name>ligationOperatorServiceImpl</servlet-name>
+        <servlet-class>edu.brown.cs32.siliclone.server.operators.ligation.LigationOperatorServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>ligationOperatorServiceImpl</servlet-name>
+    <url-pattern>/siliclone/ligationOperatorService</url-pattern>
+  </servlet-mapping>
+
+
+
 
       <servlet>
         <servlet-name>translationService</servlet-name>
