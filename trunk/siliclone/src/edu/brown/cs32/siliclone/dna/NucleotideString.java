@@ -109,8 +109,8 @@ public class NucleotideString implements Serializable{
 	 * @param length
 	 */
 	public NucleotideString(NucleotideString ns,int left,int length){
-		if(length<=0||length>ns.getLength()){
-			throw new IllegalArgumentException("Meaningless length");
+		if(length<=0){
+			throw new IllegalArgumentException("Meaningless length (less than the length of the sequence)");
 		}
 		this.sequence = new byte[length];
 		for(int i =0;i<length;i++){
