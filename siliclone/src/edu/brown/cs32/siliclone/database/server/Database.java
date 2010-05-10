@@ -31,8 +31,8 @@ public class Database {
 	// TODO - load these strings from a .config? using java.util.properties?
 	private static final String DRIVER = "org.gjt.mm.mysql.Driver"; //must be in class path
 	private static final String URL = "jdbc:mysql://mysql.vxcv.com/cs032002";
-	private static final String USERNAME = "javauser";//"cs032002";
-	private static final String PASSWORD = "siliclone";//"indy123";
+	private static final String USERNAME = "cs032002";
+	private static final String PASSWORD = "indy123";
 	
 	static{
 		try {
