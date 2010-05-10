@@ -188,6 +188,7 @@ public class DNAInputPropertiesSelector extends PropertiesSelector {
 		final RadioGroupItem formats = new RadioGroupItem("Format");
 		LinkedHashMap<String, String> formatsMap = new LinkedHashMap<String, String>();
 		formatsMap.put("FASTA", "FASTA");
+		formatsMap.put("TXT", "TXT");
 		formats.setValueMap(formatsMap);
 		DynamicForm uploadForm = new DynamicForm();
 		final TextItem seqName = new TextItem("Name");
