@@ -2,6 +2,7 @@ package edu.brown.cs32.siliclone.database.client;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -60,5 +61,8 @@ public interface SequenceServiceAsync {
 
 	void getIntegerProperty(SequenceHook seq, String key,
 			AsyncCallback<Integer> callback);
+
+
+	void getAllProperties(SequenceHook seq, AsyncCallback<Map> callback);
 
 }

@@ -321,6 +321,11 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 		}
 	}
 
+	public Map getAllProperties(SequenceHook seq) throws DataServiceException {
+		return getProperties(seq);
+	}
+	
+	
 	/**
 	 * Gives a single property value mapped to the given key for the specified sequence,
 	 * if the current user has permission to view this data. 
