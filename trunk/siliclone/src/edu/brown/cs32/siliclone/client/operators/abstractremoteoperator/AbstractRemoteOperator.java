@@ -14,7 +14,7 @@ import edu.brown.cs32.siliclone.operators.Operator;
 @SuppressWarnings("serial")
 public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.operators.AbstractOperator {
 
-	transient private static final int CHECK_DELAY=300;
+	transient private static final int CHECK_DELAY=100;
 	transient Timer checkProgressTimer;
 	
 	protected abstract AbstractRemoteOperatorServiceAsync getServiceAsyncObject();
@@ -45,7 +45,9 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 
 
 						public void onFailure(Throwable caught) {
-							SC.say(caught.toString());
+							if(!(caught instanceof BadComputationHookException)){
+								SC.say(caught.toString());
+							}
 							computationHook=null;
 						}
 
@@ -61,7 +63,10 @@ public abstract class AbstractRemoteOperator extends edu.brown.cs32.siliclone.op
 			}
 
 			public void onFailure(Throwable caught) {
-				SC.say(caught.toString());
+				if(!(caught instanceof BadComputationHookException)){
+					SC.say(caught.toString());
+				}
+				computationHook=null;
 				
 			}
 		});
