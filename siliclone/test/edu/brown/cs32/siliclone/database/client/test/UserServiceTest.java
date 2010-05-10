@@ -1,5 +1,7 @@
 package edu.brown.cs32.siliclone.database.client.test;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -24,6 +26,8 @@ public class UserServiceTest extends GWTTestCase{
 		
 		
 		
+		
+		
 
 		final AsyncCallback<Void> deleteAccountTest = new AsyncCallback<Void>(){
 			public void onFailure(Throwable caught) {
@@ -32,6 +36,47 @@ public class UserServiceTest extends GWTTestCase{
 			public void onSuccess(Void result) {
 				System.out.println("account deleted");
 				finishTest();
+			}
+		};
+		
+		
+		final AsyncCallback<Void> deleteGroupTest = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught) {
+				fail("delete group test error : " + caught.getMessage());
+			}
+			public void onSuccess(Void result) {
+				System.out.println("group deleted");
+				try {
+					service.remove(u, deleteAccountTest);
+				} catch (DataServiceException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+		
+		final AsyncCallback<List<String>> checkGroupTest = new AsyncCallback<List<String>>(){
+			public void onFailure(Throwable caught) {
+				fail("check group test error : " + caught.getMessage());
+			}
+			public void onSuccess(List<String> result) {
+				System.out.println("group checked");
+				assertTrue(result.contains("group"));
+				service.removeGroup("group", deleteGroupTest);
+			}
+		};
+		
+		
+		final AsyncCallback<Void> createGroupTest = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught) {
+				fail("create group test error : " + caught.getMessage());
+			}
+			public void onSuccess(Void result) {
+				System.out.println("group created");
+				try {
+					service.getOwnedGroups(checkGroupTest);
+				} catch (DataServiceException e) {
+					fail(e.getMessage());
+				}
 			}
 		};
 		
@@ -46,7 +91,7 @@ public class UserServiceTest extends GWTTestCase{
 				assertNull(result.getPassword());
 				assertEquals(result.getEmail(), "email");
 				try {
-					service.remove(u, deleteAccountTest);
+					service.createGroup("group", createGroupTest);
 				} catch (DataServiceException e) {
 					fail(e.getMessage());
 				}
