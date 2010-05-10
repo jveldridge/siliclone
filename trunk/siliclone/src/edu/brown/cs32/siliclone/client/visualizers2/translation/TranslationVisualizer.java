@@ -6,6 +6,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 import edu.brown.cs32.siliclone.client.WorkspaceView;
@@ -19,66 +21,83 @@ public class TranslationVisualizer extends VisualizerCanvas {
 		super(workspace, owner);
 	}
 
-	private VLayout contents;
+	private StaticTextItem text;
 	private TranslationServiceAsync service;
-
+	private String message1;
+	private String message2;
+	private String message3;
+	
 	public String getName() {
 		return "Translation Visualization";
 	}
-	
-	
 
 	public void update() {
-		if (contents == null) {
-			contents = new VLayout();
+		if (text == null) {
+			VLayout contents = new VLayout();
 			contents.setHeight100();
 			contents.setWidth100();
 			this.clear();
+			text = new StaticTextItem("");
+			text.setWidth(300);
+			DynamicForm form = new DynamicForm();
+			contents.addChild(form);
+			form.setFields(text);
+			
 			this.setContents("");
 			this.addChild(contents);
 		}
-		contents.clear();
-		System.out.println("clearing");
+		
+
+		message1 = message2 = message3 = "";
+		
+		if (service == null) {
+			service = GWT.create(TranslationService.class);
+		}
+		
 		Collection<SequenceHook> seqs = owner.getOutputSequence();
 		
 		if(seqs == null || seqs.isEmpty()){
-			contents.addMember(new Label("<h1> No sequence </h1>"));
-		
+			text.setValue("<h1> No sequence </h1>");
 		}else {
-			Label l1 = new Label();
-			Label l2 = new Label();
-			Label l3 = new Label();
-
-			System.out.println("adding");
-			contents.addMember(new Label("<h1><u> 5'3' Frame 1  </u></h1>"));
-			contents.addMember(l1);
-			contents.addMember(new Label("<h1><u> 5'3' Frame 2  </u></h1>"));
-			contents.addMember(l2);
-			contents.addMember(new Label("<h1><u> 5'3' Frame 3  </u></h1>"));
-			contents.addMember(l3);
+			message1 = "<h1><u> 5'3' Frame 1  </u></h1> \n";
+			message2 += "<h1><u> 5'3' Frame 2  </u></h1> \n";
+			message3 += "<h1><u> 5'3' Frame 3  </u></h1> \n";
+			text.setValue(message1 + message2 + message3);
 			
-			if (service == null) {
-				service = GWT.create(TranslationService.class);
-			}
+			AsyncCallback<String> updateMessage1 = new AsyncCallback<String>(){
+				public void onFailure(Throwable caught) {
+					SC.say(caught.getMessage());
+				}
+				public void onSuccess(String result) {
+					message1 += "<h3>" + result.replace("", " ") + "</h3>\n";
+					text.setValue(message1 + message2 + message3);
+				}
+			};
+			AsyncCallback<String> updateMessage2 = new AsyncCallback<String>(){
+				public void onFailure(Throwable caught) {
+					SC.say(caught.getMessage());
+				}
+				public void onSuccess(String result) {
+					message2 += "<h3>" + result.replace("", " ") + "</h3>\n";
+					text.setValue(message1 + message2 + message3);
+				}
+			};
+			AsyncCallback<String> updateMessage3 = new AsyncCallback<String>(){
+				public void onFailure(Throwable caught) {
+					SC.say(caught.getMessage());
+				}
+				public void onSuccess(String result) {
+					message3 += "<h3>" + result.replace("", " ") + "</h3> \n";
+					text.setValue(message1 + message2 + message3);
+				}
+			};
 			
-			service.getForwardTranslationOne(seqs.iterator().next(), new updateLabelCallback(l1));
-			service.getForwardTranslationTwo(seqs.iterator().next(), new updateLabelCallback(l2));
-			service.getForwardTranslationThree(seqs.iterator().next(), new updateLabelCallback(l3));
-		}
-		this.redraw();
-	}
-	
-	private class updateLabelCallback implements AsyncCallback<String> {
-		private Label l;
-		public updateLabelCallback(Label l){
-			this.l = l;
-		}
-		public void onFailure(Throwable caught) {
-			SC.say(caught.getMessage());
-		}
-		public void onSuccess(String result) {
-			l.setContents("<h3>" + result+ "</h3>");
-		}
-	}
+			
 
+			
+			service.getForwardTranslationOne(seqs.iterator().next(), updateMessage1);
+			service.getForwardTranslationTwo(seqs.iterator().next(), updateMessage2);
+			service.getForwardTranslationThree(seqs.iterator().next(), updateMessage3);
+		}
+	}
 }
