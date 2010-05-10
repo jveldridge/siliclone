@@ -26,6 +26,11 @@ import com.smartgwt.client.widgets.events.MouseOverHandler;
 
 import edu.brown.cs32.siliclone.operators.Operator;
 
+/**
+ * An outputDragger is associated with an operator owner, 
+ * and creates connections from that operator to other 
+ * operators' inputs.
+ */
 public class OutputDragger extends Canvas {
 	private static final int WIDTH = 7, HEIGHT = 7;
 	private static final String STATIONARY_COLOR = "#882288", 
@@ -35,6 +40,11 @@ public class OutputDragger extends Canvas {
 	private Operator owner;
 	private Collection<InputNode> recipients;
 	
+	/**
+	 * @param owner The operator whose output this visually represents
+	 * @param x The x-coordinate of the left side of this dragger
+	 * @param y The y-coordinate of the right side of this dragger
+	 */
 	public OutputDragger(Operator owner, int x, int y){
 		this.owner = owner;
 		init();
@@ -43,31 +53,59 @@ public class OutputDragger extends Canvas {
 		startY = y;
 	}
 	
+	/**
+	 * @param i The inputNode to connect to this dragger's operator's output.
+	 */
 	public void addRecipient(InputNode i){
 		recipients.add(i);
 	}
+	
+	/**
+	 * updates the lines connecting to this operator's output.
+	 */
 	public void reposition(){
 		for(InputNode i : recipients){
 			i.reposition();
 		}
 	}
+	
+	/**
+	 * removes all connections using this operator's output.
+	 */
 	public void disconnect(){
 		for(InputNode i : recipients){
 			i.disconnect();
 		}
 	}
 	
+	/**
+	 * gives the owner of this outputdragger.
+	 * @return The owner set on construction
+	 */
 	public Operator getOwner(){
 		return owner;
 	}
 	
+	/**
+	 * The location of this dragger (not where it currently is, 
+	 * but where it should return on the owner's opview).
+	 * @return The left coordinate
+	 */
 	public int getStartX(){
 		return startX;
 	}
+	/**
+	 * The location of this dragger (not where it currently is, 
+	 * but where it should return on the owner's opview).
+	 * @return The top coordinate
+	 */
 	public int getStartY(){
 		return startY;
 	}
 	
+	/**
+	 * Positions this dragger.
+	 */
 	private void init(){
 		setHeight(HEIGHT);
 		setWidth(WIDTH);
@@ -89,6 +127,9 @@ public class OutputDragger extends Canvas {
 		});
 	}
 
+	/**
+	 * saves the position to return, and drops below all potential drop targets.
+	 */
 	private class DragStart implements DragStartHandler { 
 		public void onDragStart(DragStartEvent event) {
 			startX = getLeft();
@@ -97,12 +138,18 @@ public class OutputDragger extends Canvas {
 		}
 	}
 	
+	/**
+	 * can change color when over a drop target
+	 */
 	private class HoverStart implements MouseOverHandler {
 		public void onMouseOver(MouseOverEvent event) {
 			setBackgroundColor(HOVER_COLOR);
 		}	
 	}
 	
+	/**
+	 * can change back
+	 */
 	private class HoverStop implements MouseOutHandler{
 		public void onMouseOut(MouseOutEvent event) {
 			setBackgroundColor(STATIONARY_COLOR);
@@ -110,6 +157,9 @@ public class OutputDragger extends Canvas {
 		
 	}
 	
+	/**
+	 * and change back to stationary color
+	 */
 	private class DragStop implements DragStopHandler {
 		public void onDragStop(DragStopEvent event) {
 			setLeft(startX);
