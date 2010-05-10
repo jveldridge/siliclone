@@ -136,6 +136,8 @@ public class NucleotideString implements Serializable{
 	
 	
 	public NucleotideString(String input) {
+		
+		input = input.replaceAll("[^ATCGatcg]", "");
 
 		sequence = new byte[input.length()];
 		for (int i = 0; i<input.length();i++){
@@ -158,7 +160,7 @@ public class NucleotideString implements Serializable{
 			break;
 		}
 		}
-		hash= Arrays.hashCode(sequence);
+		hash = Arrays.hashCode(sequence);
 	}
 	
 	
