@@ -108,4 +108,7 @@ public interface SequenceService extends RemoteService {
 	public List<String> listAvailableSequences() throws DataServiceException;
 	
 	public SequenceHook findSequence(String name) throws DataServiceException;
+	
+	
+	public Map getAllProperties(SequenceHook seq) throws DataServiceException;
 }
