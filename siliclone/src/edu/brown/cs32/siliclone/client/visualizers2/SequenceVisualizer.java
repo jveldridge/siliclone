@@ -32,15 +32,19 @@ public class SequenceVisualizer extends VisualizerCanvas {
 		if(contents == null){
 			final VLayout layout = new VLayout();
 			final DynamicForm form = new DynamicForm();
-			contents = new StaticTextItem("Sequence(s)");
-			contents.setWidth(150);
+			contents = new StaticTextItem("");
+			//contents.setWidth(width)();
 			contents.setWrap(true);
 			contents.setTitleOrientation(TitleOrientation.TOP);
 			form.setWidth100();
 			form.setFields(contents);
+			contents.setWidth(300);
 			layout.addChild(form);
 			this.addChild(layout);
 		}
+		
+		
+		
 		System.out.println("update called");
 		System.out.println("contents: " + contents);
 		if (service == null) {
@@ -57,29 +61,55 @@ public class SequenceVisualizer extends VisualizerCanvas {
 			sequences = new HashMap<SequenceHook, String>();
 			
 			for (final SequenceHook hook : seqs) {
-				AsyncCallback<String> callback = new AsyncCallback<String>() {
+				final AsyncCallback<Map> propertiesCallback = new AsyncCallback<Map>(){
+					public void onFailure(Throwable caught) {
+						SC.say(caught.getMessage());
+					}
+					public void onSuccess(Map result) {
+						String entry = sequences.get(hook);
+						entry += " <br/><b> <u> Properties </u></b>: <br/> ";
+						for(String name : ((Map<String, Object>) result).keySet()){
+							entry += name + " : " + result.get(name) + "<br/>";
+						}
+						sequences.put(hook, entry);
+						String toDisplay = "<h4>Sequences:</h4> <br/>";
+						for(String s : sequences.values()){
+							toDisplay += s;
+						}
+						contents.clearValue();
+						contents.setValue(toDisplay);
+						DynamicForm form = new DynamicForm();
+						form.setFields(contents);
+					}
+				};
+				
+				AsyncCallback<String> sequenceCallback = new AsyncCallback<String>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
 					}
 					
 					public void onSuccess(String result) {
-						sequences.put(hook, result.replaceAll("", " "));
+						sequences.put(hook, "<br/> <b><u> name :  " +hook.getSeqName() + 
+									"</b> </u> <br/>" + result.replaceAll("", " ") + "<br/>");
+						service.getAllProperties(hook, propertiesCallback);
 						SequenceVisualizer.super.setProgress(100 * (sequences.size() / seqs.size()));
 
 						if (sequences.size() == seqs.size()) {
-							String text = "";
 							for (SequenceHook hook : sequences.keySet()) {
-								text += hook.getSeqName() + ":\n" + sequences.get(hook) + "\n\n";
+								String text = sequences.get(hook);
+								text += "";
+								sequences.put(hook, text);
 							}
-							contents.setValue(text);
-					  		
-							DynamicForm form = new DynamicForm();
-							form.setFields(contents);
+
+							String toDisplay = "<h4>Sequences:</h4> <br/>";
+							for(String s : sequences.values()){
+								toDisplay += s;
+							}
 						}
 					}
 				};
 	
-				service.getNucleotides(hook, callback);
+				service.getNucleotides(hook, sequenceCallback);
 			}
 		}		
 	}
