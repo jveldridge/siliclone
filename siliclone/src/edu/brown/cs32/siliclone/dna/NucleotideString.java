@@ -282,12 +282,10 @@ outerloop:	for (int i = 0; i<sequence.length;i++){
 					 if(searchString[j]!=getSimpleNucleotideAt(i+j)){
 						 continue outerloop; //(in other words, skip r.add(i)
 					 }
-					 
 			}
-				 r.add(i);	
+				 r.add(i);
 			}
 			return r;
-			
 		}
 		
 		 SearchTreeNode currentNode = searchTreeRoot;

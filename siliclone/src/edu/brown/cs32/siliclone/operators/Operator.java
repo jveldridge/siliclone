@@ -34,7 +34,7 @@ public interface Operator extends Serializable {
 	
 	public Operator[] getInputs();
 	
-	public void setProperties(Map<String, String> properties);
+	public void setProperties(Map properties);
 	
 	public void removeInput(int slotNum);
 	

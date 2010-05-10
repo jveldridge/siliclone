@@ -1,11 +1,14 @@
 package edu.brown.cs32.siliclone.server.operators.restrictiondigest;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
+
+import com.google.gwt.dev.Link;
 
 import edu.brown.cs32.siliclone.client.dna.SequenceHook;
 import edu.brown.cs32.siliclone.client.dna.features.Feature;
@@ -43,7 +46,7 @@ public class DigestOperatorComputer implements OperatorComputer {
 		RestrictionEnzyme re = new RestrictionEnzyme(new SimpleNucleotide[]{c,c,c}, 0);
 		
 		
-		Collection<SequenceHook> r = new LinkedList<SequenceHook>();
+		final Collection<SequenceHook> r = Collections.synchronizedList(new LinkedList<SequenceHook>());
 		
 		int progint = 0;
 		for (SequenceHook sequenceHook : input[0]) {
@@ -61,19 +64,39 @@ public class DigestOperatorComputer implements OperatorComputer {
 			Iterator<Map<String,Object>> pri = r_pr.iterator();
 			assert(r_sh.size()==r_pr.size());
 			progint=0;
-			Random random = new Random();
+			final Random random = new Random();
+	
+			Collection<Thread> savingThreads = new LinkedList<Thread>();
 			while (nsi.hasNext()) {
 				progress=50+50/r_sh.size()*progint;
 				progint++;
-				NucleotideString ns = nsi.next();
-				Map<String,Object> pr = pri.next();
+				final NucleotideString ns = nsi.next();
+				final Map<String,Object> pr = pri.next();
+				Thread t = new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+							r.add(SequenceServiceImpl.saveSequence(ns, new HashMap<String,Collection<Feature>>(),"cutname"+random.nextInt(10000000),pr,true));
+						} catch (DataServiceException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+				});
+				savingThreads.add(t);
+				t.start();
+				
+				
+			}
+			
+			for (Thread thread : savingThreads) {
 				try {
-					r.add(SequenceServiceImpl.saveSequence(ns, new HashMap<String,Collection<Feature>>(),"cutname"+random.nextInt(10000000),pr));
-				} catch (DataServiceException e) {
-					// TODO Auto-generated catch block
+					thread.join();
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
 			}
 			if(cancelled) break;
 			

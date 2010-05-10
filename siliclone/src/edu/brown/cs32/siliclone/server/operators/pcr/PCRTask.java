@@ -1,7 +1,8 @@
-package edu.brown.cs32.siliclone.tasks;
+package edu.brown.cs32.siliclone.server.operators.pcr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -13,24 +14,25 @@ import edu.brown.cs32.siliclone.database.client.DataServiceException;
 import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.NucleotideString.SimpleNucleotide;
+import edu.brown.cs32.siliclone.tasks.Task;
 
 public class PCRTask implements Task {
 
 	
 	private Collection<SequenceHook> output;
 	private Collection<SequenceHook>[] input;
-	private Map<String, String> properties;
+	private Map properties;
 	
-	public PCRTask(Collection<SequenceHook>[] input, Map<String, String> properties) {
+	public PCRTask(Collection<SequenceHook>[] input, Map properties) {
 		this.input = input;
 		this.properties = properties;
-		output = new LinkedList<SequenceHook>();
+		output = Collections.synchronizedList(new LinkedList<SequenceHook>());
 	}
 
 	public void compute() {
 		try {
 
-			Integer matchLength = Integer.parseInt(properties.get("match"));
+			Integer matchLength = (Integer) properties.get("match");
 			Collection<NucleotideString> templates = new LinkedList<NucleotideString>();
 			Collection<NucleotideString> firstPrimers = new LinkedList<NucleotideString>();
 			Collection<NucleotideString> secondPrimers = new LinkedList<NucleotideString>();
@@ -125,20 +127,49 @@ public class PCRTask implements Task {
 				}
 			}
 			
-			for(NucleotideString out : outputStrings)
+			System.out.println("Inside of PCRTask1, output number:"+outputStrings.size());
+			
+			Thread[] savingThreads = new Thread[outputStrings.size()];
 			{
-				Map<String, Object> properties = new HashMap<String, Object>();
+			int i=0;
+			for(final NucleotideString out : outputStrings)
+			{
+				final Map<String, Object> properties = new HashMap<String, Object>();
 				properties.put("isCircular", false);
-				String name = Integer.toString(out.hashCode() + new Random().nextInt(100000));
-				Map<String, Collection<Feature>> features = new HashMap<String, Collection<Feature>>();
-				SequenceServiceImpl.saveSequence(out, features, name, properties);
-				output.add(SequenceServiceImpl.findDNASequence(name));
+				final String name = Integer.toString(out.hashCode() + new Random().nextInt(100000));
+				final Map<String, Collection<Feature>> features = new HashMap<String, Collection<Feature>>();
+				savingThreads[i]=new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+							output.add(SequenceServiceImpl.saveSequence(out, features, name, properties,false));
+							System.out.println("Save now!");
+						} catch (DataServiceException e) {
+							e.printStackTrace();
+						}
+						
+					}
+				});
+				savingThreads[i].start();
+				
+				i++;
 			}
+			}
+			System.out.println("Inside of PCRTask2, output number:"+savingThreads.length);
+			for (int i = 0; i<savingThreads.length;i++){
+				try {
+					savingThreads[i].join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			System.out.println("Inside of PCRTask3, output number:"+output.size());
+						
 			
 			
 			
 		} catch (DataServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();	
 		}
 	}
