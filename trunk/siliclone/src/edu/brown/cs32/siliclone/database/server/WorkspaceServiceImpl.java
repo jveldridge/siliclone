@@ -316,6 +316,7 @@ public class WorkspaceServiceImpl extends RemoteServiceServlet implements
 			if(!res.next()){
 				conn.close();
 				saveWorkspace(w, name);
+				return;
 			}
 			int id = res.getInt(1);
 			
