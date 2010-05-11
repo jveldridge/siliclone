@@ -462,7 +462,7 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 	 * 			"Error writing sequence to database."
 	 * 			"Error connecting to database."
 	 */
-	private static int saveNucleotideString(NucleotideString nucleotides, Connection conn)
+	private static int saveNucleotideString(NucleotideString nucleotides, Connection conn, boolean indexInTask)
 				throws DataServiceException{
 		try{
 			PreparedStatement statement = conn.prepareStatement("select * from " +
@@ -487,10 +487,20 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 			statement.executeUpdate();
 			
 			res = statement.getGeneratedKeys();
-	
+			
 			if(!res.next()){
 				throw new DataServiceException("Error writing sequence to database.");
 			}
+			
+			//notify task that it can start working now
+			if(indexInTask){
+				TasksDelegation.delegate(new IndexNucleotideSequenceTask(res.getInt(1)));
+				}else{
+					new IndexNucleotideSequenceTask(res.getInt(1)).compute();
+				}
+			
+	
+
 			
 			return res.getInt(1);
 		}catch(SQLException e){
@@ -538,14 +548,9 @@ public class SequenceServiceImpl extends RemoteServiceServlet implements Sequenc
 				throw new DataServiceException("Sequence data with name " + seqName + " already exists");
 			}
 			
-			int seqID = saveNucleotideString(nucleotides, conn);
+			int seqID = saveNucleotideString(nucleotides, conn,indexInTask);
 			
-				//notify task that it can start working now
-			if(indexInTask){
-				TasksDelegation.delegate(new IndexNucleotideSequenceTask(seqID));
-				}else{
-					new IndexNucleotideSequenceTask(seqID).compute();
-				}
+			
 			
 			
 			//saving the sequence data
