@@ -109,8 +109,6 @@ public abstract class AbstractOperator implements Operator {
 		
 	}
 	
-//	remove
-	
 
 	public int getX() {
 		return x;

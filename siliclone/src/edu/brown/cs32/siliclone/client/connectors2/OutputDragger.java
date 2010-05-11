@@ -4,17 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.smartgwt.client.types.DragAppearance;
-import com.smartgwt.client.util.EventHandler;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.DoubleClickEvent;
-import com.smartgwt.client.widgets.events.DoubleClickHandler;
-import com.smartgwt.client.widgets.events.DragRepositionStartEvent;
-import com.smartgwt.client.widgets.events.DragRepositionStartHandler;
-import com.smartgwt.client.widgets.events.DragRepositionStopEvent;
-import com.smartgwt.client.widgets.events.DragRepositionStopHandler;
 import com.smartgwt.client.widgets.events.DragStartEvent;
 import com.smartgwt.client.widgets.events.DragStartHandler;
 import com.smartgwt.client.widgets.events.DragStopEvent;

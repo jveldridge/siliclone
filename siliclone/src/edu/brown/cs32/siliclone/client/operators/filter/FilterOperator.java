@@ -20,21 +20,9 @@ public class FilterOperator extends AbstractOperator {
 		properties.processInput();
 	}
 	
-	public void update(){
-		for (int i = 0; i < inputs.length; i++) {
-			if (inputs[i] == null) {
-				return;
-			}
-			
-			if (i == inputs.length - 1) {
-				//calculate new output sequence
-				properties.processInput();
-			}
-		}
-	}
-	
 	public void calculate() {
 		properties.processInput();
+		properties.show();
 	}
 
 	public int getNumInputs() {
@@ -53,7 +41,6 @@ public class FilterOperator extends AbstractOperator {
 		System.out.println("before: " + outputSequence);
 		outputSequence.add(toAdd);
 		System.out.println("after: " + outputSequence);
-		this.update();
 	}
 
 }
