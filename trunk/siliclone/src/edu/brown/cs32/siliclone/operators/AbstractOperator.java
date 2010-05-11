@@ -161,6 +161,7 @@ public abstract class AbstractOperator implements Operator {
 	}
 	
 	public void updateVisualizations(){
+		//System.out.println("updateVis called on " + this);
 		visualizerDisplay.update();
 	}
 	

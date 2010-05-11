@@ -11,39 +11,57 @@ abstract public class PCREnzyme {
 	private PCREnzyme() {}
 	
 	static public PCREnzyme getEnzyme(String enzyme) {
-		if(enzyme == "Taq")
+		System.out.println(enzyme);
+		if(enzyme.equals("Taq"))
 		{
 			if(taq == null)
 				taq = new PCREnzymeTaq();
 			return taq;
 		}
-		else if(enzyme == "Pfu")
+		else if(enzyme.equals("Pfu"))
 		{
 			if(pfu == null)
 				pfu = new PCREnzymePfu();
 			return pfu;
 		}
-		else
-			return null; 
+		else {
+			System.out.println("mismatched enzyme name");
+			if(taq == null)
+				taq = new PCREnzymeTaq();
+			return taq;
+		}
+			 
 	}
 	
 	
-	abstract public SimpleNucleotide[] getOverhang(); 
+	abstract public String getOverhangSequence();
+	abstract public int getOverhang();
 	
 	private static class PCREnzymeTaq extends PCREnzyme{
 		
 		@Override
-		public SimpleNucleotide[] getOverhang() {
-			SimpleNucleotide[] overhang = {SimpleNucleotide.a};
-			return overhang;
+		public String getOverhangSequence() {
+			return "A";
+		}
+
+		@Override
+		public int getOverhang() {
+			// TODO Auto-generated method stub
+			return 1;
 		}
 	}
 	
 	private static class PCREnzymePfu extends PCREnzyme {
 
 		@Override
-		public SimpleNucleotide[] getOverhang() {
-			return null;
+		public String getOverhangSequence() {
+			return "";
+		}
+
+		@Override
+		public int getOverhang() {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 	}
 
