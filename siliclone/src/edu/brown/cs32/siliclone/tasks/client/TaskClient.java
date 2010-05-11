@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -104,6 +105,7 @@ public class TaskClient implements Runnable{
 		
 	}
 
+	ObjectInputStream _ois;
 	
 	/**
 	 * This method is used by a thread that retrieves returned tasks from
@@ -111,10 +113,10 @@ public class TaskClient implements Runnable{
 	 */
 	public void run() {
 		try {
-			ObjectInputStream ois = new ObjectInputStream(_socket
+			_ois = new ObjectInputStream(_socket
 					.getInputStream());
 			while (true) {
-				Object incomingObject = ois.readObject();
+				Object incomingObject = _ois.readObject();
 				if (!(incomingObject instanceof Request)) {
 					throw new ClassNotFoundException();
 				}
@@ -133,8 +135,10 @@ public class TaskClient implements Runnable{
 			
 			}
 		} catch (IOException e) {
+			if(!closed){
 			System.err.println("Error when communicating with "
-					+ _socket.getInetAddress());
+					+ _socket.getInetAddress()+": "+e.getMessage());
+			}
 		} catch (ClassNotFoundException e) {
 			System.err.println("Received non-Request data from the server at "
 					+ _socket.getInetAddress());
@@ -162,9 +166,11 @@ public class TaskClient implements Runnable{
 		
 	}
 	
+	private boolean closed = false;
+	
 	public void close(){
 		try {
-			_oos.flush();
+			closed=true;
 			_socket.close();
 		} catch (IOException e) {
 			System.err.println("TaskClient could not be closed");
