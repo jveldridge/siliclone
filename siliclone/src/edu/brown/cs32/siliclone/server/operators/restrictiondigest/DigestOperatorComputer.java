@@ -183,8 +183,8 @@ public class DigestOperatorComputer implements OperatorComputer {
 				for(int i = 0;i<ints.size();i++){
 					Map<String, Object> currentProperties = new HashMap<String,Object>();
 					currentProperties.put("isCircular", false);
-					currentProperties.put("leftOverhang", cutoffset);
-					currentProperties.put("rightOverhang", cutoffset);
+					currentProperties.put("leftOverhang", cutoffset*2);
+					currentProperties.put("rightOverhang", cutoffset*2);
 					r_pr.add(currentProperties);
 				}
 				
@@ -209,10 +209,10 @@ public class DigestOperatorComputer implements OperatorComputer {
 					}else{
 						r_ns.add(new NucleotideString(sequence,0,currentPosition+absoffset+halfway));
 					}
-					previousProperties.put("rightOverhang", cutoffset);
+					previousProperties.put("rightOverhang", cutoffset*2);
 					Map<String, Object> currentProperties = new HashMap<String,Object>();
 					currentProperties.put("isCircular", false);
-					currentProperties.put("leftOverhang", cutoffset);
+					currentProperties.put("leftOverhang", cutoffset*2);
 					r_pr.add(currentProperties);
 					previousPosition = currentPosition;
 					notfirst=true;

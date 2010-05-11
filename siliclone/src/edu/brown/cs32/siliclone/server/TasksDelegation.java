@@ -15,6 +15,20 @@ public class TasksDelegation {
 	 * @param t
 	 * @return
 	 */
+	
+	
+	public static Task delegate(Task t){
+		
+		t.compute();
+		return t;
+		
+	}
+	
+	
+	/**
+	 * uncomment this if you want to run things on the cluster
+	 */
+	/*
 	public static Task delegate(Task t){
 		
 		
@@ -37,5 +51,7 @@ public class TasksDelegation {
 		
 		
 	}
+	
+	*/
 
 }
