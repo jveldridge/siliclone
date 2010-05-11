@@ -53,6 +53,8 @@ public class SequenceVisualizer extends VisualizerCanvas {
 		
 		final Collection<SequenceHook> seqs = owner.getOutputSequence();
 
+		System.out.print(seqs);
+		
 		if(seqs == null || seqs.isEmpty()) {
 			contents.setValue("Add more input to get results from this operator.");
 		}
@@ -67,11 +69,15 @@ public class SequenceVisualizer extends VisualizerCanvas {
 					}
 					public void onSuccess(Map result) {
 						String entry = sequences.get(hook);
-						entry += " <br/><b> <u> Properties </u></b>: <br/> ";
-						for(String name : ((Map<String, Object>) result).keySet()){
-							entry += name + " : " + result.get(name) + "<br/>";
+						if(entry.endsWith("      ")){
+							entry += " <br/><b> <u> Properties </u></b>: <br/> ";
+							for(String name : ((Map<String, Object>) result).keySet()){
+	
+								entry += name + " : " + result.get(name) + "<br/>";
+							}
+							sequences.put(hook, entry);
 						}
-						sequences.put(hook, entry);
+						
 						String toDisplay = "<h4>Sequences:</h4> <br/>";
 						for(String s : sequences.values()){
 							toDisplay += s;
@@ -83,32 +89,23 @@ public class SequenceVisualizer extends VisualizerCanvas {
 					}
 				};
 				
+				
 				AsyncCallback<String> sequenceCallback = new AsyncCallback<String>() {
 					public void onFailure(Throwable caught) {
 						SC.say(caught.getMessage());
 					}
 					
 					public void onSuccess(String result) {
+						System.out.println("success");
 						sequences.put(hook, "<br/> <b><u> name :  " +hook.getSeqName() + 
-									"</b> </u> <br/>" + result.replaceAll("", " ") + "<br/>");
+									"</b> </u> <br/>" + result.replaceAll("", " ") + "<br/>           ");
+						
 						service.getAllProperties(hook, propertiesCallback);
 						SequenceVisualizer.super.setProgress(100 * (sequences.size() / seqs.size()));
-
-						if (sequences.size() == seqs.size()) {
-							for (SequenceHook hook : sequences.keySet()) {
-								String text = sequences.get(hook);
-								text += "";
-								sequences.put(hook, text);
-							}
-
-							String toDisplay = "<h4>Sequences:</h4> <br/>";
-							for(String s : sequences.values()){
-								toDisplay += s;
-							}
-						}
 					}
 				};
-	
+
+				System.out.println("get nucleotides");
 				service.getNucleotides(hook, sequenceCallback);
 			}
 		}		
