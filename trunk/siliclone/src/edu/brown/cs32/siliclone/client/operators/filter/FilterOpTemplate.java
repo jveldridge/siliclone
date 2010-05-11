@@ -27,8 +27,6 @@ public class FilterOpTemplate implements OperatorTemplate {
 
 	public String getIconPath() {
 		return "filter.gif";
-	}
-	
-	
+	}	
 
 }

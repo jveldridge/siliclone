@@ -227,7 +227,6 @@ public class Database {
 		oos.writeObject(objectToWrite);
 		oos.close();
 		resultset.updateBinaryStream(columnindex,new ByteArrayInputStream(baout.toByteArray()));	
-		
 	}
 	
 	/**

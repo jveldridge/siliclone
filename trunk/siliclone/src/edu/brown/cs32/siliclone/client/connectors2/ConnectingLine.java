@@ -2,12 +2,8 @@ package edu.brown.cs32.siliclone.client.connectors2;
 
 import com.smartgwt.client.types.Positioning;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-
-import edu.brown.cs32.siliclone.client.forms.RegisterForm;
-import edu.brown.cs32.siliclone.client.visualizers2.VisualizerDisplay;
 /**
  * A connecting line shows the three lines that connect two operators 
  * in the visual workspace.
