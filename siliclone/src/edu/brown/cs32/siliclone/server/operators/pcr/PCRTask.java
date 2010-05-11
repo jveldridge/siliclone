@@ -15,6 +15,7 @@ import edu.brown.cs32.siliclone.database.server.SequenceServiceImpl;
 import edu.brown.cs32.siliclone.dna.NucleotideString;
 import edu.brown.cs32.siliclone.dna.NucleotideString.SimpleNucleotide;
 import edu.brown.cs32.siliclone.tasks.Task;
+import edu.brown.cs32.siliclone.utilities.ezyme.PCREnzyme;
 
 public class PCRTask implements Task {
 
@@ -31,7 +32,12 @@ public class PCRTask implements Task {
 
 	public void compute() {
 		try {
-
+			String enzymeName = (String)properties.get("enzyme");
+			System.out.println(enzymeName);
+			PCREnzyme enzyme = PCREnzyme.getEnzyme(enzymeName);
+			System.out.println(enzyme);
+			NucleotideString overhangSeq = new NucleotideString(enzyme.getOverhangSequence());
+			int overhang = enzyme.getOverhang();
 			Integer matchLength = (Integer) properties.get("match");
 			Collection<NucleotideString> templates = new LinkedList<NucleotideString>();
 			Collection<NucleotideString> firstPrimers = new LinkedList<NucleotideString>();
@@ -85,6 +91,12 @@ public class PCRTask implements Task {
 									product = new NucleotideString(forward, product);
 									//Then concatenate with reverse primer
 									product = new NucleotideString(product, reverse);
+									//Then concatenate with output overhang
+									if(overhang != 0)
+									{
+										product = new NucleotideString(product, overhangSeq);
+										product = new NucleotideString(overhangSeq.reverseComplement(), product);
+									}
 									outputStrings.add(product);
 								}
 							}
@@ -119,6 +131,12 @@ public class PCRTask implements Task {
 									product = new NucleotideString(forward, product);
 									//Then concatenate with reverse primer
 									product = new NucleotideString(product, reverse);
+									//Then concatenate with enzyme overhang
+									if(overhang != 0)
+									{
+										product = new NucleotideString(product, overhangSeq);
+										product = new NucleotideString(overhangSeq.reverseComplement(), product);
+									}
 									outputStrings.add(product);
 								}
 							}
@@ -136,6 +154,8 @@ public class PCRTask implements Task {
 			{
 				final Map<String, Object> properties = new HashMap<String, Object>();
 				properties.put("isCircular", false);
+				properties.put("rightOverhang", overhang);
+				properties.put("leftOverhang", overhang);
 				final String name = Integer.toString(out.hashCode() + new Random().nextInt(100000));
 				final Map<String, Collection<Feature>> features = new HashMap<String, Collection<Feature>>();
 				savingThreads[i]=new Thread(new Runnable() {

@@ -93,7 +93,7 @@ public class LigationTask implements Task {
 								boolean overlap = true;
 								for(int i = 0; i < Math.abs(rightOne); i++)
 								{
-									if(one.str.getSimpleNucleotideAt(one.str.getLength() - Math.abs(rightOne) + i) != two.str.getSimpleNucleotideAt(i).opposite())
+									if(one.str.getSimpleNucleotideAt(one.str.getLength() - Math.abs(rightOne) + i) != two.str.getSimpleNucleotideAt(i))
 										overlap = false;
 								}
 								if(overlap == true) {
@@ -110,7 +110,7 @@ public class LigationTask implements Task {
 								boolean overlap = true;
 								NucleotideString rc = two.str.reverseComplement();
 								for(int i = 0; i < Math.abs(rightOne); i++) {
-									if(one.str.getSimpleNucleotideAt(one.str.getLength() - Math.abs(rightOne) + i) != rc.getSimpleNucleotideAt(i).opposite())
+									if(one.str.getSimpleNucleotideAt(one.str.getLength() - Math.abs(rightOne) + i) != rc.getSimpleNucleotideAt(i))
 										overlap = false;
 								}
 								if(overlap == true) {
